@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!--/*
+intelliJ で開くと「URI is not registered」の警告が出るが動作に支障はない。
+対応するには有償版を購入する必要があるようだ。
+https://stackoverflow.com/questions/38730992/thymleaf-for-spring-in-intellij-uri-is-not-registered
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    th:with="pageName='Todo' + ${todo.isNew() ? '登録' : '更新'}">
+<head>
+  <link th:replace="~{layout/head::header}" />
+  <title th:replace="~{layout/head::title(${pageName})}" />
+</head>
+<body>
+<div th:replace="~{layout/head::hero}"></div>
+
+<section class="app-view-one-column-narrow">
+  <div class="app-gap">
+    <a class="app-flex-left app-flex-middle" th:href="@{/todo/(usePrevCondition=true)}">
+      <i class="fa-solid fa-chevron-left app-margin-right"></i>戻る
+    </a>
+  </div>
+
+  <h2 class="app-page-title" th:text="${pageName}"></h2>
+
+  <form action="#" th:action="@{/todo/upsert}" th:object="${todo}" method="post">
+
+    <input type="hidden" th:field="*{todoId}">
+    <th:block th:if="${!todo.isNew()}">
+      <div class="app-form-field">
+        <div class="app-form-value">
+          <span th:text="'# ' + *{todoId}"></span>
+        </div>
+      </div>
+    </th:block>
+
+    <div class="app-form-field">
+      <label>やること<span class="app-form-required">*必須</span></label>
+      <div class="app-form-value">
+        <textarea
+            class="textarea" rows="2" th:field="*{detail}"
+            maxlength="100" required="required"></textarea>
+        <div th:if="${errorMap != null && errorMap.detail != null}"
+             th:text="${errorMap.detail.errorMessage}"
+             class="app-text-red">ERROR</div>
+      </div>
+    </div>
+
+    <div class="app-form-field">
+      <label>完了予定日<span class="app-form-optional">任意</span></label>
+      <div class="app-form-value">
+        <input class="input" type="date" th:field="*{deadline}"></input>
+        <div th:if="${errorMap != null && errorMap.deadline != null}"
+             th:text="${errorMap.deadline.errorMessage}"
+             class="app-text-red">ERROR</div>
+      </div>
+    </div>
+
+    <th:block th:if="${!todo.isNew()}">
+      <div class="app-form-field">
+        <label>ステータス</label>
+        <div class="app-form-value">
+          <div class="select">
+            <select class="select" th:field="*{todoStatus}">
+              <option th:each="e : ${T(com.example.todo.enums.TodoStatusEnum).values()}"
+                      th:value="${e.toString()}"
+                      th:text="${e.getLabel()}"></option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </th:block>
+
+    <div class="app-gap-large app-flex-right">
+      <input type="submit" class="button is-small is-black" th:value="${todo.isNew() ? '登録' : '更新'}" />
+    </div>
+  </form>
+
+</section>
+</body>

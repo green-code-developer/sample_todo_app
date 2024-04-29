@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:fragment="header">
+    <!--/* referrer-policy のベストプラクティス
+     https://qiita.com/n3_x/items/c2bafd5872af61147c89 */-->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="stylesheet" th:href="@{/webjars/bulma/css/bulma.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/css/fontawesome.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/css/solid.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/style.css}"/>
+    <script th:src="@{/assets/common.js}"></script>
+  </head>
+
+  <head th:fragment="title(pageName)" th:remove="tag">
+    <title th:text="${pageName} + ' - ' + ${@environment.getProperty('app.name')}"></title>
+  </head>
+
+  <div th:fragment="hero" class="app-header">
+    <h1 class="app-flex-1">
+      <a th:href="@{/}" class="app-text-white"
+          th:text="${@environment.getProperty('app.name')}"></a>
+    </h1>
+  </div>
+</html>

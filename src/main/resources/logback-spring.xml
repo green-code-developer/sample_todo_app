@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+  <property name="LoggingDir" value="/opt/keibo/log" />
+  <property name="PATTERN" value="%d %5p %C{1}:%L - %m[%t %X{request_uuid}]%n" />
+  <property name="MAX_SIZE" value="50MB" />
+  <property name="MAX_HISTORY" value="99999999" />
+  <property name="ENCODE" value="UTF-8" />
+
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${PATTERN}</pattern>
+      <charset>${ENCODE}</charset>
+    </encoder>
+  </appender>
+
+  <root level="info">
+    <appender-ref ref="stdout" />
+  </root>
+</configuration>

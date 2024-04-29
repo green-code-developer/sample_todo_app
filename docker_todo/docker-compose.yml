@@ -1,0 +1,11 @@
+version: '3'
+services:
+  postgres:
+    build:
+      context: ./postgres
+    ports:
+      - 52232:5432
+    environment:
+      - POSTGRES_USER=todo
+      - POSTGRES_PASSWORD=todo
+      - POSTGRES_DB=todo

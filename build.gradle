@@ -1,0 +1,48 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.2'
+	id 'io.spring.dependency-management' version '1.1.2'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Spring web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// HTML テンプレートエンジン thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	// セッションをDB 保存
+	implementation 'org.springframework.session:spring-session-core'
+	// DB 接続
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	// セキュリティ
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// 主にStringUtils を利用
+	implementation 'org.apache.commons:commons-lang3:3.13.0'
+	// ファイル操作で利用
+	implementation 'commons-io:commons-io:2.13.0'
+
+	// webjar ここから
+	// html にバージョンを記載せずに済む
+	implementation 'org.webjars:webjars-locator:0.47'
+	implementation 'org.webjars.npm:bulma:0.9.4'
+	implementation 'org.webjars:font-awesome:6.4.0'
+	// webjar ここまで
+
+	runtimeOnly 'org.postgresql:postgresql'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

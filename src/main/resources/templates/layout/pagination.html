@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="pagination(appPagination, key)">
+  <!--/*
+    ページング
+      最初と最後と現在のページの前後2ページを選択可能とする
+      総ページ数が0の場合は何も表示しない
+
+    appPagination AppPagination のインスタンス。現在ページとデータ数等を持つ
+    key ページングの識別子。あまりないが1ページに複数箇所のページングを表示する場合、使い分ける
+
+    全9ページの場合の表示例
+    現在1ページ  1 2 3 ... 9
+    現在2ページ  1 2 3 4 ... 9
+    現在3ページ  1 2 3 4 5 ... 9
+    現在4ページ  1 2 3 4 5 6 ... 9
+    現在5ページ  1 ... 3 4 5 6 7 ... 9
+    現在6ページ  1 ... 4 5 6 7 8 9
+    現在7ページ  1 ... 5 6 7 8 9
+    現在8ページ  1 ... 6 7 8 9
+    現在9ページ  1 ... 7 8 9
+  */-->
+  <th:block th:if="${0 < appPagination.count}">
+    <nav class="pagination is-small" th:data-pagination-key="${key}">
+      <ul class="pagination-list">
+        <!--/* 前後表示の低い方が2以上の場合は1ページ目を表示 */-->
+        <th:block th:if="1 < ${appPagination.lower}">
+          <li><span class="pagination-link">1</span></li>
+        </th:block>
+        <!--/* 前後表示の低い方が3以上なら...を表示 */-->
+        <th:block th:if="2 < ${appPagination.lower}">
+          <li><span class="pagination-ellipsis">&hellip;</span></li>
+        </th:block>
+        <!-- 前後表示 -->
+        <th:block th:if="0 < ${appPagination.upper}">
+          <th:block th:each="i : ${#numbers.sequence(appPagination.lower, appPagination.upper)}">
+          <li><span class="pagination-link" th:classappend="${i == appPagination.current} ? is-current" th:text="${i}">5</span></li>
+          </th:block>
+        </th:block>
+        <!--/* 前後表示の高い方が総ページ数-2以下なら...を表示 */-->
+        <th:block th:if="${appPagination.upper} < ${appPagination.total - 1}" >
+        <li><span class="pagination-ellipsis">&hellip;</span></li>
+        </th:block>
+        <!--/* 前後表示の高い方が総ページ数より小さい場合は最終ページ(=総ページ数)を表示 */-->
+        <th:block th:if="${appPagination.upper} < ${appPagination.total}" >
+          <li><span class="pagination-link" th:text="${appPagination.total}">9</span></li>
+        </th:block>
+      </ul>
+    </nav>
+  </th:block>
+</div>
+
+</html>

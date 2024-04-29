@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    th:with="pageName='Todo一覧'">
+<head>
+  <link th:replace="~{layout/head::header}" />
+  <link rel="stylesheet" th:href="@{/assets/style_list.css}"/>
+  <script th:src="@{/assets/list.js}"></script>
+  <title th:replace="~{layout/head::title(${pageName})}"></title>
+</head>
+<body>
+<div th:replace="~{layout/head::hero}"></div>
+
+<section class="app-view-two-column">
+  <div class="app-left">
+    <header th:replace="~{layout/side::normal}"></header>
+  </div>
+  <div class="app-right">
+    <th:block th:if="${updateTodo != null && updateTodo.value != null}">
+      <div class="notification is-primary app-notification">
+        <span>Todoを登録/更新しました</span>
+        <button class="delete"></button>
+      </div>
+    </th:block>
+    <h2 class="app-page-title" th:text="${pageName}"></h2>
+    <div>
+      <span class="app-toggle-switch" data-toggle-key="search"
+            th:classappend="|${true ? 'app-toggle-switch' : ''} ${form.isNoCondition ? '' : 'app-toggle-open'}|">
+        <i class="fa-solid fa-caret-right app-margin-right"></i>検索条件・並べ替え
+      </span>
+    </div>
+    <div class="app-gap-small app-toggle app-condition" data-toggle-key="search">
+      <form action="#" th:action="@{/todo/}" th:object="${form}" method="get">
+        <div class="app-form-field">
+          <label>詳細</label>
+          <div class="app-form-value">
+            <input class="input " th:field="*{word}" maxlength="100">
+          </div>
+        </div>
+        <div class="app-form-field">
+          <label>ステータス</label>
+          <div class="app-form-value">
+            <div class="select">
+              <select class="select" th:field="*{status}">
+                <option value=""></option>
+                <option th:each="e : ${T(com.example.todo.enums.TodoStatusEnum).values()}"
+                        th:value="${e.toString()}"
+                        th:text="${e.getLabel()}"></option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="app-form-field">
+          <label>有効期限</label>
+          <div class="app-form-value app-date-condition">
+            <input class="input" type="date" th:field="*{deadlineFrom}" maxlength="10">
+            <span>〜</span>
+            <input class="input" type="date" th:field="*{deadlineTo}" maxlength="10">
+          </div>
+        </div>
+        <div class="app-form-field">
+          <label>並び順</label>
+          <div class="app-form-value">
+            <div class="select">
+              <select class="select" th:field="*{sort}">
+                <option value=""></option>
+                <option value="UPDATE_DESC">更新　新しい順</option>
+                <option value="UPDATE_ASC">更新　古い順</option>
+                <option value="STATUS">ステータス</option>
+                <option value="DEADLINE_DESC">有効期限　新しい順</option>
+                <option value="DEADLINE_ASC">有効期限　古い順</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" th:field="*{currentPage}" data-pagination-key="main">
+        <div class="app-form-field app-flex-center-center">
+          <button type="submit" class="button is-small is-black">検索</button>
+          <span class="app-text-link app-margin-left" id="clear">クリア</span>
+        </div>
+      </form>
+    </div>
+    <div class="app-gap-large">
+      <th:block th:if="${lwc.list.isEmpty()}">
+        <div class="app-no-data">データが見つかりませんでした</div>
+      </th:block>
+      <th:block th:if="${!lwc.list.isEmpty()}">
+        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+          <tr class="app-text-nowrap">
+            <th>#</th>
+            <th>ステータス</th>
+            <th>詳細</th>
+            <th>有効期限</th>
+            <th>更新日時</th>
+          </tr>
+          <tr th:each="p : ${lwc.list}">
+            <td class="app-text-breakall">
+              <a th:text="${p.todoId}" th:href="@{/todo/edit/{id}(id=${p.todoId})}"
+                 class="app-text-underline"></a>
+            </td>
+            <td class="app-text-breakall" th:text="${T(com.example.todo.enums.TodoStatusEnum).toLabel(p.todoStatus)}"></td>
+            <td class="app-text-breakall" th:text="${p.detail}"></td>
+            <td class="app-text-breakall" th:text="${T(com.example.todo.util.DateUtil).dateToString(p.deadline)}"></td>
+            <td class="app-text-breakall" th:text="${T(com.example.todo.util.DateUtil).dateToString(p.updatedAt)}"></td>
+          </tr>
+        </table>
+      </th:block>
+    </div>
+
+    <div th:replace="~{layout/pagination::pagination(${appPagination}, main)}"></div>
+
+    <div class="app-gap-small app-flex-right">
+      <a th:href="@{/todo/new}" class="button is-small is-black app-margin-right">Todo登録</a>
+    </div>
+  </div>
+</section>
+</body>
