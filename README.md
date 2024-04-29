@@ -1,23 +1,23 @@
 # Todo アプリ
 ## 概要
-- 新規プロジェクトの立ち上げ時に使用可能なテンプレートです。
-- ローカル環境に必要なものは全てdocker-compose で構築し、できる限り少ないステップで構築と再構築ができます。
-- 
+- 新規プロジェクト立ち上げ時に便利なテンプレートプロジェクトです
+- 簡単なTODO アプリとなっており、ブラウザから検索、登録、更新を行うことができます
+- ローカル環境に必要なデータベース(Postgres) をdocker-compose で構築します
+- 認証は実装していません（シングルサインオンを推奨します）
 
 ## 構成
 - Spring Boot
 - PostgreSQL
 - Bulma CSS
 - Font-awesome
-- （Javascript ライブラリは使用しない）
 
 ## 環境
 ### 事前インストール
-Java17+ とDocker をインストールしておく
+Java17+, Docker, Docker Compose をインストールします
 
 - [Java17 Amazon corretto](https://aws.amazon.com/jp/corretto/)
 - [Docker Desktop](https://docs.docker.jp/desktop/install.html)
-- Windows でDocker 起動時にWSL のエラーが出る場合は[Linux カーネル更新プログラム](https://www.learning-nao.com/?p=3934)もインストールする
+- Windows はDocker 起動時にWSL のエラーが出る場合ので[Linux カーネル更新プログラム](https://www.learning-nao.com/?p=3934)もインストールしておく
 - [Docker Compose](https://docs.docker.jp/compose/install.html)
 
 ### 構築手順
@@ -28,22 +28,26 @@ make
 ```
 
 Windows 環境の場合
-Makefile に記載されているコマンドと同等の処理を実行してください。（以後同じ）
+```shell
+cd [プロジェクトルートのパス]
+docker-compose up -d
+```
 
-### アプリ起動
+## 起動
+Mac & Linux 環境の場合
 ```shell
 cd [プロジェクトルートのパス]
 make run
 ```
 
-もしくは、TodoApplication のmain 関数を実行します。
-
-ブラウザからこちらに接続できます
-http://localhost:52232
-
-
-### ビルド手順
+Windows 環境の場合
 ```shell
 cd [プロジェクトルートのパス]
-make jar
+.\gradlew.bat bootRun
 ```
+
+ブラウザからこちらに接続できます
+
+http://localhost:52280
+
+デバッグ時はIDE でTodoApplication のmain 関数を実行してください。
