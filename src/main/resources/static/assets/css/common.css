@@ -1,0 +1,199 @@
+/* 共通CSS */
+:root {
+  --app-max-width: 40rem;
+  --app-name-color: rgb(48, 106, 29);
+}
+
+/* header ここから */
+.app-header {
+  padding: 1rem 1.5rem;
+  border-bottom: solid 1px var(--bulma-primary);
+}
+.app-header .app-name {
+  letter-spacing: .1em;
+  color: var(--app-name-color);
+}
+/* header ここまで*/
+
+/* column ここから */
+.app-view-one-column-narrow {
+  max-width:24rem;
+  padding:0 1rem;
+  margin:auto;
+  min-height:500px;
+}
+.app-view-two-column {
+  display:flex;
+  min-height:calc(100vh - 5rem);
+}
+.app-view-two-column .app-left {
+  width:10em;
+  padding: 2rem;
+}
+.app-view-two-column .app-right {
+  flex:1;
+  padding: 1rem;
+}
+/* column ここまで */
+
+/* gap ここから */
+.app-gap {
+  margin-top:1rem;
+  margin-bottom:1rem;
+}
+.app-gap-large {
+  margin-top:2rem;
+  margin-bottom:2rem;
+}
+.app-gap-small {
+  margin-top:.5rem;
+  margin-bottom:.5rem;
+}
+.app-gap-top {
+  margin-top:1rem;
+}
+.app-gap-top-large {
+  margin-top:2rem;
+}
+.app-gap-top-small {
+  margin-top:.5rem;
+}
+.app-gap-bottom {
+  margin-bottom:1rem;
+}
+.app-gap-bottom-large {
+  margin-bottom:2rem;
+}
+.app-gap-bottom-small {
+  margin-bottom:.5rem;
+}
+.app-gap-right {
+  margin-right:1rem;
+}
+.app-gap-right-large {
+  margin-right:2rem;
+}
+.app-gap-right-small {
+  margin-right:.5rem;
+}
+.app-gap-left {
+  margin-left:1rem;
+}
+.app-gap-left-large {
+  margin-left:2rem;
+}
+.app-gap-left-small {
+  margin-left:.5rem;
+}
+/* gap ここまで */
+
+/* flex ここから */
+.app-flex-center, .app-flex-center-center {
+  display:flex;
+  justify-content: center;
+}
+.app-flex-v-center {
+  display:flex;
+  align-items: center;
+}
+.app-flex-center-center {
+  align-items: center;
+}
+.app-flex-right {
+  display: flex;
+  justify-content: flex-end;
+}
+.app-flex-left {
+  display: flex;
+  justify-content: flex-start;
+}
+.app-flex-middle {
+  display: flex;
+  align-items: center;
+}
+.app-flex-1 {
+  flex:1;
+}
+.app-flex-0 {
+  flex:0;
+}
+/* flex ここまで */
+
+/* text ここから */
+.app-text-breakall {
+  word-break: break-all;
+}
+.app-text-nowrap {
+  white-space:nowrap
+}
+.app-text-underline {
+  text-decoration:underline;
+}
+.app-text-no-decoration, .button.app-text-no-decoration {
+  text-decoration:none;
+}
+.app-text-pointer {
+  cursor: pointer;
+}
+.app-text-link {
+  text-decoration:underline;
+  cursor: pointer;
+}
+.app-text-select-none {
+  user-select: none;
+}
+/* text ここまで */
+
+/* notification ここから */
+.app-notification {
+    display: inline-flex;
+    padding: 1em;
+    align-items: center;
+    position: absolute;
+    transform: translate(-50%, 0);
+    top: 1rem;
+    left: 50%;
+}
+.app-notification>*:first-child {
+    flex: 1;
+}
+.app-notification>.delete {
+    right: unset;
+    position: relative;
+    top: unset;
+    margin-left: .5rem;
+}
+/* notification ここまで */
+
+/* toggle ここから */
+.app-toggle-switch .app-toggle-icon {
+    transition: all .3s 0s linear;
+    cursor: pointer;
+}
+.app-toggle-switch.app-toggle-open .app-toggle-icon {
+    transform: rotate(90deg);
+}
+.app-toggle {
+    display: none;
+}
+.app-toggle.app-toggle-open {
+    display: block;
+}
+/* toggle ここまで */
+
+/* pagination ここから */
+/* デフォルトでは--bulma-link(カスタマイズしているので黒)だがprimary(緑)に変更 */
+.pagination-link.is-current {
+    background: var(--bulma-primary);
+}
+/* pagination ここまで */
+
+/* side ここから */
+.app-side-item a {
+  padding: 0 2px 2px 2px;
+  border-bottom: solid 2px transparent;
+}
+.app-side-item a.is-current {
+  border-color: var(--bulma-primary);
+}
+/* side ここまで */

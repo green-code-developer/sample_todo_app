@@ -40,9 +40,9 @@ create table TODO.ACCOUNT (
   ACCOUNT_ID bigserial primary key,
   ACCOUNT_STATUS varchar not null default '',
   NAME text not null default '',
-  UPDATED_AT timestamp not null default now(),
+  UPDATED_AT timestamp with time zone not null default now(),
   UPDATED_BY bigint not null default -1,
-  CREATED_AT timestamp not null default now(),
+  CREATED_AT timestamp with time zone not null default now(),
   CREATED_BY bigint not null default -1
 );
 create trigger UPDATED_ACCOUNT before update or insert
@@ -55,10 +55,10 @@ create table TODO.TODO (
   TODO_ID bigserial primary key,
   TODO_STATUS varchar not null default '',
   DETAIL text not null default '',
-  DEADLINE timestamp,
-  UPDATED_AT timestamp not null default now(),
+  DEADLINE timestamp with time zone,
+  UPDATED_AT timestamp with time zone not null default now(),
   UPDATED_BY bigint not null default -1,
-  CREATED_AT timestamp not null default now(),
+  CREATED_AT timestamp with time zone not null default now(),
   CREATED_BY bigint not null default -1,
   foreign key (UPDATED_BY) references TODO.ACCOUNT(ACCOUNT_ID),
   foreign key (CREATED_BY) references TODO.ACCOUNT(ACCOUNT_ID)

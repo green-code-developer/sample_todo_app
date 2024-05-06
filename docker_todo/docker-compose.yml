@@ -4,7 +4,7 @@ services:
     build:
       context: ./postgres
     ports:
-      - 52232:5432
+      - 52532:5432
     environment:
       - POSTGRES_USER=todo
       - POSTGRES_PASSWORD=todo

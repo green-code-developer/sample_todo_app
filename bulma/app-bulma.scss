@@ -1,0 +1,12 @@
+// 実現したいこと
+// ・primary の色として緑を指定
+// ・リンクの色を通常文字色に変更
+
+$green-code: rgb(70, 154, 42);
+$bulma-text: rgb(64, 70,  84);
+
+@use "bulma/sass" with (
+  $primary: $green-code,
+  $link: $bulma-text,
+  $input-shadow: none
+);

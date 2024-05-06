@@ -1,38 +1,53 @@
 server:
-  port: 52280
+  # ローカルの8080 は使用されている可能性があるので変える
+  port: 52580
   servlet:
-    session:
-      cookie:
-        # HTTPS 環境ではtrue
-        secure: false
-        # HTTPS 環境では__Host-SESSION
-        name: SESSION
     encoding:
+      # セキュリティ対策
+      # css やjs のcontent-type に文字コードを付与
       charset: UTF-8
       force-response: true
 
 spring:
   servlet:
+    # ファイルアップロード上限サイズは初期値1MB では足りないことが多い
     multipart:
       max-file-size: 10MB
-      max-request-size: 20MB
+      max-request-size: 10MB
   multipart:
     enabled: true
 
   datasource:
-    url: jdbc:postgresql://localhost:52232/todo?currentSchema=TODO
+    url: jdbc:postgresql://localhost:52532/todo?currentSchema=TODO
     username: todo
-    password: todo
+    # パスワードは環境変数 APP_POSTGRES_PASSWORD で指定できるようにしておく
+    # ローカルではtodo だがサーバ環境では環境変数の値を使用する
+    password: ${APP_POSTGRES_PASSWORD:todo}
     driver-class-name: org.postgresql.Driver
     hikari:
-      # サーバ上では100 程度が良い
+      # コネクションプール数
+      # ローカルはpostgres のmax_connection は100 で同時接続の考慮が不要なので5 にしておく
+      # サーバ環境ではpostgres のmax_connection と同時接続の要件に合わせて設定
       maximumPoolSize: 5
 
-  # spring session
+  # セッション情報をpostgres に格納
+  # web サーバ冗長化時にweb サーバ間でsession 情報を共有できる
   session:
     store-type: jdbc
+
+  # ローカル設定　ここから
+  # intelliJ でhtml, css, js の変更が即時反映される
+  thymeleaf:
+    cache: false
+    prefix: file:src/main/resources/templates/
+  web:
+    resources:
+      static-locations: file:src/main/resources/static/
+  # ローカル設定　ここまで
 
 # アプリで使用するキーのトップレベルはappとする
 # 外部ライブラリが使用するキーとの衝突を避ける
 app:
-  name: Todo
+  # 環境毎に名称を変える
+  # 誤ってローカルと思い込んで本番で作業する事故を防ぐ目的
+  name: やること(ローカル)

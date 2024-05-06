@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<span th:fragment="message(map, key)" th:remove="tag">
+  <th:block th:if="${map != null && map.get(key) != null && map.get(key).isSuccess() == false}">
+    <span th:text="${#messages.msgWithParams(map.get(key).messageKey, map.get(key).params)}"
+          class="has-text-danger">メッセージ
+    </span>
+  </th:block>
+</span>
+</html>
