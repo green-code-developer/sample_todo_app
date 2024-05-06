@@ -48,6 +48,6 @@ cd [プロジェクトルートのパス]
 
 ブラウザからこちらに接続できます
 
-http://localhost:52280
+http://localhost:52580
 
 デバッグ時はIDE でTodoApplication のmain 関数を実行してください。

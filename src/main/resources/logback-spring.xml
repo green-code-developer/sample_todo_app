@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
-  <property name="LoggingDir" value="/opt/keibo/log" />
+  <property name="LoggingDir" value="/opt/todo/log" />
   <property name="PATTERN" value="%d %5p %C{1}:%L - %m[%t %X{request_uuid}]%n" />
   <property name="MAX_SIZE" value="50MB" />
   <property name="MAX_HISTORY" value="99999999" />
@@ -16,4 +16,46 @@
   <root level="info">
     <appender-ref ref="stdout" />
   </root>
+
+  <springProfile name="prd,dev">
+    <appender name="InfoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>${LoggingDir}/info.log</file>
+      <append>true</append>
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <fileNamePattern>${LoggingDir}/old/info.%d{yyyyMMdd}.%i.log</fileNamePattern>
+        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+          <maxFileSize>${MAX_SIZE}</maxFileSize>
+        </timeBasedFileNamingAndTriggeringPolicy>
+        <maxHistory>${MAX_HISTORY}</maxHistory>
+      </rollingPolicy>
+      <encoder>
+        <pattern>${PATTERN}</pattern>
+        <charset>${ENCODE}</charset>
+      </encoder>
+    </appender>
+
+    <appender name="ErrorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>error</level>
+      </filter>
+      <file>${LoggingDir}/error.log</file>
+      <append>true</append>
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <fileNamePattern>${LoggingDir}/old/error.%d{yyyyMMdd}.%i.log</fileNamePattern>
+        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+          <maxFileSize>${MAX_SIZE}</maxFileSize>
+        </timeBasedFileNamingAndTriggeringPolicy>
+        <maxHistory>${MAX_HISTORY}</maxHistory>
+      </rollingPolicy>
+      <encoder>
+        <pattern>${PATTERN}</pattern>
+        <charset>${ENCODE}</charset>
+      </encoder>
+    </appender>
+
+    <root level="info">
+      <appender-ref ref="InfoAppender" />
+      <appender-ref ref="ErrorAppender" />
+    </root>
+  </springProfile>
 </configuration>

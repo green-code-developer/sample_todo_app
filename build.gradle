@@ -1,7 +1,8 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.1.2'
-	id 'io.spring.dependency-management' version '1.1.2'
+	id 'org.springframework.boot' version '3.2.5'
+	id 'io.spring.dependency-management' version '1.1.4'
+	id 'war'
 }
 
 group = 'com.example'
@@ -27,15 +28,14 @@ dependencies {
 	// セキュリティ
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	// 主にStringUtils を利用
-	implementation 'org.apache.commons:commons-lang3:3.13.0'
+	implementation 'org.apache.commons:commons-lang3:3.14.0'
 	// ファイル操作で利用
-	implementation 'commons-io:commons-io:2.13.0'
+	implementation 'commons-io:commons-io:2.15.1'
+	// webjar でバージョンを指定しないで使う
+	implementation 'org.webjars:webjars-locator:0.52'
 
 	// webjar ここから
-	// html にバージョンを記載せずに済む
-	implementation 'org.webjars:webjars-locator:0.47'
-	implementation 'org.webjars.npm:bulma:0.9.4'
-	implementation 'org.webjars:font-awesome:6.4.0'
+	implementation 'org.webjars:font-awesome:6.5.2'
 	// webjar ここまで
 
 	runtimeOnly 'org.postgresql:postgresql'

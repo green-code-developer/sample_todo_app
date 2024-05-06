@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="notification" th:remove="tag">
+  <th:block th:if="${notification != null}">
+    <div class="notification is-light app-notification"
+         th:classappend="|${notification.type + '' == 'SUCCESS' ? 'is-info' : ''}
+         ${notification.type + '' == 'ERROR' ? 'is-danger' : ''}|">
+      <span th:text="${#messages.msgWithParams(notification.messageKey, notification.params)}"></span>
+      <button class="delete"></button>
+    </div>
+  </th:block>
+</html>

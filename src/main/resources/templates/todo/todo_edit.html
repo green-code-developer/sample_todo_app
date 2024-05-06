@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!--/*
+intelliJ community edition で開くと「URI is not registered」の警告が出るが動作に支障はない。
+対応するには有償版を購入する必要があるようだ。
+https://stackoverflow.com/questions/38730992/thymleaf-for-spring-in-intellij-uri-is-not-registered
+*/-->
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      th:with="pageName=${form.isNew() ? '登録' : '更新'}">
+<head>
+  <title th:replace="~{layout/head::title(${pageName})}"></title>
+  <link th:replace="~{layout/head::head}"/>
+  <link rel="stylesheet" th:href="@{/assets/css/todo/todo_edit.css}"/>
+  <script th:src="@{/assets/js/todo/todo_edit.js}"></script>
+</head>
+<body>
+<header th:replace="~{layout/head::hero}"></header>
+<div th:replace="~{layout/notification::notification}"></div>
+
+<div class="app-view-two-column">
+  <div class="app-left">
+    <div th:replace="~{layout/side::normal}"></div>
+  </div>
+
+  <div class="app-right">
+    <header class="app-gap-bottom is-size-4" th:text="${pageName}"></header>
+    <form th:action="@{/todo/upsert}" th:object="${form}" method="post" class="app-form" id="form">
+      <input type="hidden" th:field="*{todoId}">
+      <th:block th:if="${!form.isNew()}">
+        <div class="app-form-field app-gap-bottom">
+          <div class="app-form-value">
+            <span th:text="'#' + *{todoId}"></span>
+          </div>
+        </div>
+      </th:block>
+
+      <div class="app-form-field app-gap-bottom">
+        <label>やること<span class="has-text-danger">*必須</span></label>
+        <div class="app-form-value">
+          <textarea class="textarea" rows="2" th:field="*{detail}" maxlength="100" required="required"></textarea>
+          <div th:replace="~{layout/app_error::message(${app.map}, 'detail')}"></div>
+        </div>
+      </div>
+
+      <div class="app-form-field app-gap-bottom">
+        <label>完了予定日</label>
+        <div class="app-form-value">
+          <input class="input" th:field="*{deadline}" type="date">
+          <div th:replace="~{layout/app_error::message(${app.map}, 'deadline')}"></div>
+        </div>
+      </div>
+
+      <th:block th:if="${!form.isNew()}">
+        <div class="app-form-field">
+          <label>ステータス</label>
+          <div class="app-form-value">
+            <div class="select">
+              <select class="select" th:field="*{todoStatus}">
+                <th:block th:each="e : ${@enumUtil.getTodoStatusEnum()}">
+                  <option th:value="${e.left}" th:text="${e.right}"></option>
+                </th:block>
+              </select>
+            </div>
+          </div>
+        </div>
+      </th:block>
+
+      <div class="app-gap-large app-flex-v-center">
+        <input type="submit" class="button is-primary" th:value="${form.isNew() ? '登録' : '更新'}"/>
+        <a th:href="@{/todo/(usePrevCondition=true)}"
+           class="app-gap-left button is-text is-small app-text-no-decoration" id="cancel">キャンセル</a>
+      </div>
+    </form>
+  </div>
+
+</div>
+</body>

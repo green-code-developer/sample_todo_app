@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+/bulma/node_modules
+/bulma/app-bulma.css
+/bulma/app-bulma.css.map
+/server

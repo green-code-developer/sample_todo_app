@@ -1,0 +1,26 @@
+
+.app-condition-title {
+    display: inline-block;
+    background: var(--bulma-background);
+    padding: .5rem 1rem;
+}
+
+.app-condition {
+    padding:1rem;
+    max-width: var(--app-max-width);
+    background: var(--bulma-background);
+}
+
+.app-date-condition {
+    display:flex;
+}
+.app-form-field {
+    display:flex;
+    margin: .5rem 0;
+}
+.app-form-field > label {
+    width: 6rem;
+}
+.app-form-field input, .app-form-field select {
+    width: 14rem;
+}
