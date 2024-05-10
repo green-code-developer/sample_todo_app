@@ -5,7 +5,7 @@
     <div class="notification is-light app-notification"
          th:classappend="|${notification.type + '' == 'SUCCESS' ? 'is-info' : ''}
          ${notification.type + '' == 'ERROR' ? 'is-danger' : ''}|">
-      <span th:text="${#messages.msgWithParams(notification.messageKey, notification.params)}"></span>
+      <span th:text="${@messageService.getMessage(notification.appMessage)}"></span>
       <button class="delete"></button>
     </div>
   </th:block>

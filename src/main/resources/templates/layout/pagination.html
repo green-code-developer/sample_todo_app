@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<div th:fragment="pagination(appPagination, key)" th:remove="tag">
+<div th:fragment="pagination(pageableList)" th:remove="tag">
+  <div th:replace="~{layout/pagination::paginationCore(${pageableList}, 'main')}"></div>
+</div>
+
+<div th:fragment="paginationCore(pageableList, key)" th:remove="tag">
   <!--/*
     ページング
       最初と最後と現在のページの前後2ページを選択可能とする
       総ページ数が0の場合は何も表示しない
 
     appPagination AppPagination のインスタンス。現在ページとデータ数等を持つ
-    key ページングの識別子。あまりないが1ページに複数箇所のページングを表示する場合、使い分ける
+    key ページングの識別子。あまり使わない。1ページに複数箇所のページングを表示する場合に使い分ける
 
     全9ページの場合の表示例
     現在1ページ  1 2 3 ... 9
@@ -21,36 +25,44 @@
     現在8ページ  1 ... 6 7 8 9
     現在9ページ  1 ... 7 8 9
   */-->
-  <th:block th:if="${1 < appPagination.totalPage}">
+  <th:block th:if="${1 < pageableList.totalPage}">
     <nav class="pagination is-small" th:data-pagination-key="${key}">
       <ul class="pagination-list">
         <!--/* 前後表示の低い方が2以上の場合は1ページ目を表示 */-->
-        <th:block th:if="1 < ${appPagination.lower}">
+        <th:block th:if="1 < ${pageableList.lower}">
           <li><span class="pagination-link">1</span></li>
         </th:block>
         <!--/* 前後表示の低い方が3以上なら...を表示 */-->
-        <th:block th:if="2 < ${appPagination.lower}">
+        <th:block th:if="2 < ${pageableList.lower}">
           <li><span class="pagination-ellipsis">&hellip;</span></li>
         </th:block>
         <!-- 前後表示 -->
-        <th:block th:if="0 < ${appPagination.upper}">
-          <th:block th:each="i : ${#numbers.sequence(appPagination.lower, appPagination.upper)}">
+        <th:block th:if="0 < ${pageableList.upper}">
+          <th:block th:each="i : ${#numbers.sequence(pageableList.lower, pageableList.upper)}">
             <li><span class="pagination-link" th:text="${i}"
-                      th:classappend="${i == appPagination.current} ? is-current">5</span>
+                      th:classappend="${i == pageableList.currentPage} ? is-current">5</span>
             </li>
           </th:block>
         </th:block>
         <!--/* 前後表示の高い方が総ページ数-2以下なら...を表示 */-->
-        <th:block th:if="${appPagination.upper} < ${appPagination.totalPage - 1}">
+        <th:block th:if="${pageableList.upper} < ${pageableList.totalPage - 1}">
           <li><span class="pagination-ellipsis">&hellip;</span></li>
         </th:block>
         <!--/* 前後表示の高い方が総ページ数より小さい場合は最終ページ(=総ページ数)を表示 */-->
-        <th:block th:if="${appPagination.upper} < ${appPagination.totalPage}">
-          <li><span class="pagination-link" th:text="${appPagination.totalPage}">9</span></li>
+        <th:block th:if="${pageableList.upper} < ${pageableList.totalPage}">
+          <li><span class="pagination-link" th:text="${pageableList.totalPage}">9</span></li>
         </th:block>
       </ul>
     </nav>
   </th:block>
 </div>
 
+<!--/* 1ページ表示件数の候補 */-->
+<select th:fragment="pageOption(currentValue)" th:remove="tag">
+  <option th:value="1">1</option>
+  <option th:value="10">10</option>
+  <option th:value="50">50</option>
+  <option th:value="100">100</option>
+  <option th:value="500">500</option>
+</select>
 </html>

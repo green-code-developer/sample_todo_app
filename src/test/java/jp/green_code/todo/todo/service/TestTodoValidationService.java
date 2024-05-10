@@ -1,20 +1,20 @@
 package jp.green_code.todo.todo.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import jp.green_code.todo.todo.web.form.TodoForm;
-import java.util.StringJoiner;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.StringJoiner;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class TestTodoValidationService {
 
   // detail の長さ上限文字列
   public static String MAX_DETAIL_LENGTH_VALUE;
-  {
+  static {
     var sb = new StringJoiner("");
     for (int i = 0; i < TodoValidationService.MAX_DETAIL_LENGTH; i++) {
       sb.add("あ");
@@ -22,7 +22,7 @@ public class TestTodoValidationService {
     MAX_DETAIL_LENGTH_VALUE = sb + "";
   }
 
-  private TodoValidationService todoValidationService;
+  private final TodoValidationService todoValidationService;
 
   @Autowired
   public TestTodoValidationService(
@@ -44,7 +44,7 @@ public class TestTodoValidationService {
     var result = todoValidationService.validateDetail(detail);
     assertEquals(expectToSuccess, result.isSuccess());
     if (!expectToSuccess) {
-      assertEquals(TodoValidationService.DETAIL_ERROR_MESSAGE_KEY, result.getMessageKey());
+      assertEquals(TodoValidationService.DETAIL_ERROR_MESSAGE_KEY, result.getAppMessage().getCode());
     }
   }
 
@@ -63,7 +63,7 @@ public class TestTodoValidationService {
     var result = todoValidationService.validateDeadline(deadline);
     assertEquals(expectToSuccess, result.isSuccess());
     if (!expectToSuccess) {
-      assertEquals(TodoValidationService.DEADLINE_ERROR_MESSAGE_KEY, result.getMessageKey());
+      assertEquals(TodoValidationService.DEADLINE_ERROR_MESSAGE_KEY, result.getAppMessage().getCode());
     }
   }
 

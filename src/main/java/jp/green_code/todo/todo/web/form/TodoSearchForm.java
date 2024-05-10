@@ -5,22 +5,19 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 /**
  * Todo 検索条件フォーム
  */
-public class TodoSearchForm {
+public class TodoSearchForm extends AppPageable {
 
     private String word;
     private String status;
     private String deadlineFrom;
     private String deadlineTo;
-    private int currentPage = 1;
-    private int pageSize = 10;
-
     private String sort;
 
     // 画面上の検索条件を開いておくかどうか
     public boolean isNoCondition() {
         return isBlank(word) && isBlank(status)
             && isBlank(deadlineFrom) && isBlank(deadlineTo)
-            && isBlank(sort);
+            && isBlank(sort) && getPageSize() == 10;
     }
 
     public String getWord() {
@@ -61,21 +58,5 @@ public class TodoSearchForm {
 
     public void setSort(String sort) {
         this.sort = sort;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
     }
 }
