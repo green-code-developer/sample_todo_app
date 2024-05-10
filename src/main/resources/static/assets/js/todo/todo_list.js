@@ -18,6 +18,8 @@ App.pageLoadEvent = function() {
             const select = selectList[i]
             select.selectedIndex = 0
         }
+        // 1ページ件数のみ10件を選択
+        form.querySelectorAll('[name=pageSize]').forEach(el => el.value = 10)
     })
 }
 window.addEventListener('load', App.pageLoadEvent);

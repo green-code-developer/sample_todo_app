@@ -12,7 +12,7 @@
 
 <div class="app-view-two-column">
   <div class="app-left">
-    <div th:replace="~{layout/side::normal}"></div>
+    <div th:replace="~{layout/sidemenu::normal}"></div>
   </div>
   <div class="app-right">
     <header class="is-size-4" th:text="${pageName}"></header>
@@ -63,6 +63,16 @@
               </div>
             </div>
           </div>
+          <div class="app-form-field">
+            <label for="pageSize" class="app-flex-v-center">1ページ件数</label>
+            <div class="app-form-value">
+              <div class="select">
+                <select class="select" th:field="*{pageSize}" id="pageSize">
+                  <div th:replace="~{layout/pagination::pageOption(${form.pageSize})}"></div>
+                </select>
+              </div>
+            </div>
+          </div>
           <input type="hidden" name="currentPage" value="1" data-pagination-key="main">
           <div class="app-gap-top-large app-flex-center-center">
             <button type="submit" class="button is-primary">検索</button>
@@ -72,10 +82,10 @@
       </div>
     </div>
     <div class="app-gap-large">
-      <th:block th:if="${lwc.list.isEmpty()}">
+      <th:block th:if="${pageableList.list.isEmpty()}">
         <div class="app-gap-large">データが見つかりませんでした</div>
       </th:block>
-      <th:block th:if="${!lwc.list.isEmpty()}">
+      <th:block th:if="${!pageableList.list.isEmpty()}">
         <table class="table is-bordered is-striped is-hoverable">
           <tr class="app-text-nowrap">
             <th>#</th>
@@ -84,20 +94,20 @@
             <th>完了予定日</th>
             <th>更新日時</th>
           </tr>
-          <tr th:each="p : ${lwc.list}">
-            <td class="app-text-breakall">
+          <tr th:each="p : ${pageableList.list}">
+            <td>
               <a th:text="${p.todoId}" th:href="@{/todo/edit/{id}(id=${p.todoId})}"
                  class="app-text-underline"></a>
             </td>
-            <td class="app-text-breakall"
+            <td class="app-text-nowrap"
                 th:text="${@enumUtil.labelOfTodoStatus(p.todoStatus)}"></td>
             <td class="app-text-breakall" th:text="${p.detail}"></td>
-            <td class="app-text-breakall" th:text="${@dateUtil.toYMD(p.deadline)}"></td>
-            <td class="app-text-breakall" th:text="${@dateUtil.toYMD_HM(p.updatedAt)}"></td>
+            <td class="app-text-nowrap" th:text="${@dateUtil.toYMD(p.deadline)}"></td>
+            <td class="app-text-nowrap" th:text="${@dateUtil.toYMD_HM(p.updatedAt)}"></td>
           </tr>
         </table>
       </th:block>
-      <div th:replace="~{layout/pagination::pagination(${appPagination}, main)}"></div>
+      <div th:replace="~{layout/pagination::pagination(${pageableList})}"></div>
     </div>
     <div>
       <a th:href="@{/todo/new}" class="button is-primary">登録</a>

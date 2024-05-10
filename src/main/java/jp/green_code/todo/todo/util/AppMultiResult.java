@@ -2,6 +2,7 @@ package jp.green_code.todo.todo.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 // 複数のエラーが発生し得る場合
 public class AppMultiResult<T> {
@@ -32,6 +33,11 @@ public class AppMultiResult<T> {
 
   public Map<String, AppErrorResult> getMap() {
     return map;
+  }
+
+  public Map<String, AppErrorResult> getErrorMap() {
+    return map.keySet().stream().filter(k -> !map.get(k).isSuccess())
+            .collect(Collectors.toMap(e -> e, e -> map.get(e)));
   }
 
   public void setMap(Map<String, AppErrorResult> map) {

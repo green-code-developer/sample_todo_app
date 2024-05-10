@@ -1,17 +1,8 @@
 package jp.green_code.todo.todo.repository;
 
-import static jp.green_code.todo.todo.enums.TodoSearchSortEnum.UPDATE_DESC;
-import static jp.green_code.todo.todo.repository.TodoCrudRepository.TABLE;
-import static java.lang.String.join;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 import jp.green_code.todo.todo.entity.TodoEntity;
 import jp.green_code.todo.todo.enums.TodoSearchSortEnum;
 import jp.green_code.todo.todo.web.form.TodoSearchForm;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
-import javax.sql.DataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -19,6 +10,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
+
+import static jp.green_code.todo.todo.enums.TodoSearchSortEnum.UPDATE_DESC;
+import static jp.green_code.todo.todo.repository.TodoCrudRepository.TABLE;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Repository
 public class TodoJdbcRepository {
@@ -82,11 +82,8 @@ public class TodoJdbcRepository {
         param.addValue("status", form.getStatus());
         param.addValue("deadlineFrom", form.getDeadlineFrom());
         param.addValue("deadlineTo", form.getDeadlineTo());
-        int offset = form.getPageSize() * (form.getCurrentPage() - 1);
-        param.addValue("offset", offset);
-        // 大量に取るとメモリを食い潰すので必ず上限を設定する
-        int pageSize = Math.min(form.getPageSize(), 1000);
-        param.addValue("limit", pageSize);
+        param.addValue("offset", form.toOffset());
+        param.addValue("limit", form.toLimit());
         return param;
     }
 

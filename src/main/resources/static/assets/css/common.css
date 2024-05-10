@@ -13,6 +13,10 @@
   letter-spacing: .1em;
   color: var(--app-name-color);
 }
+.app-header .app-github-icon {
+  width:36px;
+  height:36px;
+}
 /* header ここまで*/
 
 /* column ここから */
@@ -197,3 +201,20 @@
   border-color: var(--bulma-primary);
 }
 /* side ここまで */
+
+/* ダーク・ライトモード　ここから */
+.app-light-mode {
+  display: inherit;
+}
+.app-dark-mode {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  .app-light-mode {
+    display: none;
+  }
+  .app-dark-mode {
+    display: inherit;
+  }
+}
+/* ダーク・ライトモード　ここまで */

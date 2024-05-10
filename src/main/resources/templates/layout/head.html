@@ -17,9 +17,14 @@
   <title th:text="${pageName} + ' - ' + ${@environment.getProperty('app.name')}"></title>
 </head>
 
-<header th:fragment="hero" class="app-header">
+<header th:fragment="hero" class="app-header app-flex-v-center">
   <a th:href="@{/}" class="is-size-3 app-name"
      th:text="${@environment.getProperty('app.name')}"></a>
+  <span class="app-flex-1"></span>
+  <a href="https://github.com/green-code-developer/sample_todo_app" target="_blank">
+    <img th:src="@{/assets/image/github-mark.png}" class="app-github-icon app-light-mode"/>
+    <img th:src="@{/assets/image/github-mark-white.png}" class="app-github-icon app-dark-mode"/>
+  </a>
 </header>
 
 </html>
