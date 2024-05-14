@@ -6,7 +6,7 @@
 
 /* header ここから */
 .app-header {
-  padding: 1rem 1.5rem;
+  padding: 1rem 1rem 1rem 1.5rem;
   border-bottom: solid 1px var(--bulma-primary);
 }
 .app-header .app-name {
@@ -18,6 +18,80 @@
   height:36px;
 }
 /* header ここまで*/
+
+/* ハンバーガーメニュー　ここから */
+.app-navbar-burger {
+  height: 1rem;
+  font-size:1.5rem;
+  width: 2rem;
+  cursor: pointer;
+  position: relative;
+  margin-left: auto;
+}
+.app-navbar-burger span {
+  background-color: var(--bulma-primary);
+  width: 24px;
+  left: calc(50% - 12px);
+  height: 1px;
+  position: absolute;
+  transform-origin: center;
+  transition-duration: 86ms;
+  transition-property: background-color,opacity,transform;
+  transition-timing-function: ease-out;
+}
+.app-navbar-burger span:first-child {
+  top: calc(50% - 6px);
+}
+.app-navbar-burger span:nth-child(2) {
+  top: calc(50% - 1px);
+}
+.app-navbar-burger span:nth-child(3) {
+  top: calc(50% + 4px);
+}
+.app-navbar-burger.is-active span:first-child {
+  transform: translateY(5px) rotate(45deg);
+}
+.app-navbar-burger.is-active span:nth-child(2) {
+  opacity: 0;
+}
+.app-navbar-burger.is-active span:nth-child(3) {
+  transform: translateY(-5px) rotate(-45deg);
+}
+/* ハンバーガーメニュー　ここまで */
+
+/* モバイル用メニュー　ここから */
+.app-hidden {
+  display: none;
+}
+.app-overwrap-nav {
+  background: var(--bulma-background);
+  display: none;
+  padding: 1.5rem 1.5rem .5rem;
+}
+.app-overwrap-nav.is-animating {
+  display: inherit;
+}
+.app-overwrap-nav.open {
+  display: inherit;
+}
+/* thanks to https://1-notes.com/css-slide-animation/ */
+@keyframes open-menu {
+  0% {
+    transform: translateX(100vw);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes close-menu {
+   0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100vw);
+  }
+}
+/* モバイル用メニュー　ここまで */
 
 /* column ここから */
 .app-view-one-column-narrow {
@@ -31,12 +105,15 @@
   min-height:calc(100vh - 5rem);
 }
 .app-view-two-column .app-left {
-  width:10em;
+  min-width:10em;
   padding: 2rem;
 }
 .app-view-two-column .app-right {
   flex:1;
   padding: 1rem;
+}
+.app-view-narrow {
+  max-width: var(--app-max-width);
 }
 /* column ここまで */
 
@@ -148,6 +225,13 @@
 }
 /* text ここまで */
 
+/* scroll ここから */
+.app-horizontal-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+/* scroll ここまで */
+
 /* notification ここから */
 .app-notification {
     display: inline-flex;
@@ -193,9 +277,13 @@
 /* pagination ここまで */
 
 /* side ここから */
+.app-side-item {
+  margin-bottom: 1.5rem;
+}
 .app-side-item a {
   padding: 0 2px 2px 2px;
   border-bottom: solid 2px transparent;
+  white-space: nowrap;
 }
 .app-side-item a.is-current {
   border-color: var(--bulma-primary);
@@ -218,3 +306,43 @@
   }
 }
 /* ダーク・ライトモード　ここまで */
+
+/* form ここから */
+.app-form-field {
+    display: flex;
+    margin: .5rem 0;
+}
+.app-form-field > label {
+    width: 7rem;
+    white-space: nowrap;
+}
+.app-form-field input, .app-form-field select {
+    width: 12rem;
+}
+/* form ここまで */
+
+/* responsive 最下部に記載 ここから */
+.app-small-screen-hidden-or-block {
+  display: none;
+}
+.app-small-screen-hidden-or-flex {
+  display: none;
+}
+.app-small-screen-block-or-flex {
+  display: block;
+}
+@media screen and (min-width: 768px) {
+  .app-small-screen-hidden-or-flex {
+    display: flex
+  }
+  .app-small-screen-hidden-or-block {
+    display: block
+  }
+  .app-small-screen-block-or-flex {
+    display: flex
+  }
+  .app-large-screen-hidden {
+    display: none !important
+  }
+}
+/* responsive 最下部に記載 ここまで */

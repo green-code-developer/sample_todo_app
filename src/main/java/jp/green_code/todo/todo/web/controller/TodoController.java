@@ -140,4 +140,9 @@ public class TodoController {
         redirectAttributes.addFlashAttribute(NOTIFICATION, successNotification(toMessage(messageCode)));
         return "redirect:/todo/?usePrevCondition=true";
     }
+
+    @GetMapping("/setting")
+    public ModelAndView setting() {
+        return new ModelAndView("todo/todo_setting");
+    }
 }

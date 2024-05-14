@@ -1,4 +1,4 @@
-.app-error-status {
-    margin: 1em;
-    font-size: 300%;
+.app-error {
+  margin: 1rem auto;
+  text-align: center;
 }

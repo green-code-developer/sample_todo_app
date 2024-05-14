@@ -4,23 +4,22 @@
     background: var(--bulma-background);
     padding: .5rem 1rem;
 }
-
 .app-condition {
     padding:1rem;
     max-width: var(--app-max-width);
     background: var(--bulma-background);
 }
+.app-horizontal-scroll {
+    max-width: calc(100vw - 2rem);
+}
 
-.app-date-condition {
-    display:flex;
+/* responsive 最下部に記載 ここから */
+.app-small-screen-block-or-flex>* {
+  display: block;
 }
-.app-form-field {
-    display:flex;
-    margin: .5rem 0;
+@media screen and (min-width: 768px) {
+  .app-small-screen-block-or-flex>* {
+    display: unset
+  }
 }
-.app-form-field > label {
-    width: 7rem;
-}
-.app-form-field input, .app-form-field select {
-    width: 14rem;
-}
+/* responsive 最下部に記載 ここまで */

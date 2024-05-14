@@ -4,11 +4,13 @@ import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.apache.commons.lang3.StringUtils.trim;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +24,7 @@ public class DateUtil {
     public static final String FORMAT_YMD_hyphen_loose = "y-M-d";
     public static final String FORMAT_YMD_HM = "yyyy/MM/dd HH:mm";
     public static final String FORMAT_YMD_HMS_LOOSE = "y-M-d H:m:s";
+    public static final String FORMAT_YMD_HMSS = "yyyy/MM/dd HH:mm:ss.SSS";
     public static final OffsetDateTime BLANK_OFFSET_TIME = parseISO("1900-01-01T00:00:00+00:00").get();
 
     public static String toYMD(OffsetDateTime dateTime) {
@@ -39,6 +42,11 @@ public class DateUtil {
     static String format(OffsetDateTime dateTime, String format) {
         DateTimeFormatter fmt = ofPattern(format);
         return dateTime == null ? "" : fmt.format(dateTime.atZoneSameInstant(ZoneId.systemDefault()));
+    }
+
+    // Date 型をミリ秒まで表示
+    public static String dateToYMD_HMSS(Date date) {
+        return new SimpleDateFormat(FORMAT_YMD_HMSS).format(date);
     }
 
     // "1900-01-01T00:00:00+00:00" 形式の文字列を日付に変換

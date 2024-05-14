@@ -15,9 +15,11 @@ https://stackoverflow.com/questions/38730992/thymleaf-for-spring-in-intellij-uri
 <body>
 <header th:replace="~{layout/head::hero}"></header>
 <div th:replace="~{layout/notification::notification}"></div>
-
+<div class="app-overwrap-nav close app-large-screen-hidden">
+  <div th:replace="~{layout/sidemenu::normal}"></div>
+</div>
 <div class="app-view-two-column">
-  <div class="app-left">
+  <div class="app-left app-small-screen-hidden-or-block">
     <div th:replace="~{layout/sidemenu::normal}"></div>
   </div>
 
@@ -26,33 +28,27 @@ https://stackoverflow.com/questions/38730992/thymleaf-for-spring-in-intellij-uri
     <form th:action="@{/todo/upsert}" th:object="${form}" method="post" class="app-form" id="form">
       <input type="hidden" th:field="*{todoId}">
       <th:block th:if="${!form.isNew()}">
-        <div class="app-form-field app-gap-bottom">
-          <div class="app-form-value">
-            <span th:text="'#' + *{todoId}"></span>
-          </div>
+        <div class="app-gap-bottom">
+          <span th:text="'#' + *{todoId}"></span>
         </div>
       </th:block>
 
-      <div class="app-form-field app-gap-bottom">
+      <div class="app-gap-bottom">
         <label>やること<span class="has-text-danger">*必須</span></label>
-        <div class="app-form-value">
-          <textarea class="textarea" rows="2" th:field="*{detail}" maxlength="100" required="required"></textarea>
-          <div th:replace="~{layout/app_error::message(${app.map}, 'detail')}"></div>
-        </div>
+        <textarea class="textarea" rows="2" th:field="*{detail}" maxlength="100" required="required"></textarea>
+        <div th:replace="~{layout/app_error::message(${app.map}, 'detail')}"></div>
       </div>
 
-      <div class="app-form-field app-gap-bottom">
+      <div class="app-gap-bottom">
         <label>完了予定日</label>
-        <div class="app-form-value">
-          <input class="input" th:field="*{deadline}" type="date">
-          <div th:replace="~{layout/app_error::message(${app.map}, 'deadline')}"></div>
-        </div>
+        <input class="input" th:field="*{deadline}" type="date">
+        <div th:replace="~{layout/app_error::message(${app.map}, 'deadline')}"></div>
       </div>
 
       <th:block th:if="${!form.isNew()}">
-        <div class="app-form-field">
+        <div>
           <label>ステータス</label>
-          <div class="app-form-value">
+          <div>
             <div class="select">
               <select class="select" th:field="*{todoStatus}">
                 <th:block th:each="e : ${@enumUtil.getTodoStatusEnum()}">
