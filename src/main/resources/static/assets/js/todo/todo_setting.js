@@ -4,6 +4,6 @@ window.addEventListener('load', () => {
       localStorage.setItem("dark-mode", el.value)
       App.refreshDarkMode()
     })
-    el.value = localStorage.getItem("dark-mode")
+    el.value = localStorage.getItem("dark-mode") ?? ''
   })
 })
