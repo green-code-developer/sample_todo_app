@@ -1,13 +1,13 @@
 # 本番環境用設定
 # ローカル環境と異なる点のみ記載する
-#server:
-#  servlet:
-#    session:
-#      cookie:
-#        # HTTPS 環境限定のセキュリティ対策
-#        # cookie を堅牢にする
-#        secure: true
-#        name: __Host-SESSION
+server:
+  servlet:
+    session:
+      cookie:
+        # HTTPS 環境限定のセキュリティ対策
+        # cookie を堅牢にする
+        secure: true
+        name: __Host-SESSION
 
 spring:
   # ローカル設定戻し　ここから
