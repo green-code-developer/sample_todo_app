@@ -87,12 +87,11 @@ window.addEventListener('load', () => {
     for (const path of Object.keys(def)) {
         const key = def[path]
         if (location.pathname == path) {
-            const el = document.querySelector('.app-side-item a[data-side-key=' + key + ']')
-            if (el) {
+            document.querySelectorAll('.app-side-item a[data-side-key=' + key + ']').forEach(el => {
                 el.classList.add('is-current')
-                return
-            }
-       }
+            })
+            return
+        }
     }
 })
 
@@ -102,5 +101,27 @@ App.SideMenuDefinition = {
     '/todo': 'list',
     '/todo/': 'list',
     '/todo/new': 'new',
+    '/todo/setting': 'setting',
 }
 
+// バーガーメニュー
+window.addEventListener('load', () => {
+  const checkbox = document.querySelector('#burger')
+  const label = document.querySelector('[for=burger]')
+  const overwrap = document.querySelector('.app-overwrap-nav')
+  const body = document.querySelector('body')
+  if (!checkbox || !label || !overwrap) return
+  checkbox.addEventListener('change', () => {
+    overwrap.classList.toggle('close')
+    overwrap.classList.toggle('open')
+    label.classList.toggle('is-active')
+    body.classList.toggle('is-overwrap-nav-open')
+  })
+})
+
+// ダークモード
+App.refreshDarkMode = () => {
+  const mode = localStorage.getItem("dark-mode");
+  document.querySelector('html').setAttribute('data-theme', mode ?? '')
+}
+window.addEventListener('load', App.refreshDarkMode)

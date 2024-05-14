@@ -9,9 +9,11 @@
 <body>
 <header th:replace="~{layout/head::hero}"></header>
 <div th:replace="~{layout/notification::notification}"></div>
-
+<div class="app-overwrap-nav close app-large-screen-hidden">
+  <div th:replace="~{layout/sidemenu::normal}"></div>
+</div>
 <div class="app-view-two-column">
-  <div class="app-left">
+  <div class="app-left app-small-screen-hidden-or-block">
     <div th:replace="~{layout/sidemenu::normal}"></div>
   </div>
   <div class="app-right">
@@ -44,7 +46,7 @@
           </div>
           <div class="app-form-field">
             <label for="deadlineFrom" class="app-flex-v-center">完了予定日</label>
-            <div class="app-form-value app-date-condition app-flex-v-center">
+            <div class="app-form-value app-small-screen-block-or-flex app-flex-v-center">
               <input class="input" type="date" th:field="*{deadlineFrom}" maxlength="10" id="deadlineFrom">
               <span class="app-gap-left app-gap-right">〜</span>
               <input class="input" type="date" th:field="*{deadlineTo}" maxlength="10">
@@ -81,12 +83,13 @@
         </form>
       </div>
     </div>
-    <div class="app-gap-large">
+    <div class="app-gap-top-large app-gap-bottom">
       <th:block th:if="${pageableList.list.isEmpty()}">
         <div class="app-gap-large">データが見つかりませんでした</div>
       </th:block>
       <th:block th:if="${!pageableList.list.isEmpty()}">
-        <table class="table is-bordered is-striped is-hoverable">
+        <div class="app-horizontal-scroll">
+          <table class="table is-bordered is-striped is-hoverable">
           <tr class="app-text-nowrap">
             <th>#</th>
             <th>ステータス</th>
@@ -106,10 +109,11 @@
             <td class="app-text-nowrap" th:text="${@dateUtil.toYMD_HM(p.updatedAt)}"></td>
           </tr>
         </table>
+        </div>
       </th:block>
-      <div th:replace="~{layout/pagination::pagination(${pageableList})}"></div>
     </div>
-    <div>
+    <div th:replace="~{layout/pagination::pagination(${pageableList})}"></div>
+    <div class="app-gap-large">
       <a th:href="@{/todo/new}" class="button is-primary">登録</a>
     </div>
   </div>

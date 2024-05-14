@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:with="pageName='エラー'">
+<head>
+  <title th:replace="~{layout/head::title(${pageName})}"></title>
+  <link th:replace="~{layout/head::head}"/>
+  <link rel="stylesheet" th:href="@{/assets/css/error/error.css}"/>
+</head>
+<body>
+<header th:replace="~{layout/head::hero}"></header>
+<div class="app-view-narrow app-error">
+  <div class="is-size-2 app-gap-top-large" th:text="${status}"></div>
+  <div th:text="${error}" class="app-gap-bottom-large"></div>
+  <div th:text="${path}"></div>
+  <div th:text="${@dateUtil.dateToYMD_HMSS(timestamp)}"></div>
+  <div class="app-gap">
+    <a th:href="@{/}" class="app-text-underline">戻る</a>
+  </div>
+</div>
+</body>

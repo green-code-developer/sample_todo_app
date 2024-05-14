@@ -2,19 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head th:fragment="head" th:remove="tag">
-  <!--/* referrer-policy のベストプラクティス
-   https://qiita.com/n3_x/items/c2bafd5872af61147c89 */-->
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="format-detection" content="telephone=no"/>
   <meta name="referrer" content="strict-origin-when-cross-origin"/>
+  <link rel="icon" type="image/x-icon" th:href="@{/assets/image/logo_128.png}">
+  <link rel="apple-touch-icon" th:href="@{/assets/image/logo_128.png}">
   <link rel="stylesheet" th:href="@{/webjars/font-awesome/css/fontawesome.min.css}">
   <link rel="stylesheet" th:href="@{/webjars/font-awesome/css/solid.min.css}">
   <link rel="stylesheet" th:href="@{/assets/css/app-bulma.css}"/>
   <link rel="stylesheet" th:href="@{/assets/css/common.css}"/>
   <script th:src="@{/assets/js/common.js}"></script>
-  <link rel="icon" type="image/x-icon" th:href="@{assets/image/logo_128.png}">
 </head>
 
 <head th:fragment="title(pageName)" th:remove="tag">
   <title th:text="${pageName} + ' - ' + ${@environment.getProperty('app.name')}"></title>
+  <meta name="description" th:content="${pageName} + ' - ' + ${@environment.getProperty('app.name')}"/>
 </head>
 
 <header th:fragment="hero" class="app-header app-flex-v-center">
@@ -25,6 +28,14 @@
     <img th:src="@{/assets/image/github-mark.png}" class="app-github-icon app-light-mode"/>
     <img th:src="@{/assets/image/github-mark-white.png}" class="app-github-icon app-dark-mode"/>
   </a>
+  <div class="app-flex-v-center app-large-screen-hidden app-gap-left-small">
+    <input type="checkbox" id="burger" class="app-hidden" />
+    <label class="app-navbar-burger" for="burger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+  </div>
 </header>
 
 </html>

@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="normal" th:remove="tag" class="app-side">
-  <div class="app-side-item app-gap-bottom">
+  <div class="app-side-item">
     <a th:href="@{/todo}" data-side-key="list">一覧</a>
   </div>
-  <div class="app-side-item app-gap-bottom">
+  <div class="app-side-item">
     <a th:href="@{/todo/new}" data-side-key="new">登録</a>
+  </div>
+  <div class="app-side-item">
+    <a th:href="@{/todo/setting}" data-side-key="setting">設定</a>
   </div>
 </div>
 </html>

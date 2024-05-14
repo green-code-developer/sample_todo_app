@@ -5,7 +5,7 @@ plugins {
 	id 'war'
 }
 
-group = 'com.example'
+group = 'jp.green-code'
 version = '0.0.1-SNAPSHOT'
 
 java {
