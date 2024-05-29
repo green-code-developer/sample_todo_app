@@ -1,10 +1,9 @@
 package jp.green_code.todo.todo.repository;
 
-import jp.green_code.todo.todo.entity.TodoEntity;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 import javax.sql.DataSource;
+import jp.green_code.todo.todo.entity.TodoEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -29,7 +28,7 @@ public class TodoCrudRepository extends BaseCrudRepository<Long, TodoEntity> {
 
     @Override
     public Long insert(TodoEntity entity, long updatedBy) {
-        List<String> sql = new ArrayList<>();
+        var sql = new StringJoiner(" ");
         sql.add("insert into " + TABLE + "(");
         // DDLtoEntity のinsert column 列をコピー　ここから
         // （先頭のみカンマを除く、PK は不要、created_x updated_x は不要）
@@ -53,13 +52,13 @@ public class TodoCrudRepository extends BaseCrudRepository<Long, TodoEntity> {
         sql.add("  , :createdBy"); // 共通
         sql.add("  , :updatedBy"); // 共通
         sql.add(") returning " + PK);
-        MapSqlParameterSource param = entityToMap(entity, updatedBy);
-        return namedParameterJdbcTemplate.queryForObject(String.join(" ", sql), param, Long.class);
+        var param = entityToMap(entity, updatedBy);
+        return namedParameterJdbcTemplate.queryForObject(sql + "", param, Long.class);
     }
 
     @Override
     public int update(TodoEntity entity, long updatedBy) {
-        List<String> sql = new ArrayList<>();
+        var sql = new StringJoiner(" ");
         sql.add("update " + TABLE + " set");
         // DDLtoEntity のupdate 列をコピー　ここから
         // （先頭のみカンマを除く、PK は不要、created_x updated_x は不要）
@@ -72,35 +71,35 @@ public class TodoCrudRepository extends BaseCrudRepository<Long, TodoEntity> {
         sql.add("  , updated_by = :updatedBy"); // 共通
         sql.add("where");
         sql.add("  " + PK + " = :" + JAVA_PK);
-        MapSqlParameterSource param = entityToMap(entity, updatedBy);
-        return namedParameterJdbcTemplate.update(String.join(" ", sql), param);
+        var param = entityToMap(entity, updatedBy);
+        return namedParameterJdbcTemplate.update(sql + "", param);
     }
 
     @Override
     public int delete(Long id) {
-        List<String> sql = new ArrayList<>();
+        var sql = new StringJoiner(" ");
         sql.add("delete from " + TABLE);
         sql.add("where " + PK + " = :id");
-        MapSqlParameterSource param = new MapSqlParameterSource();
+        var param = new MapSqlParameterSource();
         param.addValue("id", id);
-        return namedParameterJdbcTemplate.update(String.join(" ", sql), param);
+        return namedParameterJdbcTemplate.update(sql + "", param);
     }
 
     @Override
     public Optional<TodoEntity> findById(Long id) {
-        List<String> sql = new ArrayList<>();
+        var sql = new StringJoiner(" ");
         sql.add("select * from " + TABLE);
         sql.add("where " + PK + " = :id");
-        MapSqlParameterSource param = new MapSqlParameterSource();
+        var param = new MapSqlParameterSource();
         param.addValue("id", id);
         return namedParameterJdbcTemplate
-            .query(String.join(" ", sql), param,
+            .query(sql + "", param,
                 new BeanPropertyRowMapper<>(TodoEntity.class)).stream()
             .findFirst();
     }
 
     public static MapSqlParameterSource entityToMap(TodoEntity entity, long updatedBy) {
-        MapSqlParameterSource param = new MapSqlParameterSource();
+        var param = new MapSqlParameterSource();
         // DDLtoEntity のentityToMap 列をコピー　ここから
         // （先頭のみカンマを除く、created_x updated_x は不要）
         param.addValue("todoId", entity.getTodoId());

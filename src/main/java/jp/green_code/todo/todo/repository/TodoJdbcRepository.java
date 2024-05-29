@@ -1,5 +1,13 @@
 package jp.green_code.todo.todo.repository;
 
+import static jp.green_code.todo.todo.enums.TodoSearchSortEnum.UPDATE_DESC;
+import static jp.green_code.todo.todo.repository.TodoCrudRepository.TABLE;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
+import javax.sql.DataSource;
 import jp.green_code.todo.todo.entity.TodoEntity;
 import jp.green_code.todo.todo.enums.TodoSearchSortEnum;
 import jp.green_code.todo.todo.web.form.TodoSearchForm;
@@ -11,25 +19,14 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
-
-import static jp.green_code.todo.todo.enums.TodoSearchSortEnum.UPDATE_DESC;
-import static jp.green_code.todo.todo.repository.TodoCrudRepository.TABLE;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 @Repository
 public class TodoJdbcRepository {
 
-    protected JdbcTemplate jdbcTemplate;
     protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
     public TodoJdbcRepository(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(this.jdbcTemplate);
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(new JdbcTemplate(dataSource));
     }
 
     public List<TodoEntity> findByForm(TodoSearchForm form) {
@@ -42,7 +39,7 @@ public class TodoJdbcRepository {
         sql.add("order by " + sort.getQuery());
         sql.add("offset :offset");
         sql.add("limit :limit");
-        MapSqlParameterSource param = toFindParam(form);
+        var param = toFindParam(form);
         return namedParameterJdbcTemplate
             .query(sql + "", param, new BeanPropertyRowMapper<>(TodoEntity.class));
     }
@@ -51,7 +48,7 @@ public class TodoJdbcRepository {
         var sql = new StringJoiner(" ");
         sql.add("select count(*) from " + TABLE);
         sql.add(toFindSql(form));
-        MapSqlParameterSource param = toFindParam(form);
+        var param = toFindParam(form);
         return namedParameterJdbcTemplate.queryForObject(sql + "", param, Long.class);
     }
 
@@ -77,28 +74,13 @@ public class TodoJdbcRepository {
     }
 
     MapSqlParameterSource toFindParam(TodoSearchForm form) {
-        MapSqlParameterSource param = new MapSqlParameterSource();
+        var param = new MapSqlParameterSource();
         param.addValue("word", form.getWord());
         param.addValue("status", form.getStatus());
         param.addValue("deadlineFrom", form.getDeadlineFrom());
         param.addValue("deadlineTo", form.getDeadlineTo());
         param.addValue("offset", form.toOffset());
         param.addValue("limit", form.toLimit());
-        return param;
-    }
-
-    public static MapSqlParameterSource entityToMap(TodoEntity entity, long updatedBy) {
-        MapSqlParameterSource param = new MapSqlParameterSource();
-        // DDLtoEntity のentityToMap 列をコピー　ここから
-        // （先頭のみカンマを除く、created_x updated_x は不要）
-        param.addValue("todoId", entity.getTodoId());
-        param.addValue("todoStatus", entity.getTodoStatus());
-        param.addValue("detail", entity.getDetail());
-        param.addValue("deadline", entity.getDeadline());
-        // DDLtoEntity のentityToMap 列をコピー　ここまで
-
-        param.addValue("createdBy", updatedBy); // 共通
-        param.addValue("updatedBy", updatedBy); // 共通
         return param;
     }
 }
