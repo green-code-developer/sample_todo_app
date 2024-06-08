@@ -16,12 +16,11 @@ https://todo.green-code.jp
 
 ## 環境
 ### 事前インストール
-Java17+, Docker, Docker Compose をインストールします
+Java17+ と Docker をインストールします
 
 - [Java17 Amazon corretto](https://aws.amazon.com/jp/corretto/)
 - [Docker Desktop](https://docs.docker.jp/desktop/install.html)
 - Windows はDocker 起動時にWSL のエラーが出る場合ので[Linux カーネル更新プログラム](https://www.learning-nao.com/?p=3934)もインストールしておく
-- [Docker Compose](https://docs.docker.jp/compose/install.html)
 
 ### 構築手順
 Mac & Linux 環境の場合
@@ -33,7 +32,7 @@ make
 Windows 環境の場合
 ```shell
 cd [プロジェクトルートのパス]
-docker-compose up -d
+docker compose up -d
 ```
 
 ## 起動
