@@ -16,9 +16,9 @@ https://todo.green-code.jp
 
 ## 環境
 ### 事前インストール
-Java17+ と Docker をインストールします
+Java21+ と Docker をインストールします
 
-- [Java17 Amazon corretto](https://aws.amazon.com/jp/corretto/)
+- [Java21 Amazon corretto](https://aws.amazon.com/jp/corretto/)
 - [Docker Desktop](https://docs.docker.jp/desktop/install.html)
 - Windows はDocker 起動時にWSL のエラーが出る場合ので[Linux カーネル更新プログラム](https://www.learning-nao.com/?p=3934)もインストールしておく
 
@@ -32,6 +32,7 @@ make
 Windows 環境の場合
 ```shell
 cd [プロジェクトルートのパス]
+cd docker_todo
 docker compose up -d
 ```
 
@@ -50,6 +51,6 @@ cd [プロジェクトルートのパス]
 
 ブラウザからこちらに接続できます
 
-http://localhost:52580
+http://localhost:55480
 
 デバッグ時はIDE でTodoApplication のmain 関数を実行してください。
