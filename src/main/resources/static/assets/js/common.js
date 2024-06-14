@@ -121,7 +121,11 @@ window.addEventListener('load', () => {
 
 // ダークモード
 App.refreshDarkMode = () => {
-  const mode = localStorage.getItem("dark-mode");
-  document.querySelector('html').setAttribute('data-theme', mode ?? '')
+  const mode = App.readDarkMode();
+  document.querySelector('html').setAttribute('data-theme', mode)
 }
+App.readDarkMode = () => {
+  return localStorage.getItem("dark-mode") ?? 'light'
+}
+
 window.addEventListener('load', App.refreshDarkMode)
