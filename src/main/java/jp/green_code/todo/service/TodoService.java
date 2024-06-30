@@ -1,43 +1,38 @@
 package jp.green_code.todo.service;
 
-import jp.green_code.todo.repository.TodoCrudRepository;
-import jp.green_code.todo.repository.TodoJdbcRepository;
+import static jp.green_code.todo.enums.TodoSearchSortEnum.UPDATE_DESC;
+import static org.springframework.beans.BeanUtils.copyProperties;
+
+import java.util.Arrays;
+import java.util.Optional;
+import jp.green_code.todo.dto.common.AppPageableList;
+import jp.green_code.todo.dto.common.AppValidationResult;
 import jp.green_code.todo.entity.TodoEntity;
-import jp.green_code.todo.enums.TodoStatusEnum;
-import jp.green_code.todo.util.AppMultiResult;
-import jp.green_code.todo.util.AppPageableList;
+import jp.green_code.todo.enums.TodoSearchSortEnum;
+import jp.green_code.todo.repository.TodoJpaRepository;
 import jp.green_code.todo.util.DateUtil;
+import jp.green_code.todo.util.JsonUtil;
+import jp.green_code.todo.util.ValidationUtil;
 import jp.green_code.todo.web.form.TodoForm;
 import jp.green_code.todo.web.form.TodoSearchForm;
-import jp.green_code.todo.util.JsonUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-import static jp.green_code.todo.util.JsonUtil.toJson;
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.springframework.beans.BeanUtils.copyProperties;
-
+/**
+ * やること
+ */
 @Service
 @Transactional(rollbackFor = Exception.class)
+@RequiredArgsConstructor
+@Slf4j
 public class TodoService {
 
-    private final Logger logger = getLogger(this.getClass());
-    private final TodoValidationService todoValidationService;
-    private final TodoCrudRepository todoCrudRepository;
-    private final TodoJdbcRepository todoJdbcRepository;
-
-    public TodoService(
-            TodoValidationService todoValidationService,
-            TodoCrudRepository todoCrudRepository,
-            TodoJdbcRepository todoJdbcRepository) {
-        this.todoValidationService = todoValidationService;
-        this.todoCrudRepository = todoCrudRepository;
-        this.todoJdbcRepository = todoJdbcRepository;
-    }
+    private final TodoJpaRepository todoJpaRepository;
+    private final ValidationUtil validationUtil;
 
     public static TodoEntity formToEntity(TodoForm form) {
         var result = new TodoEntity();
@@ -45,41 +40,29 @@ public class TodoService {
         var deadline = DateUtil.parseYMD_hyphen_loose(form.getDeadline())
                 .map(DateUtil::localDateToOffsetDateTime).orElse(null);
         result.setDeadline(deadline);
+        result.setTodoStatus(form.toStatusEnum().map(e -> e + "").orElse(null));
         return result;
     }
 
     // TodoForm の値をバリデーション後にDB 登録する
-    public Pair<AppMultiResult<TodoForm>, Boolean> upsert(TodoForm form, long updatedBy) {
-        logger.info("S " + this.getClass().getSimpleName() + ".upsert form({}), updatedBy({})",
-                JsonUtil.toJson(form), updatedBy);
+    public Pair<AppValidationResult<TodoForm>, Boolean> save(TodoForm form) {
+        log.info("START upsert() form({})", JsonUtil.toJson(form));
 
         // バリデーションを行う
-        var result = todoValidationService.validate(form);
-        // エラーなら終了
-        if (!result.isSuccess()) {
-            logger.info("E " + this.getClass().getSimpleName() + ".upsert validation error ({})",
-                    JsonUtil.toJson(result.getErrorMap()));
-            return Pair.of(result, null);
+        var validationResult = validationUtil.validate(form);
+        if (!validationResult.isSuccess()) {
+            log.info("END save() validation error ({})", JsonUtil.toJson(validationResult.getErrorMap()));
+            return Pair.of(validationResult, null);
         }
         // フォームに変換
         var todoEntity = formToEntity(form);
         // DB 登録
-        long todoId;
-        boolean isNew;
-        if (todoEntity.getTodoId() == null) {
-            todoEntity.setTodoStatus(TodoStatusEnum.NEW + "");
-            todoId = todoCrudRepository.insert(todoEntity, updatedBy);
-            isNew = true;
-        } else {
-            todoId = todoEntity.getTodoId();
-            todoCrudRepository.update(todoEntity, updatedBy);
-            isNew = false;
-        }
-        //noinspection OptionalGetWithoutIsPresent
-        var storedEntity = todoCrudRepository.findById(todoId).get();
+        boolean isNew = todoEntity.getTodoId() == null;
+        todoEntity = todoJpaRepository.save(todoEntity);
+        var storedEntity = findByTodoId(todoEntity.getTodoId()).get();
         var storedEntityAsForm = entityToForm(storedEntity);
-        logger.info("E " + this.getClass().getSimpleName() + ".upsert");
-        return Pair.of(new AppMultiResult<>(storedEntityAsForm), isNew);
+        log.info("END " + this.getClass().getSimpleName() + ".upsert");
+        return Pair.of(validationResult, isNew);
     }
 
     public static TodoForm entityToForm(TodoEntity entity) {
@@ -90,17 +73,39 @@ public class TodoService {
         return result;
     }
 
-    public AppPageableList<TodoEntity> findByForm(TodoSearchForm form, long updatedBy) {
-        logger.info("S " + this.getClass().getSimpleName() + ".findByForm form({}), updatedBy({})",
-                JsonUtil.toJson(form), updatedBy);
-        var list = todoJdbcRepository.findByForm(form);
-        var count = todoJdbcRepository.countByForm(form);
-        var result = new AppPageableList<>(list, count, form.getCurrentPage(), form.getPageSize());
-        logger.info("E " + this.getClass().getSimpleName() + ".findByForm count({})", count);
-        return result;
+    public Pair<AppValidationResult<TodoSearchForm>, AppPageableList<TodoEntity>> findByForm(TodoSearchForm form) {
+        log.info("START findByForm() form({})", JsonUtil.toJson(form));
+
+        // バリデーション
+        var validationResult = validationUtil.validate(form);
+        if (!validationResult.isSuccess()) {
+            log.info("END save() validation error ({})", JsonUtil.toJson(validationResult.getErrorMap()));
+            return Pair.of(validationResult, AppPageableList.empty());
+        }
+
+        // sortEnum を取得
+        var sortEnum = Arrays.stream(TodoSearchSortEnum.values())
+            .filter(e -> StringUtils.equals(e + "", form.getSort())).findFirst()
+            .orElse(UPDATE_DESC);
+
+        // ページリクエスト作成
+        var pageRequest = form.toPageRequest(sortEnum.getSort());
+
+        // データ取得
+        var page = todoJpaRepository.findByForm(pageRequest, form.getWord(), form.getStatus(),
+            form.getDeadlineFrom(), form.getDeadlineTo());
+
+        // 戻り値作成
+        var result = new AppPageableList<>(page.getContent(), page.getTotalElements(), form.getCurrentPage(),
+            form.getPageSize());
+        log.info("END findByForm() count({})", page.getTotalElements());
+        return Pair.of(null, result);
     }
 
     public Optional<TodoEntity> findByTodoId(long todoId) {
-        return todoCrudRepository.findById(todoId);
+        log.info("START " + this.getClass().getSimpleName() + ".findByTodoId todoId({})", todoId);
+        var result = todoJpaRepository.findById(todoId);
+        log.info("END " + this.getClass().getSimpleName() + ".findByTodoId todoId({})", todoId);
+        return result;
     }
 }

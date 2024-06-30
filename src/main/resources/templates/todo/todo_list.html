@@ -29,6 +29,7 @@
             <label for="word" class="app-flex-v-center">詳細</label>
             <div class="app-form-value">
               <input class="input" id="word" th:field="*{word}" maxlength="100">
+              <div th:replace="~{layout/app_error::message(${app}, 'word')}"></div>
             </div>
           </div>
           <div class="app-form-field">
@@ -42,14 +43,19 @@
                   </th:block>
                 </select>
               </div>
+              <div th:replace="~{layout/app_error::message(${app}, 'status')}"></div>
             </div>
           </div>
           <div class="app-form-field">
             <label for="deadlineFrom" class="app-flex-v-center">完了予定日</label>
-            <div class="app-form-value app-small-screen-block-or-flex app-flex-v-center">
-              <input class="input" type="date" th:field="*{deadlineFrom}" maxlength="10" id="deadlineFrom">
-              <span class="app-gap-left app-gap-right">〜</span>
-              <input class="input" type="date" th:field="*{deadlineTo}" maxlength="10">
+            <div class="app-form-value">
+              <div class="app-flex-v-center app-small-screen-block-or-flex">
+                <input class="input" type="date" th:field="*{deadlineFrom}" maxlength="10" id="deadlineFrom">
+                <span class="app-gap-left app-gap-right">〜</span>
+                <input class="input" type="date" th:field="*{deadlineTo}" maxlength="10">
+              </div>
+              <div th:replace="~{layout/app_error::message(${app}, 'deadlineFrom')}"></div>
+              <div th:replace="~{layout/app_error::message(${app}, 'deadlineTo')}"></div>
             </div>
           </div>
           <div class="app-form-field">
@@ -63,6 +69,7 @@
                   </th:block>
                 </select>
               </div>
+              <div th:replace="~{layout/app_error::message(${app}, 'sort')}"></div>
             </div>
           </div>
           <div class="app-form-field">
@@ -73,6 +80,7 @@
                   <div th:replace="~{layout/pagination::pageOption(${form.pageSize})}"></div>
                 </select>
               </div>
+              <div th:replace="~{layout/app_error::message(${app}, 'pageSize')}"></div>
             </div>
           </div>
           <input type="hidden" name="currentPage" value="1" data-pagination-key="main">

@@ -1,20 +1,23 @@
 package jp.green_code.todo.enums;
 
+import lombok.Getter;
+import org.springframework.data.domain.Sort;
+
+/**
+ * やること検索の並び順
+ */
+@Getter
 public enum TodoSearchSortEnum {
-    UPDATE_DESC("updated_at desc"),
-    UPDATE_ASC("updated_at asc"),
-    STATUS("todo_status desc"),
-    DEADLINE_DESC("deadline desc"),
-    DEADLINE_ASC("deadline asc"),
+    UPDATE_DESC(Sort.by("updated_at").descending()),
+    UPDATE_ASC(Sort.by("updated_at").ascending()),
+    STATUS(Sort.by("todo_status").descending()),
+    DEADLINE_DESC(Sort.by("deadline").descending()),
+    DEADLINE_ASC(Sort.by("deadline").ascending()),
     ;
 
-    private String query;
+    private Sort sort;
 
-    private TodoSearchSortEnum(String query) {
-        this.query = query;
-    }
-
-    public String getQuery() {
-        return query;
+    TodoSearchSortEnum(Sort sort) {
+        this.sort = sort;
     }
 }

@@ -1,8 +1,10 @@
-package jp.green_code.todo.util;
+package jp.green_code.todo.dto.common;
 
 import java.util.List;
 
-// pagination.html にて使用
+/**
+ * pagination.html にて使用
+ */
 public class AppPageableList<T> {
 
     // データ
@@ -25,6 +27,10 @@ public class AppPageableList<T> {
         this.count = count;
         this.currentPage = currentPage;
         this.pageSize = pageSize;
+    }
+
+    public static <T> AppPageableList<T> empty() {
+        return new AppPageableList<>(List.of(), 0, 0, 0);
     }
 
     // 総ページ数
