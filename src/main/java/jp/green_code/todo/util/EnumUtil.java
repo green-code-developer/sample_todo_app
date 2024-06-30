@@ -1,12 +1,11 @@
 package jp.green_code.todo.util;
 
-import jp.green_code.todo.enums.TodoSearchSortEnum;
-import jp.green_code.todo.enums.TodoStatusEnum;
-import jp.green_code.todo.service.MessageService;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import jp.green_code.todo.enums.TodoSearchSortEnum;
+import jp.green_code.todo.enums.TodoStatusEnum;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +15,8 @@ import org.springframework.stereotype.Component;
 @Component("enumUtil")
 public class EnumUtil {
 
-    private final MessageService messageService;
+    private final MessageUtil messageUtil;
 
-    public static TodoStatusEnum todoStatusEnum;
 
     public static <T extends Enum<T>> Optional<T> valueOf(Class<T> clazz, String name) {
         // https://stackoverflow.com/a/32176739
@@ -26,8 +24,8 @@ public class EnumUtil {
             .findAny();
     }
 
-    public EnumUtil(MessageService messageService) {
-        this.messageService = messageService;
+    public EnumUtil(MessageUtil messageUtil) {
+        this.messageUtil = messageUtil;
     }
 
     List<Pair<String, String>> enumValues(Object[] values, Class clazz) {
@@ -35,7 +33,7 @@ public class EnumUtil {
     }
 
     String enumToMessage(Object e, Class clazz) {
-        return messageService.getMessage("enum." + clazz.getSimpleName() + "." + e);
+        return messageUtil.getMessage("enum." + clazz.getSimpleName() + "." + e);
     }
 
     public List<Pair<String, String>> getTodoSearchSortEnum() {

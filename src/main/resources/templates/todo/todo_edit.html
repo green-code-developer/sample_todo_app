@@ -36,13 +36,13 @@ https://stackoverflow.com/questions/38730992/thymleaf-for-spring-in-intellij-uri
       <div class="app-gap-bottom">
         <label>やること<span class="has-text-danger">*必須</span></label>
         <textarea class="textarea" rows="2" th:field="*{detail}" maxlength="100" required="required"></textarea>
-        <div th:replace="~{layout/app_error::message(${app.map}, 'detail')}"></div>
+        <div th:replace="~{layout/app_error::message(${app}, 'detail')}"></div>
       </div>
 
       <div class="app-gap-bottom">
         <label>完了予定日</label>
         <input class="input" th:field="*{deadline}" type="date">
-        <div th:replace="~{layout/app_error::message(${app.map}, 'deadline')}"></div>
+        <div th:replace="~{layout/app_error::message(${app}, 'deadline')}"></div>
       </div>
 
       <th:block th:if="${!form.isNew()}">
@@ -55,6 +55,7 @@ https://stackoverflow.com/questions/38730992/thymleaf-for-spring-in-intellij-uri
                   <option th:value="${e.left}" th:text="${e.right}"></option>
                 </th:block>
               </select>
+              <div th:replace="~{layout/app_error::message(${app}, 'todoStatus')}"></div>
             </div>
           </div>
         </div>
@@ -67,6 +68,5 @@ https://stackoverflow.com/questions/38730992/thymleaf-for-spring-in-intellij-uri
       </div>
     </form>
   </div>
-
 </div>
 </body>

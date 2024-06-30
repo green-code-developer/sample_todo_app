@@ -1,5 +1,13 @@
-package jp.green_code.todo.util;
+package jp.green_code.todo.dto.common;
 
+import static jp.green_code.todo.dto.common.AppNotification.NotificationType.ERROR;
+import static jp.green_code.todo.dto.common.AppNotification.NotificationType.SUCCESS;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
 public class AppNotification {
     private AppMessage appMessage;
 
@@ -9,26 +17,16 @@ public class AppNotification {
 
     public static AppNotification successNotification(AppMessage appMessage) {
         var result = new AppNotification();
-        result.type = NotificationType.SUCCESS;
+        result.type = SUCCESS;
         result.appMessage = appMessage;
         return result;
     }
-
-    private AppNotification() {}
 
     public static AppNotification errorNotification(AppMessage appMessage) {
         var result = new AppNotification();
-        result.type = NotificationType.ERROR;
+        result.type = ERROR;
         result.appMessage = appMessage;
         return result;
-    }
-
-    public AppMessage getAppMessage() {
-        return appMessage;
-    }
-
-    public NotificationType getType() {
-        return type;
     }
 
     public enum NotificationType {

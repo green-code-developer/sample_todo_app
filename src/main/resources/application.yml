@@ -45,6 +45,14 @@ spring:
       static-locations: file:src/main/resources/static/
   # ローカル設定　ここまで
 
+# Actuator
+management:
+  endpoints:
+    web:
+      base-path: /public/monitor
+      exposure:
+        include: health
+
 # アプリで使用するキーのトップレベルはappとする
 # 外部ライブラリが使用するキーとの衝突を避ける
 app:

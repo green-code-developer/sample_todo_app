@@ -1,46 +1,35 @@
 package jp.green_code.todo.entity;
 
 import static jp.green_code.todo.util.AppConstants.SYSTEM_ACCOUNT_ID;
+import static jp.green_code.todo.util.ThreadLocalUtil.getAccountId;
+import static org.hibernate.annotations.SourceType.DB;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import java.io.Serializable;
 import java.time.OffsetDateTime;
-import jp.green_code.todo.util.DateUtil;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-public class BaseEntity {
+/**
+ * エンティティ共通クラス
+ */
+@Data
+@MappedSuperclass
+public class BaseEntity implements Serializable {
 
-    private OffsetDateTime updatedAt = DateUtil.BLANK_OFFSET_TIME;
+    @UpdateTimestamp(source = DB)
+    private OffsetDateTime updatedAt;
+
     private Long updatedBy = SYSTEM_ACCOUNT_ID;
-    private OffsetDateTime createdAt = DateUtil.BLANK_OFFSET_TIME;
+
+    @CreationTimestamp(source = DB)
+    @Column(updatable = false)
+    private OffsetDateTime createdAt;
+
+    @Column(updatable = false)
     private Long createdBy = SYSTEM_ACCOUNT_ID;
-
-    public OffsetDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(OffsetDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Long getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(Long updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Long getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
-    }
 }
