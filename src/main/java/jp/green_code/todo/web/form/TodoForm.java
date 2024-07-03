@@ -6,11 +6,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.Arrays;
-import java.util.Optional;
 import jp.green_code.todo.enums.TodoStatusEnum;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Todo 登録・更新フォーム
@@ -36,12 +33,7 @@ public class TodoForm {
 
   @AssertTrue(message = "{validation.invalid-choice}")
   public boolean isAssertionOfTodoStatus() {
-    return isEmpty(todoStatus) || toStatusEnum().isPresent();
-  }
-
-  public Optional<TodoStatusEnum> toStatusEnum() {
-    return Arrays.stream(TodoStatusEnum.values())
-        .filter(e -> StringUtils.equals(e + "", todoStatus)).findFirst();
+    return isEmpty(todoStatus) || TodoStatusEnum.optionalValueOf(todoStatus).isPresent();
   }
 
   public boolean isNew() {

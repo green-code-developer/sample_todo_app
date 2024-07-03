@@ -9,6 +9,7 @@ import jp.green_code.todo.dto.common.AppPageableList;
 import jp.green_code.todo.dto.common.AppValidationResult;
 import jp.green_code.todo.entity.TodoEntity;
 import jp.green_code.todo.enums.TodoSearchSortEnum;
+import jp.green_code.todo.enums.TodoStatusEnum;
 import jp.green_code.todo.repository.TodoJpaRepository;
 import jp.green_code.todo.util.DateUtil;
 import jp.green_code.todo.util.JsonUtil;
@@ -38,29 +39,29 @@ public class TodoService {
         var result = new TodoEntity();
         copyProperties(form, result);
         var deadline = DateUtil.parseYMD_hyphen_loose(form.getDeadline())
-                .map(DateUtil::localDateToOffsetDateTime).orElse(null);
+            .map(DateUtil::localDateToOffsetDateTime).orElse(null);
         result.setDeadline(deadline);
-        result.setTodoStatus(form.toStatusEnum().map(e -> e + "").orElse(null));
+        var status = TodoStatusEnum.optionalValueOf(form.getTodoStatus()).map(e -> e + "").orElse("");
+        result.setTodoStatus(status);
         return result;
     }
 
     // TodoForm の値をバリデーション後にDB 登録する
     public Pair<AppValidationResult<TodoForm>, Boolean> save(TodoForm form) {
-        log.info("START upsert() form({})", JsonUtil.toJson(form));
+        log.info("START " + this.getClass().getSimpleName() + ".upsert() form({})", JsonUtil.toJson(form));
 
         // バリデーションを行う
         var validationResult = validationUtil.validate(form);
         if (!validationResult.isSuccess()) {
-            log.info("END save() validation error ({})", JsonUtil.toJson(validationResult.getErrorMap()));
+            var logJson = JsonUtil.toJson(validationResult.getErrorMap());
+            log.info("END " + this.getClass().getSimpleName() + ".save() validation error ({})", logJson);
             return Pair.of(validationResult, null);
         }
         // フォームに変換
         var todoEntity = formToEntity(form);
         // DB 登録
-        boolean isNew = todoEntity.getTodoId() == null;
-        todoEntity = todoJpaRepository.save(todoEntity);
-        var storedEntity = findByTodoId(todoEntity.getTodoId()).get();
-        var storedEntityAsForm = entityToForm(storedEntity);
+        var isNew = todoEntity.getTodoId() == null;
+        todoJpaRepository.save(todoEntity);
         log.info("END " + this.getClass().getSimpleName() + ".upsert");
         return Pair.of(validationResult, isNew);
     }
@@ -74,12 +75,13 @@ public class TodoService {
     }
 
     public Pair<AppValidationResult<TodoSearchForm>, AppPageableList<TodoEntity>> findByForm(TodoSearchForm form) {
-        log.info("START findByForm() form({})", JsonUtil.toJson(form));
+        log.info("START " + this.getClass().getSimpleName() + ".findByForm() form({})", JsonUtil.toJson(form));
 
         // バリデーション
         var validationResult = validationUtil.validate(form);
         if (!validationResult.isSuccess()) {
-            log.info("END save() validation error ({})", JsonUtil.toJson(validationResult.getErrorMap()));
+            var logJson = JsonUtil.toJson(validationResult.getErrorMap());
+            log.info("END " + this.getClass().getSimpleName() + ".save() validation error ({})", logJson);
             return Pair.of(validationResult, AppPageableList.empty());
         }
 
@@ -98,7 +100,7 @@ public class TodoService {
         // 戻り値作成
         var result = new AppPageableList<>(page.getContent(), page.getTotalElements(), form.getCurrentPage(),
             form.getPageSize());
-        log.info("END findByForm() count({})", page.getTotalElements());
+        log.info("END " + this.getClass().getSimpleName() + ".findByForm() count({})", page.getTotalElements());
         return Pair.of(null, result);
     }
 

@@ -1,8 +1,9 @@
 package jp.green_code.todo.dto.common;
 
+import static java.util.stream.Collectors.toMap;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,6 +29,6 @@ public class AppValidationResult<T> {
 
   public Map<String, AppErrorResult> getErrorMap() {
     return map.keySet().stream().filter(k -> !map.get(k).isSuccess())
-            .collect(Collectors.toMap(e -> e, e -> map.get(e)));
+        .collect(toMap(e -> e, e -> map.get(e)));
   }
 }

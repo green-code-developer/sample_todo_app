@@ -5,7 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 @Data
-public class AppPageable {
+public class AppPageableForm {
 
     public static final int MAX = 1000;
 
