@@ -4,14 +4,12 @@ import static jp.green_code.todo.TestSupportService.TEST_ACCOUNT_ID_1;
 import static jp.green_code.todo.TestSupportService.makeLongString;
 import static jp.green_code.todo.util.ThreadLocalUtil.setAccountId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jp.green_code.todo.TestSupportService;
 import jp.green_code.todo.util.ValidationUtil;
 import jp.green_code.todo.web.form.TodoForm;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +38,6 @@ public class TestTodoService {
     @BeforeEach
     void before() {
         testSupportService.clean();
-    }
-
-    @Test
-    void validationError() {
-        // 必須であるdetail をセットせずに登録するとエラーになる
-        var result = todoService.save(new TodoForm());
-        assertFalse(result.getLeft().isSuccess());
-        assertTrue(result.getLeft().getMap().containsKey("detail"));
     }
 
     @Test

@@ -1,6 +1,9 @@
 package jp.green_code.todo.enums;
 
+import java.util.Arrays;
+import java.util.Optional;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 
 /**
@@ -19,5 +22,10 @@ public enum TodoSearchSortEnum {
 
     TodoSearchSortEnum(Sort sort) {
         this.sort = sort;
+    }
+
+    public static Optional<TodoSearchSortEnum> optionalValueOf(String s) {
+        return Arrays.stream(TodoSearchSortEnum.values())
+            .filter(e -> StringUtils.equals(e + "", s)).findFirst();
     }
 }
