@@ -1,12 +1,12 @@
 services:
   postgres:
-    image: postgres:16.3
+    build:
+      context: ./postgres
     ports:
       - 56432:5432
     environment:
       - POSTGRES_USER=todo
       - POSTGRES_PASSWORD=todo
       - POSTGRES_DB=todo
-      - TZ=Asia/Tokyo
-    volumes:
-      - ./postgres/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: psql -Utodo todo -c '\q'
