@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.5'
-	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.springframework.boot' version '3.4.4'
+	id 'io.spring.dependency-management' version '1.1.7'
 	id 'war'
 }
 
@@ -21,26 +21,33 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	// HTML テンプレートエンジン thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	// validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// セッションをDB 保存
 	implementation 'org.springframework.session:spring-session-core'
-	// DB 接続
+	// DB 接続 JPA + Spring JDBC
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtimeOnly 'org.postgresql:postgresql'
 	// セキュリティ
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 	// 主にStringUtils を利用
 	implementation 'org.apache.commons:commons-lang3:3.14.0'
 	// ファイル操作で利用
 	implementation 'commons-io:commons-io:2.15.1'
+	// Actuator 生死監視用
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	// テスト
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// webjar でバージョンを指定しないで使う
 	implementation 'org.webjars:webjars-locator:0.52'
-
 	// webjar ここから
 	implementation 'org.webjars:font-awesome:6.5.2'
 	// webjar ここまで
-
-	runtimeOnly 'org.postgresql:postgresql'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
