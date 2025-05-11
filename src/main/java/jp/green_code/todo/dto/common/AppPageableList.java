@@ -1,50 +1,59 @@
 package jp.green_code.todo.dto.common;
 
+import lombok.Data;
+
 import java.util.List;
 
 /**
  * pagination.html にて使用
  */
+@Data
 public class AppPageableList<T> {
 
     // データ
-    public final List<T> list;
+    private final List<T> list;
 
     // 総データ件数
-    public final long count;
+    private final long count;
 
-    // 現在ページ数
-    public final int currentPage;
-
-    // 1ページ辺り件数
-    public final int pageSize;
+    // ページ指定
+    private AppPageableDto pageableDto;
 
     // 前後表示数、デフォルト2
-    public int around = 2;
+    private int around = 2;
 
-    public AppPageableList(List<T> list, long count, int currentPage, int pageSize) {
+    public AppPageableList(AppPageableDto pageableDto, List<T> list, long count) {
+        this.pageableDto = pageableDto;
         this.list = list;
         this.count = count;
-        this.currentPage = currentPage;
-        this.pageSize = pageSize;
     }
 
     public static <T> AppPageableList<T> empty() {
-        return new AppPageableList<>(List.of(), 0, 0, 0);
+        return new AppPageableList<>(new AppPageableDto(), List.of(), 0);
+    }
+
+    // 現在ページ数
+    public int getCurrentPage() {
+        return pageableDto.getCurrentPage();
+    }
+
+    // 1ページ辺り件数
+    public int getPageSize() {
+        return pageableDto.getPageSize();
     }
 
     // 総ページ数
     public int getTotalPage() {
-        return count == 0 ? 0 : (int) Math.ceil((double) count / pageSize);
+        return count == 0 ? 0 : (int) Math.ceil((double) count / getPageSize());
     }
 
     // 前後表示の低い方、マイナスにならない
     public int getLower() {
-        return Math.max(1, currentPage - around);
+        return Math.max(1, getCurrentPage() - around);
     }
 
     // 前後表示の高い方、総ページ数を越えない
     public int getUpper() {
-        return Math.min(getTotalPage(), currentPage + around);
+        return Math.min(getTotalPage(), getCurrentPage() + around);
     }
 }

@@ -1,31 +1,26 @@
 package jp.green_code.todo.enums;
 
-import java.util.Arrays;
-import java.util.Optional;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
+import org.jooq.SortField;
+
+import java.util.List;
+
+import static jp.green_code.todo.jooq.Tables.TODO_;
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * やること検索の並び順
  */
 @Getter
+@RequiredArgsConstructor(access = PRIVATE)
 public enum TodoSearchSortEnum {
-    UPDATE_DESC(Sort.by("updated_at").descending()),
-    UPDATE_ASC(Sort.by("updated_at").ascending()),
-    STATUS(Sort.by("todo_status").descending()),
-    DEADLINE_DESC(Sort.by("deadline").descending()),
-    DEADLINE_ASC(Sort.by("deadline").ascending()),
+    UPDATE_DESC(List.of(TODO_.UPDATED_AT.desc())),
+    UPDATE_ASC(List.of(TODO_.UPDATED_AT.asc())),
+    STATUS(List.of(TODO_.TODO_STATUS.desc())),
+    DEADLINE_DESC(List.of(TODO_.DEADLINE.desc())),
+    DEADLINE_ASC(List.of(TODO_.TODO_STATUS.asc())),
     ;
 
-    private Sort sort;
-
-    TodoSearchSortEnum(Sort sort) {
-        this.sort = sort;
-    }
-
-    public static Optional<TodoSearchSortEnum> optionalValueOf(String s) {
-        return Arrays.stream(TodoSearchSortEnum.values())
-            .filter(e -> StringUtils.equals(e + "", s)).findFirst();
-    }
+    private final List<SortField<?>> sort;
 }
