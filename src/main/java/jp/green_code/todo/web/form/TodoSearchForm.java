@@ -1,21 +1,23 @@
 package jp.green_code.todo.web.form;
 
-import static jp.green_code.todo.util.DateUtil.parseYMD_hyphen_loose;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Size;
-import jp.green_code.todo.enums.TodoSearchSortEnum;
+import jp.green_code.todo.dto.common.AppPageableDto;
+import jp.green_code.todo.enums.TodoStatusEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import static jp.green_code.todo.util.DateUtil.parseYMD_hyphen_loose;
+import static org.apache.commons.lang3.EnumUtils.getEnumIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Todo 検索条件フォーム
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class TodoSearchForm extends AppPageableForm {
+public class TodoSearchForm extends AppPageableDto {
 
     @Size(max = 100)
     private String word;
@@ -43,7 +45,7 @@ public class TodoSearchForm extends AppPageableForm {
 
     @AssertTrue(message = "{validation.invalid-choice}")
     public boolean isAssertionOfSort() {
-        return isEmpty(sort) || TodoSearchSortEnum.optionalValueOf(sort).isPresent();
+        return isEmpty(sort) || getEnumIgnoreCase(TodoStatusEnum.class, sort) == null;
     }
 
     // 画面上の検索条件を開いておくかどうか

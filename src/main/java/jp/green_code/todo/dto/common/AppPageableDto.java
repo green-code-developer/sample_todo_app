@@ -1,11 +1,9 @@
-package jp.green_code.todo.web.form;
+package jp.green_code.todo.dto.common;
 
 import lombok.Data;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
 @Data
-public class AppPageableForm {
+public class AppPageableDto {
 
     public static final int MAX = 1000;
 
@@ -20,13 +18,5 @@ public class AppPageableForm {
     public int getLimit() {
         // 大量に取るとメモリを食い潰すので必ず上限を設定する
         return Math.min(pageSize, MAX);
-    }
-
-    int toPageNumber() {
-        return Math.max(0, currentPage - 1);
-    }
-
-    public PageRequest toPageRequest(Sort sort) {
-        return PageRequest.of(toPageNumber(), getLimit(), sort);
     }
 }

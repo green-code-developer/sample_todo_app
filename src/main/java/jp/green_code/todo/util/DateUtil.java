@@ -78,6 +78,11 @@ public class DateUtil {
         }
     }
 
+    public static OffsetDateTime toOffsetDateTime(LocalDate ld) {
+        ZoneId zoneId = ZoneId.systemDefault();
+        return ld.atStartOfDay(zoneId).toOffsetDateTime();
+    }
+
     public static OffsetDateTime toOffsetDateTime(LocalDateTime ldt) {
         ZoneId zoneId = ZoneId.systemDefault();
         return ldt.atZone(zoneId).toOffsetDateTime();

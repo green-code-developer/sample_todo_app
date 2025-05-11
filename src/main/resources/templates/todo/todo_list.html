@@ -24,7 +24,7 @@
         <i class="fa-solid fa-caret-right app-gap-right-small app-toggle-icon"></i>検索条件・並べ替え
       </div>
       <div class="app-toggle app-condition" data-toggle-key="search">
-        <form action="#" th:action="@{/todo/}" th:object="${form}" method="get">
+        <form action="#" th:action="@{/list}" th:object="${form}" method="get">
           <div class="app-form-field">
             <label for="word" class="app-flex-v-center">詳細</label>
             <div class="app-form-value">
@@ -107,7 +107,7 @@
           </tr>
           <tr th:each="p : ${pageableList.list}">
             <td>
-              <a th:text="${p.todoId}" th:href="@{/todo/edit/{id}(id=${p.todoId})}"
+              <a th:text="${p.todoId}" th:href="@{/edit/{id}(id=${p.todoId})}"
                  class="app-text-underline"></a>
             </td>
             <td class="app-text-nowrap"
@@ -122,7 +122,7 @@
     </div>
     <div th:replace="~{layout/pagination::pagination(${pageableList})}"></div>
     <div class="app-gap-large">
-      <a th:href="@{/todo/new}" class="button is-primary">登録</a>
+      <a th:href="@{/new}" class="button is-primary">登録</a>
     </div>
   </div>
 </div>

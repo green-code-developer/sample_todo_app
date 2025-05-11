@@ -1,4 +1,4 @@
-package jp.green_code.todo.config;
+package jp.green_code.todo.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

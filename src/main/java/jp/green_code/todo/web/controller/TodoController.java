@@ -1,13 +1,5 @@
 package jp.green_code.todo.web.controller;
 
-import static jp.green_code.todo.dto.common.AppMessage.propertyMessage;
-import static jp.green_code.todo.dto.common.AppNotification.NOTIFICATION;
-import static jp.green_code.todo.dto.common.AppNotification.errorNotification;
-import static jp.green_code.todo.dto.common.AppNotification.successNotification;
-import static jp.green_code.todo.util.ControllerUtil.getFlashAttribute;
-import static jp.green_code.todo.web.controller.TodoController.TODO_PATH_PREFIX;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jp.green_code.todo.dto.common.AppNotification;
 import jp.green_code.todo.dto.common.AppValidationResult;
@@ -16,29 +8,28 @@ import jp.green_code.todo.web.form.TodoForm;
 import jp.green_code.todo.web.form.TodoSearchForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import static jp.green_code.todo.dto.common.AppMessage.propertyMessage;
+import static jp.green_code.todo.dto.common.AppNotification.*;
+import static jp.green_code.todo.util.ControllerUtil.getFlashAttribute;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 @Controller
-@RequestMapping(TODO_PATH_PREFIX)
 @RequiredArgsConstructor
 public class TodoController {
 
-    public static final String TODO_PATH_PREFIX = "/todo";
-
+    public static final String LIST_PATH = "/list";
     public static final String KEY_PREV_CONDITION = "prevTodoListCondition";
     public static final String VALIDATION_ERROR_MESSAGE_KEY = "notification.validation-error";
     public static final String PREV_FORM = "prevForm";
 
     private final TodoService todoService;
 
-    @RequestMapping({"/", ""})
+    @RequestMapping(LIST_PATH)
     public ModelAndView list(HttpServletRequest request, RedirectAttributes redirectAttributes,
         @RequestParam(defaultValue = "false") boolean usePrevCondition, TodoSearchForm form) {
         // 前回の検索条件を使いたい場合
@@ -52,7 +43,7 @@ public class TodoController {
             redirectAttributes.addFlashAttribute(NOTIFICATION, notification);
 
             // アドレスバーにusePrevCondition=true が残るのを避けるためリダイレクト
-            return new ModelAndView("redirect:/todo/");
+            return new ModelAndView("redirect:" + LIST_PATH);
         }
 
         // FlashAttribute に検索条件があればそちらを使う
@@ -118,9 +109,9 @@ public class TodoController {
 
             // 再度登録画面へ
             if (form.isNew()) {
-                return "redirect:" + TODO_PATH_PREFIX + "/new";
+                return "redirect:/new";
             } else {
-                return "redirect:" + TODO_PATH_PREFIX + "/edit/" + form.getTodoId();
+                return "redirect:/edit/" + form.getTodoId();
             }
         }
         // 成功時は一覧に戻る
@@ -128,7 +119,7 @@ public class TodoController {
         var messageCode = result.getRight() ? "notification.complete-post" : "notification.complete-update";
         var successNotification = successNotification(propertyMessage(messageCode));
         redirectAttributes.addFlashAttribute(NOTIFICATION, successNotification);
-        return "redirect:/todo/?usePrevCondition=true";
+        return "redirect:" + LIST_PATH + "?usePrevCondition=true";
     }
 
     @GetMapping("/setting")

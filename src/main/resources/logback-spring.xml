@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
-  <property name="LoggingDir" value="/opt/todo/log" />
+  <property name="LoggingDir" value="/var/app/log" />
   <property name="PATTERN" value="%d %5p %m [accountId:%X{ACCOUNT_ID}] [%C{1}:%L] [%t] %n"/>
   <property name="MAX_SIZE" value="50MB" />
   <property name="MAX_HISTORY" value="99999999" />
@@ -18,11 +18,7 @@
   </root>
 
   <!-- SQL をログ出力　ここから -->
-  <logger name="org.springframework.jdbc.core.JdbcTemplate" level="debug"/>
-  <logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="trace"/>
-  <logger name="org.hibernate.SQL" level="debug"/>
-  <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="trace"/>
-  <logger name="org.hibernate.orm.jdbc.bind" level="trace"/>
+  <logger name="org.jooq.tools.LoggerListener" level="trace"/>
   <!-- SQL をログ出力　ここまで -->
 
   <springProfile name="prd,dev">
@@ -67,11 +63,7 @@
     </root>
 
     <!-- SQL をログ出力　本番では行わない　ここから -->
-    <logger name="org.springframework.jdbc.core.JdbcTemplate" level="info"/>
-    <logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="info"/>
-    <logger name="org.hibernate.SQL" level="info"/>
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="info"/>
-    <logger name="org.hibernate.orm.jdbc.bind" level="info"/>
+    <logger name="org.jooq.tools.LoggerListener" level="info"/>
     <!-- SQL をログ出力　本番では行わない　ここまで -->
   </springProfile>
 </configuration>

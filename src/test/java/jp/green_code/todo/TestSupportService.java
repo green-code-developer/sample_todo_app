@@ -2,8 +2,9 @@ package jp.green_code.todo;
 
 import java.util.Optional;
 import java.util.StringJoiner;
-import jp.green_code.todo.entity.AccountEntity;
-import jp.green_code.todo.repository.AccountJpaRepository;
+
+import jp.green_code.todo.jooq.tables.pojos.Account;
+import jp.green_code.todo.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class TestSupportService {
   @Autowired
   private TestSupportRepository testSupportRepository;
   @Autowired
-  private AccountJpaRepository accountJpaRepository;
+  private AccountRepository accountJpaRepository;
 
   public void clean() {
     // ForeignKey 制約に抵触しない順
@@ -29,18 +30,18 @@ public class TestSupportService {
   }
 
   public void addTestAccount() {
-    Optional<AccountEntity> account1 = accountJpaRepository.findById(TEST_ACCOUNT_ID_1);
+    Optional<Account> account1 = accountJpaRepository.findById(TEST_ACCOUNT_ID_1);
     if (account1.isEmpty()) {
       addAccount(TEST_ACCOUNT_ID_1);
     }
-    Optional<AccountEntity> account2 = accountJpaRepository.findById(TEST_ACCOUNT_ID_2);
+    Optional<Account> account2 = accountJpaRepository.findById(TEST_ACCOUNT_ID_2);
     if (account2.isEmpty()) {
       addAccount(TEST_ACCOUNT_ID_2);
     }
   }
 
-  AccountEntity addAccount(long accountId) {
-    var entity = new AccountEntity();
+  Account addAccount(long accountId) {
+    var entity = new Account();
     entity.setAccountId(accountId);
     entity.setAccountStatus("ERR");
     entity.setName("test" + accountId);

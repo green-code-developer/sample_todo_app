@@ -10,6 +10,8 @@ server:
         name: __Host-SESSION
 
 spring:
+  datasource:
+    url: jdbc:postgresql://postgres/todo?currentSchema=TODO
   # ローカル設定戻し　ここから
   thymeleaf:
     cache: true
