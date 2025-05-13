@@ -5,6 +5,7 @@ import jp.green_code.todo.dto.common.AppPageableList;
 import jp.green_code.todo.enums.TodoSearchSortEnum;
 import jp.green_code.todo.enums.TodoStatusEnum;
 import jp.green_code.todo.jooq.tables.pojos.Todo;
+import jp.green_code.todo.util.JooqUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -28,19 +29,14 @@ import static org.jooq.impl.DSL.trueCondition;
 public class TodoRepository {
 
     private final DSLContext dsl;
+    private final JooqUtil jooqUtil;
 
-    public Todo save(Todo account) {
-        //@formatter:off
-        return dsl.insertInto(TODO_).set(dsl.newRecord(TODO_, account))
-                .onConflict(TODO_.TODO_ID).doUpdate()
-                    .set(dsl.newRecord(TODO_, account))
-                .returning(TODO_.TODO_ID).fetchOneInto(Todo.class);
-        //@formatter:on
+    public Long save(Todo data) {
+        return jooqUtil.genericSave(TODO_, TODO_.TODO_ID, Todo.class, data).map(Todo::getTodoId).orElseThrow();
     }
 
     public Optional<Todo> findById(long id) {
-        var res = dsl.select().from(TODO_).where(TODO_.TODO_ID.eq(id)).fetchOneInto(Todo.class);
-        return ofNullable(res);
+        return jooqUtil.genericFindById(TODO_, TODO_.TODO_ID, Todo.class, id);
     }
 
     public AppPageableList<Todo> findByCondition(AppPageableDto pageable, TodoSearchSortEnum sort, String word, TodoStatusEnum status, OffsetDateTime deadlineFrom, OffsetDateTime deadlineTo) {
@@ -74,7 +70,6 @@ public class TodoRepository {
                 .limit(pageable.getLimit())
                 .offset(pageable.getOffset())
                 .fetchInto(Todo.class);
-        //@formatter:on
 
         return new AppPageableList<>(pageable, list, count);
     }
