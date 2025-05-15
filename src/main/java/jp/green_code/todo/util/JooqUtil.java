@@ -16,22 +16,29 @@ import static java.util.Optional.ofNullable;
 @RequiredArgsConstructor
 public class JooqUtil {
 
-    public static final List<String> EXCLUDE_COLUMN_LIST = List.of("created_by", "created_at");
+    public static final List<String> EXCLUDE_INSERT_COLUMN_LIST = List.of("created_at");
+    public static final List<String> EXCLUDE_UPDATE_COLUMN_LIST = List.of("created_at", "created_by");
     private final DSLContext dsl;
+
+    public <R extends Record> R toRecord4Insert(Table<R> table, Object o) {
+        var record = dsl.newRecord(table, o);
+        EXCLUDE_INSERT_COLUMN_LIST.forEach(record::reset);
+        return record;
+    }
 
     public <R extends Record> R toRecord4Update(Table<R> table, Object o) {
         var record = dsl.newRecord(table, o);
-        EXCLUDE_COLUMN_LIST.forEach(record::reset);
+        EXCLUDE_UPDATE_COLUMN_LIST.forEach(record::reset);
         return record;
     }
 
     // 汎用save
     // pk はlong 型のテーブルのみ対応
-    // 作成者、作成日のカラムを更新しない
+    // Insert時は作成日を、Update時は作成者と作成日を、更新しない
     // 戻り値にはreturning のpk のみ格納されている
     public <R extends Record, T> Optional<T> genericSave(Table<R> table, TableField<R, Long> pk, Class<T> clazz, T o) {
         //@formatter:off
-        var res = dsl.insertInto(table).set(dsl.newRecord(table, o))
+        var res = dsl.insertInto(table).set(toRecord4Insert(table, o))
                 .onConflict(pk).doUpdate().set(toRecord4Update(table, o))
                 .returning(pk).fetchOneInto(clazz);
         //@formatter:on
