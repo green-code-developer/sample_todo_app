@@ -10,6 +10,7 @@ import static jp.green_code.todo.TestSupportService.TEST_ACCOUNT_ID_2;
 import static jp.green_code.todo.enums.TodoStatusEnum.DELETED;
 import static jp.green_code.todo.enums.TodoStatusEnum.NEW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class TestTodoRepository {
@@ -36,7 +37,12 @@ public class TestTodoRepository {
         inserted.setCreatedBy(TEST_ACCOUNT_ID_2);
         repository.save(inserted);
         var updated = repository.findById(todoId).orElseThrow();
-        assertEquals(TEST_ACCOUNT_ID_1, updated.getCreatedBy());
         assertEquals(DELETED, updated.getTodoStatus());
+        // created_by は更新されない
+        assertEquals(TEST_ACCOUNT_ID_1, updated.getCreatedBy());
+        // created_at はinsert 時のまま
+        assertEquals(inserted.getCreatedAt(), updated.getCreatedAt());
+        // updated_at はinsert 時より未来
+        assertTrue(updated.getUpdatedAt().isAfter(inserted.getUpdatedAt()));
     }
 }
