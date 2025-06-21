@@ -4,69 +4,69 @@ intelliJ community edition で開くと「URI is not registered」の警告が�
 対応するには有償版を購入する必要があるようだ。
 https://stackoverflow.com/questions/38730992/thymleaf-for-spring-in-intellij-uri-is-not-registered
 */-->
-<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" data-theme="light"
       th:with="pageName=${form.isNew() ? '登録' : '更新'}">
 <head>
-  <title th:replace="~{layout/head::title(${pageName})}"></title>
-  <link th:replace="~{layout/head::head}"/>
-  <link rel="stylesheet" th:href="@{/assets/css/todo/todo_edit.css}"/>
-  <script th:src="@{/assets/js/todo/todo_edit.js}"></script>
+    <title th:replace="~{layout/head::title(${pageName})}"></title>
+    <link th:replace="~{layout/head::head}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/todo/todo_edit.css}"/>
+    <script th:src="@{/assets/js/todo/todo_edit.js}"></script>
 </head>
 <body>
 <header th:replace="~{layout/head::hero}"></header>
 <div th:replace="~{layout/notification::notification}"></div>
 <div class="app-overwrap-nav close app-large-screen-hidden">
-  <div th:replace="~{layout/sidemenu::normal}"></div>
+    <div th:replace="~{layout/sidemenu::normal}"></div>
 </div>
 <div class="app-view-two-column">
-  <div class="app-left app-small-screen-hidden-or-block">
-    <div th:replace="~{layout/sidemenu::normal}"></div>
-  </div>
+    <div class="app-left app-small-screen-hidden-or-block">
+        <div th:replace="~{layout/sidemenu::normal}"></div>
+    </div>
 
-  <div class="app-right">
-    <header class="app-gap-bottom is-size-4" th:text="${pageName}"></header>
-    <form th:action="@{/upsert}" th:object="${form}" method="post" class="app-form" id="form">
-      <input type="hidden" th:field="*{todoId}">
-      <th:block th:if="${!form.isNew()}">
-        <div class="app-gap-bottom">
-          <span th:text="'#' + *{todoId}"></span>
-        </div>
-      </th:block>
+    <div class="app-right">
+        <header class="app-gap-bottom is-size-4" th:text="${pageName}"></header>
+        <form th:action="@{/upsert}" th:object="${form}" method="post" class="app-form" id="form">
+            <input type="hidden" th:field="*{todoId}">
+            <th:block th:if="${!form.isNew()}">
+                <div class="app-gap-bottom">
+                    <span th:text="'#' + *{todoId}"></span>
+                </div>
+            </th:block>
 
-      <div class="app-gap-bottom">
-        <label>やること<span class="has-text-danger">*必須</span></label>
-        <textarea class="textarea" rows="2" th:field="*{detail}" maxlength="100" required="required"></textarea>
-        <div th:replace="~{layout/app_error::message(${app}, 'detail')}"></div>
-      </div>
-
-      <div class="app-gap-bottom">
-        <label>完了予定日</label>
-        <input class="input" th:field="*{deadline}" type="date">
-        <div th:replace="~{layout/app_error::message(${app}, 'deadline')}"></div>
-      </div>
-
-      <th:block th:if="${!form.isNew()}">
-        <div>
-          <label>ステータス</label>
-          <div>
-            <div class="select">
-              <select class="select" th:field="*{todoStatus}">
-                <th:block th:each="e : ${@enumUtil.getTodoStatusEnum()}">
-                  <option th:value="${e.left}" th:text="${e.right}"></option>
-                </th:block>
-              </select>
-              <div th:replace="~{layout/app_error::message(${app}, 'todoStatus')}"></div>
+            <div class="app-gap-bottom">
+                <label>やること<span class="has-text-danger">*必須</span></label>
+                <textarea class="textarea" rows="2" th:field="*{detail}" maxlength="100" required="required"></textarea>
+                <div th:replace="~{layout/app_error::message(${app}, 'detail')}"></div>
             </div>
-          </div>
-        </div>
-      </th:block>
 
-      <div class="app-gap-large app-flex-v-center">
-        <input type="submit" class="button is-primary" th:value="${form.isNew() ? '登録' : '更新'}"/>
-        <a th:href="@{/list(usePrevCondition=true)}"
-           class="app-gap-left button is-text is-small app-text-no-decoration" id="cancel">キャンセル</a>
-      </div>
-    </form>
-  </div>
+            <div class="app-gap-bottom">
+                <label>完了予定日</label>
+                <input class="input" th:field="*{deadline}" type="date">
+                <div th:replace="~{layout/app_error::message(${app}, 'deadline')}"></div>
+            </div>
+
+            <th:block th:if="${!form.isNew()}">
+                <div>
+                    <label>ステータス</label>
+                    <div>
+                        <div class="select">
+                            <select class="select" th:field="*{todoStatus}">
+                                <th:block th:each="e : ${@enumUtil.getTodoStatusEnum()}">
+                                    <option th:value="${e.left}" th:text="${e.right}"></option>
+                                </th:block>
+                            </select>
+                            <div th:replace="~{layout/app_error::message(${app}, 'todoStatus')}"></div>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+
+            <div class="app-gap-large app-flex-v-center">
+                <input type="submit" class="button is-primary" th:value="${form.isNew() ? '登録' : '更新'}"/>
+                <a th:href="@{/list(usePrevCondition=true)}"
+                   class="app-gap-left button is-text is-small app-text-no-decoration" id="cancel">キャンセル</a>
+            </div>
+        </form>
+    </div>
 </div>
 </body>

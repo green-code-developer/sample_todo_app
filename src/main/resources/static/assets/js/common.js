@@ -98,10 +98,9 @@ window.addEventListener('load', () => {
 // サイドメニューの定義
 App.SideMenuDefinition = {
     // 属性「data-side-menu-key」の値 : URLのプレフィックス
-    '/todo': 'list',
-    '/todo/': 'list',
-    '/todo/new': 'new',
-    '/todo/setting': 'setting',
+    '/list': 'list',
+    '/list/': 'list',
+    '/new': 'new'
 }
 
 // バーガーメニュー
@@ -118,14 +117,3 @@ window.addEventListener('load', () => {
     body.classList.toggle('is-overwrap-nav-open')
   })
 })
-
-// ダークモード
-App.refreshDarkMode = () => {
-  const mode = App.readDarkMode();
-  document.querySelector('html').setAttribute('data-theme', mode)
-}
-App.readDarkMode = () => {
-  return localStorage.getItem("dark-mode") ?? 'light'
-}
-
-window.addEventListener('load', App.refreshDarkMode)

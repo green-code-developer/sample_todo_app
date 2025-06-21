@@ -1,129 +1,132 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:with="pageName='一覧'">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:with="pageName='一覧'" data-theme="light">
 <head>
-  <title th:replace="~{layout/head::title(${pageName})}"></title>
-  <link th:replace="~{layout/head::head}"/>
-  <link rel="stylesheet" th:href="@{/assets/css/todo/todo_list.css}"/>
-  <script th:src="@{/assets/js/todo/todo_list.js}"></script>
+    <title th:replace="~{layout/head::title(${pageName})}"></title>
+    <link th:replace="~{layout/head::head}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/todo/todo_list.css}"/>
+    <script th:src="@{/assets/js/todo/todo_list.js}"></script>
 </head>
 <body>
 <header th:replace="~{layout/head::hero}"></header>
 <div th:replace="~{layout/notification::notification}"></div>
 <div class="app-overwrap-nav close app-large-screen-hidden">
-  <div th:replace="~{layout/sidemenu::normal}"></div>
+    <div th:replace="~{layout/sidemenu::normal}"></div>
 </div>
 <div class="app-view-two-column">
-  <div class="app-left app-small-screen-hidden-or-block">
-    <div th:replace="~{layout/sidemenu::normal}"></div>
-  </div>
-  <div class="app-right">
-    <header class="is-size-4" th:text="${pageName}"></header>
-    <div class="app-gap">
-      <div class="app-condition-title app-toggle-switch app-text-select-none app-text-pointer" data-toggle-key="search"
-           th:classappend="|${true ? 'app-toggle-switch' : ''} ${form.isNoCondition ? '' : 'app-toggle-open'}|">
-        <i class="fa-solid fa-caret-right app-gap-right-small app-toggle-icon"></i>検索条件・並べ替え
-      </div>
-      <div class="app-toggle app-condition" data-toggle-key="search">
-        <form action="#" th:action="@{/list}" th:object="${form}" method="get">
-          <div class="app-form-field">
-            <label for="word" class="app-flex-v-center">詳細</label>
-            <div class="app-form-value">
-              <input class="input" id="word" th:field="*{word}" maxlength="100">
-              <div th:replace="~{layout/app_error::message(${app}, 'word')}"></div>
-            </div>
-          </div>
-          <div class="app-form-field">
-            <label for="status" class="app-flex-v-center">ステータス</label>
-            <div class="app-form-value">
-              <div class="select">
-                <select class="select" th:field="*{status}" id="status">
-                  <option value=""></option>
-                  <th:block th:each="e : ${@enumUtil.getTodoStatusEnum()}">
-                    <option th:value="${e.left}" th:text="${e.right}"></option>
-                  </th:block>
-                </select>
-              </div>
-              <div th:replace="~{layout/app_error::message(${app}, 'status')}"></div>
-            </div>
-          </div>
-          <div class="app-form-field">
-            <label for="deadlineFrom" class="app-flex-v-center">完了予定日</label>
-            <div class="app-form-value">
-              <div class="app-flex-v-center app-small-screen-block-or-flex">
-                <input class="input" type="date" th:field="*{deadlineFrom}" maxlength="10" id="deadlineFrom">
-                <span class="app-gap-left app-gap-right">〜</span>
-                <input class="input" type="date" th:field="*{deadlineTo}" maxlength="10">
-              </div>
-              <div th:replace="~{layout/app_error::message(${app}, 'deadlineFrom')}"></div>
-              <div th:replace="~{layout/app_error::message(${app}, 'deadlineTo')}"></div>
-            </div>
-          </div>
-          <div class="app-form-field">
-            <label for="sort" class="app-flex-v-center">並び順</label>
-            <div class="app-form-value">
-              <div class="select">
-                <select class="select" th:field="*{sort}" id="sort">
-                  <option value=""></option>
-                  <th:block th:each="e : ${@enumUtil.getTodoSearchSortEnum()}">
-                    <option th:value="${e.left}" th:text="${e.right}"></option>
-                  </th:block>
-                </select>
-              </div>
-              <div th:replace="~{layout/app_error::message(${app}, 'sort')}"></div>
-            </div>
-          </div>
-          <div class="app-form-field">
-            <label for="pageSize" class="app-flex-v-center">1ページ件数</label>
-            <div class="app-form-value">
-              <div class="select">
-                <select class="select" th:field="*{pageSize}" id="pageSize">
-                  <div th:replace="~{layout/pagination::pageOption(${form.pageSize})}"></div>
-                </select>
-              </div>
-              <div th:replace="~{layout/app_error::message(${app}, 'pageSize')}"></div>
-            </div>
-          </div>
-          <input type="hidden" name="currentPage" value="1" data-pagination-key="main">
-          <div class="app-gap-top-large app-flex-center-center">
-            <button type="submit" class="button is-primary">検索</button>
-            <span class="app-text-link app-gap-left button app-text-no-decoration is-small" id="clear">クリア</span>
-          </div>
-        </form>
-      </div>
+    <div class="app-left app-small-screen-hidden-or-block">
+        <div th:replace="~{layout/sidemenu::normal}"></div>
     </div>
-    <div class="app-gap-top-large app-gap-bottom">
-      <th:block th:if="${pageableList.list.isEmpty()}">
-        <div class="app-gap-large">データが見つかりませんでした</div>
-      </th:block>
-      <th:block th:if="${!pageableList.list.isEmpty()}">
-        <div class="app-horizontal-scroll">
-          <table class="table is-bordered is-striped is-hoverable">
-          <tr class="app-text-nowrap">
-            <th>#</th>
-            <th>ステータス</th>
-            <th>詳細</th>
-            <th>完了予定日</th>
-            <th>更新日時</th>
-          </tr>
-          <tr th:each="p : ${pageableList.list}">
-            <td>
-              <a th:text="${p.todoId}" th:href="@{/edit/{id}(id=${p.todoId})}"
-                 class="app-text-underline"></a>
-            </td>
-            <td class="app-text-nowrap"
-                th:text="${@enumUtil.labelOfTodoStatus(p.todoStatus)}"></td>
-            <td class="app-text-breakall" th:text="${p.detail}"></td>
-            <td class="app-text-nowrap" th:text="${@dateUtil.toYMD(p.deadline)}"></td>
-            <td class="app-text-nowrap" th:text="${@dateUtil.toYMD_HM(p.updatedAt)}"></td>
-          </tr>
-        </table>
+    <div class="app-right">
+        <header class="is-size-4" th:text="${pageName}"></header>
+        <div class="app-gap">
+            <div class="app-condition-title app-toggle-switch app-text-select-none app-text-pointer"
+                 data-toggle-key="search"
+                 th:classappend="|${true ? 'app-toggle-switch' : ''} ${form.isNoCondition ? '' : 'app-toggle-open'}|">
+                <i class="fa-solid fa-caret-right app-gap-right-small app-toggle-icon"></i>検索条件・並べ替え
+            </div>
+            <div class="app-toggle app-condition" data-toggle-key="search">
+                <form action="#" th:action="@{/list}" th:object="${form}" method="get">
+                    <div class="app-form-field">
+                        <label for="word" class="app-flex-v-center">詳細</label>
+                        <div class="app-form-value">
+                            <input class="input" id="word" th:field="*{word}" maxlength="100">
+                            <div th:replace="~{layout/app_error::message(${app}, 'word')}"></div>
+                        </div>
+                    </div>
+                    <div class="app-form-field">
+                        <label for="status" class="app-flex-v-center">ステータス</label>
+                        <div class="app-form-value">
+                            <div class="select">
+                                <select class="select" th:field="*{status}" id="status">
+                                    <option value=""></option>
+                                    <th:block th:each="e : ${@enumUtil.getTodoStatusEnum()}">
+                                        <option th:value="${e.left}" th:text="${e.right}"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                            <div th:replace="~{layout/app_error::message(${app}, 'status')}"></div>
+                        </div>
+                    </div>
+                    <div class="app-form-field">
+                        <label for="deadlineFrom" class="app-flex-v-center">完了予定日</label>
+                        <div class="app-form-value">
+                            <div class="app-flex-v-center app-small-screen-block-or-flex">
+                                <input class="input" type="date" th:field="*{deadlineFrom}" maxlength="10"
+                                       id="deadlineFrom">
+                                <span class="app-gap-left app-gap-right">〜</span>
+                                <input class="input" type="date" th:field="*{deadlineTo}" maxlength="10">
+                            </div>
+                            <div th:replace="~{layout/app_error::message(${app}, 'deadlineFrom')}"></div>
+                            <div th:replace="~{layout/app_error::message(${app}, 'deadlineTo')}"></div>
+                        </div>
+                    </div>
+                    <div class="app-form-field">
+                        <label for="sort" class="app-flex-v-center">並び順</label>
+                        <div class="app-form-value">
+                            <div class="select">
+                                <select class="select" th:field="*{sort}" id="sort">
+                                    <option value=""></option>
+                                    <th:block th:each="e : ${@enumUtil.getTodoSearchSortEnum()}">
+                                        <option th:value="${e.left}" th:text="${e.right}"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                            <div th:replace="~{layout/app_error::message(${app}, 'sort')}"></div>
+                        </div>
+                    </div>
+                    <div class="app-form-field">
+                        <label for="pageSize" class="app-flex-v-center">1ページ件数</label>
+                        <div class="app-form-value">
+                            <div class="select">
+                                <select class="select" th:field="*{pageSize}" id="pageSize">
+                                    <div th:replace="~{layout/pagination::pageOption(${form.pageSize})}"></div>
+                                </select>
+                            </div>
+                            <div th:replace="~{layout/app_error::message(${app}, 'pageSize')}"></div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="currentPage" value="1" data-pagination-key="main">
+                    <div class="app-gap-top-large app-flex-center-center">
+                        <button type="submit" class="button is-primary">検索</button>
+                        <span class="app-text-link app-gap-left button app-text-no-decoration is-small"
+                              id="clear">クリア</span>
+                    </div>
+                </form>
+            </div>
         </div>
-      </th:block>
+        <div class="app-gap-top-large app-gap-bottom">
+            <th:block th:if="${pageableList.list.isEmpty()}">
+                <div class="app-gap-large">データが見つかりませんでした</div>
+            </th:block>
+            <th:block th:if="${!pageableList.list.isEmpty()}">
+                <div class="app-horizontal-scroll">
+                    <table class="table is-bordered is-striped is-hoverable">
+                        <tr class="app-text-nowrap">
+                            <th>#</th>
+                            <th>ステータス</th>
+                            <th>詳細</th>
+                            <th>完了予定日</th>
+                            <th>更新日時</th>
+                        </tr>
+                        <tr th:each="p : ${pageableList.list}">
+                            <td>
+                                <a th:text="${p.todoId}" th:href="@{/edit/{id}(id=${p.todoId})}"
+                                   class="app-text-underline"></a>
+                            </td>
+                            <td class="app-text-nowrap"
+                                th:text="${@enumUtil.labelOfTodoStatus(p.todoStatus)}"></td>
+                            <td class="app-text-breakall" th:text="${p.detail}"></td>
+                            <td class="app-text-nowrap" th:text="${@dateUtil.toYMD(p.deadline)}"></td>
+                            <td class="app-text-nowrap" th:text="${@dateUtil.toYMD_HM(p.updatedAt)}"></td>
+                        </tr>
+                    </table>
+                </div>
+            </th:block>
+        </div>
+        <div th:replace="~{layout/pagination::pagination(${pageableList})}"></div>
+        <div class="app-gap-large">
+            <a th:href="@{/new}" class="button is-primary">登録</a>
+        </div>
     </div>
-    <div th:replace="~{layout/pagination::pagination(${pageableList})}"></div>
-    <div class="app-gap-large">
-      <a th:href="@{/new}" class="button is-primary">登録</a>
-    </div>
-  </div>
 </div>
 </body>

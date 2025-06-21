@@ -31,8 +31,12 @@ public class TodoRepository {
     private final DSLContext dsl;
     private final JooqUtil jooqUtil;
 
-    public Long save(Todo data) {
-        return jooqUtil.genericSave(TODO_, TODO_.TODO_ID, Todo.class, data).map(Todo::getTodoId).orElseThrow();
+    public Todo save(Todo data) {
+        return jooqUtil.genericSave(TODO_, TODO_.TODO_ID, Todo.class, data)
+                .map(i -> {
+                    data.setTodoId(i.getTodoId());
+                    return data;
+                }).orElseThrow();
     }
 
     public Optional<Todo> findById(long id) {

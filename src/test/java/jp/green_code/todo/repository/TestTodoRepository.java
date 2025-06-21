@@ -26,7 +26,7 @@ public class TestTodoRepository {
         data.setDetail(detail);
         data.setTodoStatus(NEW);
         data.setCreatedBy(TEST_ACCOUNT_ID_1);
-        var todoId = repository.save(data);
+        var todoId = repository.save(data).getTodoId();
         var inserted = repository.findById(todoId).orElseThrow();
         assertEquals(TEST_ACCOUNT_ID_1, inserted.getCreatedBy());
         assertEquals(detail, inserted.getDetail());

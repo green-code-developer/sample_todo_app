@@ -1,12 +1,12 @@
 package jp.green_code.todo;
 
-import java.util.Optional;
-import java.util.StringJoiner;
-
 import jp.green_code.todo.jooq.tables.pojos.Account;
 import jp.green_code.todo.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.StringJoiner;
 
 @Service
 public class TestSupportService {

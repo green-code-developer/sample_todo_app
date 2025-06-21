@@ -1,13 +1,12 @@
 package jp.green_code.todo.repository;
 
-import jp.green_code.todo.jooq.Tables;
 import jp.green_code.todo.jooq.tables.pojos.Account;
+import jp.green_code.todo.util.JooqUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import static jp.green_code.todo.jooq.Tables.ACCOUNT;
@@ -18,20 +17,17 @@ import static jp.green_code.todo.jooq.Tables.ACCOUNT;
 public class AccountRepository {
 
     private final DSLContext dsl;
+    private final JooqUtil jooqUtil;
 
-    public Account save(Account account) {
-        var record = dsl.insertInto(ACCOUNT)
-                .set(dsl.newRecord(ACCOUNT, account))
-                .onConflict(ACCOUNT.ACCOUNT_ID)
-                .doUpdate()
-                .set(dsl.newRecord(ACCOUNT, account))
-                .returning(ACCOUNT.ACCOUNT_ID)
-                .fetchOne();
-        return Objects.requireNonNull(record).into(Account.class);
+    public Account save(Account data) {
+        return jooqUtil.genericSave(ACCOUNT, ACCOUNT.ACCOUNT_ID, Account.class, data)
+                .map(i -> {
+                    data.setAccountId(i.getAccountId());
+                    return data;
+                }).orElseThrow();
     }
 
     public Optional<Account> findById(long id) {
-        var res = dsl.select().from(ACCOUNT).where(ACCOUNT.ACCOUNT_ID.eq(id)).fetchOneInto(Account.class);
-        return Optional.ofNullable(res);
+        return jooqUtil.genericFindById(ACCOUNT, ACCOUNT.ACCOUNT_ID, Account.class, id);
     }
 }
