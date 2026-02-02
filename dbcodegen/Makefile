@@ -1,0 +1,2 @@
+run:
+	../gradlew clean run

@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.util.Optional;
 
-import jp.green_code.todo.jooq.tables.pojos.Account;
+import jp.green_code.todo.entity.AccountEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,12 +16,12 @@ public class SessionUtil {
 
     private final HttpSession session;
 
-    public void setLoggedAccount(Account account) {
+    public void setLoggedAccount(AccountEntity account) {
         session.setAttribute(SESSION_KEY_ACCOUNT, account);
     }
 
-    public Optional<Account> getLoggedAccount() {
+    public Optional<AccountEntity> getLoggedAccount() {
         var sessionAccount = session.getAttribute(SESSION_KEY_ACCOUNT);
-        return sessionAccount == null ? Optional.empty() : Optional.of((Account) sessionAccount);
+        return sessionAccount == null ? Optional.empty() : Optional.of((AccountEntity) sessionAccount);
     }
 }

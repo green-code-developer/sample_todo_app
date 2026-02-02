@@ -18,7 +18,8 @@
   </root>
 
   <!-- SQL をログ出力　ここから -->
-  <logger name="org.jooq.tools.LoggerListener" level="trace"/>
+  <logger name="org.springframework.jdbc.core.JdbcTemplate" level="debug"/>
+  <logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="trace"/>
   <!-- SQL をログ出力　ここまで -->
 
   <springProfile name="prd,dev">
@@ -63,7 +64,8 @@
     </root>
 
     <!-- SQL をログ出力　本番では行わない　ここから -->
-    <logger name="org.jooq.tools.LoggerListener" level="info"/>
+    <logger name="org.springframework.jdbc.core.JdbcTemplate" level="info"/>
+    <logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="info"/>
     <!-- SQL をログ出力　本番では行わない　ここまで -->
   </springProfile>
 </configuration>

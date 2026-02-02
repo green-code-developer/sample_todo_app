@@ -16,6 +16,8 @@ ps:
 	docker compose ps
 stats:
 	docker stats
+sh:
+	docker compose exec postgres bash
 sql:
 	docker compose exec postgres psql -Utodo todo
 help:

@@ -1,9 +1,8 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.4'
+	id 'org.springframework.boot' version '3.5.10'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'war'
-	id 'org.jooq.jooq-codegen-gradle' version '3.19.21'
 }
 
 group = 'jp.green-code'
@@ -26,17 +25,16 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// セッションをDB 保存
 	implementation 'org.springframework.session:spring-session-core'
-	// DB 接続 jooq
-	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	// DB 接続 jdbc
+	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	runtimeOnly 'org.postgresql:postgresql'
-	jooqCodegen 'org.postgresql:postgresql'
 	// セキュリティ
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	// 主にStringUtils を利用
-	implementation 'org.apache.commons:commons-lang3:3.14.0'
+	implementation 'org.apache.commons:commons-lang3:3.18.0'
 	// ファイル操作で利用
 	implementation 'commons-io:commons-io:2.15.1'
 	// Actuator 生死監視用
@@ -53,43 +51,4 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
-}
-
-jooq {
-	configuration {
-		jdbc {
-			driver = "org.postgresql.Driver"
-			url = "jdbc:postgresql://localhost:56432/todo"
-			user = "todo"
-			password = "todo"
-		}
-		generator {
-			database {
-				name = "org.jooq.meta.postgres.PostgresDatabase"
-				inputSchema = "todo"
-				includes = ".*"
-				excludes = "spring_session.*"
-				forcedTypes{
-					forcedType{
-						name = "ENUM"
-						userType = "jp.green_code.todo.enums.TodoStatusEnum"
-						includeTypes = "todo_status"
-					}
-				}
-			}
-			target {
-				packageName = "jp.green_code.todo.jooq"
-			}
-			generate {
-				pojos = true
-			}
-		}
-	}
-}
-sourceSets {
-	main {
-		java {
-			srcDir 'build/generated-sources/jooq'
-		}
-	}
 }

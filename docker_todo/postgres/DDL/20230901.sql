@@ -1,4 +1,4 @@
-/* 2023/9/1 初回りリース向け */
+/* 2023/9/1 初回リリース向け */
 
 drop schema if exists TODO CASCADE;
 create schema if not exists TODO;

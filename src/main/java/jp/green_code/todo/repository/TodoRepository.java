@@ -2,79 +2,74 @@ package jp.green_code.todo.repository;
 
 import jp.green_code.todo.dto.common.AppPageableDto;
 import jp.green_code.todo.dto.common.AppPageableList;
+import jp.green_code.todo.entity.TodoEntity;
 import jp.green_code.todo.enums.TodoSearchSortEnum;
 import jp.green_code.todo.enums.TodoStatusEnum;
-import jp.green_code.todo.jooq.tables.pojos.Todo;
-import jp.green_code.todo.util.JooqUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
+import jp.green_code.todo.repository.base.BaseTodoRepository;
+import jp.green_code.todo.repository.base.RepositoryHelper;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 import static jp.green_code.todo.enums.TodoSearchSortEnum.UPDATE_DESC;
-import static jp.green_code.todo.jooq.Tables.TODO_;
-import static org.jooq.impl.DSL.trueCondition;
+import static jp.green_code.todo.repository.base.BaseTodoRepository.Columns.DEADLINE;
+import static jp.green_code.todo.repository.base.BaseTodoRepository.Columns.DETAIL;
+import static jp.green_code.todo.repository.base.BaseTodoRepository.Columns.TODO_STATUS;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
+/**
+ * Table: todo
+ */
 @Repository
-@RequiredArgsConstructor
-@Slf4j
-public class TodoRepository {
-
-    private final DSLContext dsl;
-    private final JooqUtil jooqUtil;
-
-    public Todo save(Todo data) {
-        return jooqUtil.genericSave(TODO_, TODO_.TODO_ID, Todo.class, data)
-                .map(i -> {
-                    data.setTodoId(i.getTodoId());
-                    return data;
-                }).orElseThrow();
+public class TodoRepository extends BaseTodoRepository {
+    public TodoRepository(RepositoryHelper helper) {
+        super(helper);
     }
 
-    public Optional<Todo> findById(long id) {
-        return jooqUtil.genericFindById(TODO_, TODO_.TODO_ID, Todo.class, id);
-    }
+    public AppPageableList<TodoEntity> findByCondition(AppPageableDto pageable, TodoSearchSortEnum sort, String word, TodoStatusEnum status, OffsetDateTime deadlineFrom, OffsetDateTime deadlineTo) {
+        var conditions = new ArrayList<String>();
+        if (!isBlank(word)) {
+            conditions.add(DETAIL + " like concat('%', :word, '%')");
+        }
+        if (status != null) {
+            conditions.add(TODO_STATUS + " = :status::todo_status");
+        }
+        if (deadlineFrom != null) {
+            conditions.add(":deadlineFrom <= " + DEADLINE);
+        }
+        if (deadlineTo != null) {
+            conditions.add(DEADLINE + " <= :deadlineTo");
+        }
+        var condition = conditions.isEmpty() ? "" : "where " + String.join("AND ", conditions);
 
-    public AppPageableList<Todo> findByCondition(AppPageableDto pageable, TodoSearchSortEnum sort, String word, TodoStatusEnum status, OffsetDateTime deadlineFrom, OffsetDateTime deadlineTo) {
-        //@formatter:off
-        var condition = Stream.of(
-                ofNullable(word).filter(StringUtils::isNotBlank).map(TODO_.DETAIL::contains),
-                ofNullable(status).map(TODO_.TODO_STATUS::eq),
-                ofNullable(deadlineFrom).map(from ->
-                        TODO_.DEADLINE.isNull().or(TODO_.DEADLINE.greaterOrEqual(from))),
-                ofNullable(deadlineTo).map(TODO_.DEADLINE::le)
-        ).flatMap(Optional::stream).reduce(trueCondition(), Condition::and);
+        var param = new HashMap<String, Object>();
+        param.put("word", word);
+        param.put("status", status + "");
+        param.put("deadlineFrom", deadlineFrom);
+        param.put("deadlineTo", deadlineTo);
+        param.put("limit", pageable.getLimit());
+        param.put("offset", pageable.getOffset());
 
-        // 参考 別の書き方 部分的にSQL を使うことで学習コストを下げる
-        /*
-        condition = Stream.of(
-                ofNullable(word).filter(StringUtils::isNotBlank).map(w ->
-                        DSL.condition("detail LIKE ?", "%" + w + "%")),
-                ofNullable(status).map(TODO_.TODO_STATUS::eq),
-                ofNullable(deadlineFrom).map(from ->
-                        DSL.condition("deadline is null or cast(? as timestamp with time zone) <= deadline", from)),
-                ofNullable(deadlineTo).map(TODO_.DEADLINE::le)
-        ).flatMap(Optional::stream).reduce(trueCondition(), Condition::and);
-        */
+        var sql = new ArrayList<String>();
+        sql.add("select count(*)");
+        sql.add("from todo");
+        sql.add(condition);
+        var count = helper.count(sql, param);
 
-        long count = ofNullable(
-                dsl.selectCount().from(TODO_).where(condition).fetchOne(0, long.class)
-        ).orElse(0L);
-
-        List<Todo> list = count == 0 ? List.of() : dsl.selectFrom(TODO_).where(condition)
-                .orderBy(ofNullable(sort).orElse(UPDATE_DESC).getSort())
-                .limit(pageable.getLimit())
-                .offset(pageable.getOffset())
-                .fetchInto(Todo.class);
-
+        List<TodoEntity> list = List.of();
+        if (0 < count) {
+            var sb = new ArrayList<String>();
+            sb.add("select " + ALL_COLUMNS);
+            sb.add("from todo");
+            sb.add(condition);
+            sb.add("order by " + ofNullable(sort).orElse(UPDATE_DESC).getSort());
+            sb.add("limit :limit offset :offset");
+            list = helper.list(sb, param, TodoEntity.class);
+        }
         return new AppPageableList<>(pageable, list, count);
     }
 }

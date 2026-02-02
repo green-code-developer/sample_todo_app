@@ -2,9 +2,9 @@ package jp.green_code.todo.service;
 
 import jp.green_code.todo.dto.common.AppPageableList;
 import jp.green_code.todo.dto.common.AppValidationResult;
+import jp.green_code.todo.entity.TodoEntity;
 import jp.green_code.todo.enums.TodoSearchSortEnum;
 import jp.green_code.todo.enums.TodoStatusEnum;
-import jp.green_code.todo.jooq.tables.pojos.Todo;
 import jp.green_code.todo.repository.TodoRepository;
 import jp.green_code.todo.util.DateUtil;
 import jp.green_code.todo.util.ValidationUtil;
@@ -38,9 +38,9 @@ public class TodoService {
     private final ValidationUtil validationUtil;
 
 
-    public Optional<Todo> findByTodoId(long todoId) {
+    public Optional<TodoEntity> findByTodoId(long todoId) {
         log.info("START {} todoId({})", methodName(), todoId);
-        var result = todoRepository.findById(todoId);
+        var result = todoRepository.findByPk(todoId);
         log.info("END {} todoId({})", methodName(), todoId);
         return result;
     }
@@ -59,13 +59,13 @@ public class TodoService {
         var todoEntity = formToEntity(form);
         // DB 登録
         var isNew = todoEntity.getTodoId() == null;
-        todoRepository.save(todoEntity);
+        todoRepository.upsert(todoEntity);
         log.info("END {}", methodName());
         return Pair.of(validationResult, isNew);
     }
 
-    public static Todo formToEntity(TodoForm form) {
-        var result = new Todo();
+    public static TodoEntity formToEntity(TodoForm form) {
+        var result = new TodoEntity();
         result.setTodoId(form.getTodoId());
         result.setDetail(form.getDetail());
         var deadline = parseYMD_hyphen_loose(form.getDeadline())
@@ -76,7 +76,7 @@ public class TodoService {
         return result;
     }
 
-    public static TodoForm entityToForm(Todo entity) {
+    public static TodoForm entityToForm(TodoEntity entity) {
         var result = new TodoForm();
         result.setTodoId(entity.getTodoId());
         result.setDetail(entity.getDetail());
@@ -86,7 +86,7 @@ public class TodoService {
         return result;
     }
 
-    public Pair<AppValidationResult<TodoSearchForm>, AppPageableList<Todo>> findByForm(TodoSearchForm form) {
+    public Pair<AppValidationResult<TodoSearchForm>, AppPageableList<TodoEntity>> findByForm(TodoSearchForm form) {
         log.info("START {} form({})", methodName(), toJson(form));
 
         // バリデーション
