@@ -186,9 +186,23 @@ create table TODO (
   CREATED_AT timestamp with time zone not null default now(),
 ```
 
+### Insert, Update 時にデータベースの時刻 now() を指定したい
+
+param.yml のsetNowColumnsByTable に設定すると、そのカラムの値はSQL の now() に置き換わります。
+指定されたカラムはjava で値を更新することができなくなります。
+
+設定例
+```yml
+# param.yml
+setNowColumnsByTable:
+   "*":
+      - updated_at
+      - created_at
+```
+
 ### テストデータ作成で固定値を指定したい
 
-generateTestData4{フィールド名}() をoverride することで実現します。
+generateTestData4{フィールド名}() をoverride することで実現できます。
 
 例）Base クラス
 ```java
@@ -215,54 +229,54 @@ protected Long generateTestData4updatedBy(int seed) {
 
 ## DB 型とJava 型の変換表
 
-| 区分     | PostgreSQL 型                | Java 型                   | 備考                 |
-|--------|-----------------------------|--------------------------|--------------------|
-| 数値     | smallint                    | java.lang.Short          |                    |
-| 数値     | int2                        | java.lang.Short          |                    |
-| 数値     | smallserial                 | java.lang.Short          |                    |
-| 数値     | integer                     | java.lang.Integer        |                    |
-| 数値     | int4                        | java.lang.Integer        |                    |
-| 数値     | serial                      | java.lang.Integer        |                    |
-| 数値     | bigint                      | java.lang.Long           |                    |
-| 数値     | int8                        | java.lang.Long           |                    |
-| 数値     | bigserial                   | java.lang.Long           |                    |
-| 数値     | real                        | java.lang.Float          |                    |
-| 数値     | float4                      | java.lang.Float          |                    |
-| 数値     | double precision            | java.lang.Double         |                    |
-| 数値     | float8                      | java.lang.Double         |                    |
-| 数値     | numeric                     | java.math.BigDecimal     |                    |
-| 論理     | boolean                     | java.lang.Boolean        |                    |
-| 論理     | bool                        | java.lang.Boolean        |                    |
-| 文字列    | character                   | java.lang.String         |                    |
-| 文字列    | bpchar                      | java.lang.String         |                    |
-| 文字列    | character varying           | java.lang.String         |                    |
-| 文字列    | varchar                     | java.lang.String         |                    |
-| 文字列    | text                        | java.lang.String         |                    |
-| 日付     | date                        | java.time.LocalDate      |                    |
-| 時刻     | time                        | java.time.LocalTime      |                    |
-| 時刻     | time without time zone      | java.time.LocalTime      |                    |
-| 時刻     | time with time zone         | java.time.OffsetTime     |                    |
-| 時刻     | timetz                      | java.time.OffsetTime     |                    |
-| 時刻     | timestamp                   | java.time.LocalDateTime  |                    |
-| 時刻     | timestamp without time zone | java.time.LocalDateTime  |                    |
-| 時刻     | timestamp with time zone    | java.time.OffsetDateTime |                    |
-| 時刻     | timestamptz                 | java.time.OffsetDateTime |                    |
-| 時刻     | interval                    | java.lang.Long           | 秒（epoch）扱いが難しいため   |
-| バイナリ   | bytea                       | byte[]                   |                    |
-| 文字列    | uuid                        | java.util.UUID           |                    |
-| 文字列    | json                        | java.lang.String         | INSERT 時 ::jsonb   |
-| 文字列    | jsonb                       | java.lang.String         | INSERT 時 ::jsonb   |
-| 文字列    | xml                         | java.lang.String         | INSERT 時 ::xml     |
-| ネットワーク | inet                        | java.lang.String         | INSERT 時 ::inet    |
-| ネットワーク | cidr                        | java.lang.String         | INSERT 時 ::cidr    |
+| 区分     | PostgreSQL 型                | Java 型                   | 備考              |
+|--------|-----------------------------|--------------------------|-----------------|
+| 数値     | smallint                    | java.lang.Short          |                 |
+| 数値     | int2                        | java.lang.Short          |                 |
+| 数値     | smallserial                 | java.lang.Short          |                 |
+| 数値     | integer                     | java.lang.Integer        |                 |
+| 数値     | int4                        | java.lang.Integer        |                 |
+| 数値     | serial                      | java.lang.Integer        |                 |
+| 数値     | bigint                      | java.lang.Long           |                 |
+| 数値     | int8                        | java.lang.Long           |                 |
+| 数値     | bigserial                   | java.lang.Long           |                 |
+| 数値     | real                        | java.lang.Float          |                 |
+| 数値     | float4                      | java.lang.Float          |                 |
+| 数値     | double precision            | java.lang.Double         |                 |
+| 数値     | float8                      | java.lang.Double         |                 |
+| 数値     | numeric                     | java.math.BigDecimal     |                 |
+| 論理     | boolean                     | java.lang.Boolean        |                 |
+| 論理     | bool                        | java.lang.Boolean        |                 |
+| 文字列    | character                   | java.lang.String         |                 |
+| 文字列    | bpchar                      | java.lang.String         |                 |
+| 文字列    | character varying           | java.lang.String         |                 |
+| 文字列    | varchar                     | java.lang.String         |                 |
+| 文字列    | text                        | java.lang.String         |                 |
+| 日付     | date                        | java.time.LocalDate      |                 |
+| 時刻     | time                        | java.time.LocalTime      |                 |
+| 時刻     | time without time zone      | java.time.LocalTime      |                 |
+| 時刻     | time with time zone         | java.time.OffsetTime     |                 |
+| 時刻     | timetz                      | java.time.OffsetTime     |                 |
+| 時刻     | timestamp                   | java.time.LocalDateTime  |                 |
+| 時刻     | timestamp without time zone | java.time.LocalDateTime  |                 |
+| 時刻     | timestamp with time zone    | java.time.OffsetDateTime |                 |
+| 時刻     | timestamptz                 | java.time.OffsetDateTime |                 |
+| 時刻     | interval                    | java.lang.Long           | 秒（epoch）扱いが難しい  |
+| バイナリ   | bytea                       | byte[]                   |                 |
+| 文字列    | uuid                        | java.util.UUID           |                 |
+| 文字列    | json                        | java.lang.String         | INSERT 時 ::jsonb |
+| 文字列    | jsonb                       | java.lang.String         | INSERT 時 ::jsonb |
+| 文字列    | xml                         | java.lang.String         | INSERT 時 ::xml  |
+| ネットワーク | inet                        | java.lang.String         | INSERT 時 ::inet |
+| ネットワーク | cidr                        | java.lang.String         | INSERT 時 ::cidr |
 | ネットワーク | macaddr                     | java.lang.String         | INSERT 時 ::macaddr |
-| 幾何     | point                       | java.lang.String         | SELECT 時 ::text    |
-| 幾何     | line                        | java.lang.String         | SELECT 時 ::text    |
-| 幾何     | lseg                        | java.lang.String         | SELECT 時 ::text    |
-| 幾何     | box                         | java.lang.String         | SELECT 時 ::text    |
-| 幾何     | path                        | java.lang.String         | SELECT 時 ::text    |
-| 幾何     | polygon                     | java.lang.String         | SELECT 時 ::text    |
-| 幾何     | circle                      | java.lang.String         | SELECT 時 ::text    |
+| 幾何     | point                       | java.lang.String         | SELECT 時 ::text |
+| 幾何     | line                        | java.lang.String         | SELECT 時 ::text |
+| 幾何     | lseg                        | java.lang.String         | SELECT 時 ::text |
+| 幾何     | box                         | java.lang.String         | SELECT 時 ::text |
+| 幾何     | path                        | java.lang.String         | SELECT 時 ::text |
+| 幾何     | polygon                     | java.lang.String         | SELECT 時 ::text |
+| 幾何     | circle                      | java.lang.String         | SELECT 時 ::text |
 
 ### 対応外の型
 

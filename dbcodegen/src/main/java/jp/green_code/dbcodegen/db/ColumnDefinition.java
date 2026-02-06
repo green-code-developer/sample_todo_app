@@ -1,9 +1,14 @@
 package jp.green_code.dbcodegen.db;
 
+import java.util.List;
+import java.util.Map;
+
+import static jp.green_code.dbcodegen.DbCodeGenParameter.param;
 import static jp.green_code.dbcodegen.DbCodeGenUtil.toCamelCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class ColumnDefinition {
+    public String tableName;
     public String columnName;
     public String dbTypeName;
     public Integer jdbcType;
@@ -65,5 +70,30 @@ public class ColumnDefinition {
         } else {
             return toJavaType().dbSelectTemplate().replace("{colName}", columnName);
         }
+    }
+
+    // INSERT 対象外判定
+    public boolean shouldSkipInInsert() {
+        return mapContainsColumn(param.excludeInsertColumnsByTable, tableName, columnName);
+    }
+
+    // UPDATE 対象外判定
+    public boolean shouldSkipInUpdate() {
+        return mapContainsColumn(param.excludeUpdateColumnsByTable, tableName, columnName);
+    }
+
+    // set now() 対象判定
+    public boolean isSetNowColumn() {
+        return mapContainsColumn(param.setNowColumnsByTable, tableName, columnName);
+    }
+
+    // map にカラムが含まれるか汎用判定
+    static boolean mapContainsColumn(Map<String, List<String>> map, String tableName, String columnName) {
+        // テーブル名に「*」で登録されているカラム
+        if (map.containsKey("*") && map.get("*").contains(columnName)) {
+            return true;
+        }
+        // テーブル名とカラム名で登録されている
+        return map.containsKey(tableName) && map.get(tableName).contains(columnName);
     }
 }

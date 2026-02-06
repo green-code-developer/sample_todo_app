@@ -49,6 +49,9 @@ public abstract class BaseAccountRepository {
         if (entity.getUpdatedBy() != null) {
             insertColumns.add("updated_by");
         }
+        if (entity.getCreatedAt() != null) {
+            insertColumns.add("created_at");
+        }
         if (entity.getCreatedBy() != null) {
             insertColumns.add("created_by");
         }
@@ -69,10 +72,13 @@ public abstract class BaseAccountRepository {
                 insertValues.add(":name");
             }
             if (entity.getUpdatedAt() != null) {
-                insertValues.add(":updatedAt");
+                insertValues.add("now()");
             }
             if (entity.getUpdatedBy() != null) {
                 insertValues.add(":updatedBy");
+            }
+            if (entity.getCreatedAt() != null) {
+                insertValues.add("now()");
             }
             if (entity.getCreatedBy() != null) {
                 insertValues.add(":createdBy");
@@ -89,7 +95,7 @@ public abstract class BaseAccountRepository {
                 updateValues.add("name = EXCLUDED.name");
             }
             if (entity.getUpdatedAt() != null) {
-                updateValues.add("updated_at = EXCLUDED.updated_at");
+                updateValues.add("updated_at = now()");
             }
             if (entity.getUpdatedBy() != null) {
                 updateValues.add("updated_by = EXCLUDED.updated_by");

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DbCodeGenParameter {
+    public static DbCodeGenParameter param;
     /** JDBC url */
     public String jdbcUrl;
     /** JDBC user */
@@ -22,6 +23,8 @@ public class DbCodeGenParameter {
     public Map<String, List<String>> excludeInsertColumnsByTable = Map.of();
     /** UPDATE 対象外カラム */
     public Map<String, List<String>> excludeUpdateColumnsByTable = Map.of();
+    /** set now() カラム */
+    public Map<String, List<String>> setNowColumnsByTable = Map.of();
     /** テスト対象テーブル */
     public List<String> testTargetTable = List.of();
     /** テストスキップ対象 */

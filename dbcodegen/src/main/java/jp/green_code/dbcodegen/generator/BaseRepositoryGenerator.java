@@ -113,12 +113,18 @@ public class BaseRepositoryGenerator {
         sb.add(indent + "    var insertValues = new ArrayList<String>();");
         for (var col : table.insertTargetColumns()) {
             var dbTypeTemplate = (isBlank(col.toJavaType().dbParamTemplate()) ? ":%s" : col.toJavaType().dbParamTemplate()).formatted(col.toJavaFieldName());
+            String insertValue;
+            if (col.isSetNowColumn()) {
+                insertValue = "insertValues.add(\"now()\");";
+            } else {
+                insertValue = "insertValues.add(\"%s\");".formatted(dbTypeTemplate);
+            }
             if (col.isInsertOmittable()) {
                 sb.add(indent + "    if (entity.%s() != null) {".formatted(col.toGetter()));
-                sb.add(indent + "        insertValues.add(\"%s\");".formatted(dbTypeTemplate));
+                sb.add(indent + "        " + insertValue);
                 sb.add(indent + "    }");
             } else {
-                sb.add(indent + "    insertValues.add(\"%s\");".formatted(dbTypeTemplate));
+                sb.add(indent + "    " + insertValue);
             }
         }
         sb.add(indent + "    sql.add(\"(%s)\".formatted(String.join(\", \", insertValues)));");
@@ -132,12 +138,18 @@ public class BaseRepositoryGenerator {
             sb.add(indent + "    sql.add(\") do update set\");");
             sb.add(indent + "    var updateValues = new ArrayList<String>();");
             for (var col : table.updateTargetColumns()) {
+                String updateValue;
+                if (col.isSetNowColumn()) {
+                    updateValue = "updateValues.add(\"%s = now()\");".formatted(col.columnName);
+                } else {
+                    updateValue = "updateValues.add(\"%s = EXCLUDED.%s\");".formatted(col.columnName, col.columnName);
+                }
                 if (col.isInsertOmittable()) {
                     sb.add(indent + "    if (entity.%s() != null) {".formatted(col.toGetter()));
-                    sb.add(indent + "        updateValues.add(\"%s = EXCLUDED.%s\");".formatted(col.columnName, col.columnName));
+                    sb.add(indent + "        " + updateValue);
                     sb.add(indent + "    }");
                 } else {
-                    sb.add(indent + "    updateValues.add(\"%s = EXCLUDED.%s\");".formatted(col.columnName, col.columnName));
+                    sb.add(indent + "    " + updateValue);
                 }
             }
             sb.add(indent + "    sql.add(String.join(\", \", updateValues));");

@@ -31,10 +31,47 @@ public abstract class TestBaseTestAllWithDefaultRepository {
         var id = repository.upsert(data);
 
         // select 1回目
-        var stored = repository.findByPk(id);
+        var res = repository.findByPk(id);
         data.setColBigserial(id);
-        assertTrue(stored.isPresent());
-        assertEntity(data, stored.get());
+        assertTrue(res.isPresent());
+
+        // insert 後の確認
+        var stored = res.orElseThrow();
+        assert4colSmallint(data.getColSmallint(), stored.getColSmallint());
+        assert4colSmallserial(data.getColSmallserial(), stored.getColSmallserial());
+        assert4colInteger(data.getColInteger(), stored.getColInteger());
+        assert4colSerial(data.getColSerial(), stored.getColSerial());
+        assert4colBigint(data.getColBigint(), stored.getColBigint());
+        assert4colBigserial(data.getColBigserial(), stored.getColBigserial());
+        assert4colReal(data.getColReal(), stored.getColReal());
+        assert4colDoublePrecision(data.getColDoublePrecision(), stored.getColDoublePrecision());
+        assert4colNumeric(data.getColNumeric(), stored.getColNumeric());
+        assert4colBoolean(data.getColBoolean(), stored.getColBoolean());
+        assert4colChar(data.getColChar(), stored.getColChar());
+        assert4colVarchar(data.getColVarchar(), stored.getColVarchar());
+        assert4colText(data.getColText(), stored.getColText());
+        assert4colDate(data.getColDate(), stored.getColDate());
+        assert4colTime(data.getColTime(), stored.getColTime());
+        assert4colTimeTz(data.getColTimeTz(), stored.getColTimeTz());
+        assert4colTimestamp(data.getColTimestamp(), stored.getColTimestamp());
+        assert4colTimestampTz(data.getColTimestampTz(), stored.getColTimestampTz());
+        assert4colInterval(data.getColInterval(), stored.getColInterval());
+        assert4colBytea(data.getColBytea(), stored.getColBytea());
+        assert4colUuid(data.getColUuid(), stored.getColUuid());
+        assert4colJson(data.getColJson(), stored.getColJson());
+        assert4colJsonb(data.getColJsonb(), stored.getColJsonb());
+        assert4colXml(data.getColXml(), stored.getColXml());
+        assert4colInet(data.getColInet(), stored.getColInet());
+        assert4colCidr(data.getColCidr(), stored.getColCidr());
+        assert4colMacaddr(data.getColMacaddr(), stored.getColMacaddr());
+        assert4colBox(data.getColBox(), stored.getColBox());
+        assert4colPoint(data.getColPoint(), stored.getColPoint());
+        assert4colLine(data.getColLine(), stored.getColLine());
+        assert4colLseg(data.getColLseg(), stored.getColLseg());
+        assert4colPath(data.getColPath(), stored.getColPath());
+        assert4colPolygon(data.getColPolygon(), stored.getColPolygon());
+        assert4colCircle(data.getColCircle(), stored.getColCircle());
+        assert4colTodoStatus(data.getColTodoStatus(), stored.getColTodoStatus());
 
         // update(upsert)
         seed++;
@@ -43,9 +80,46 @@ public abstract class TestBaseTestAllWithDefaultRepository {
         repository.upsert(data2);
 
         // select 2回目
-        var stored2 = repository.findByPk(id);
-        assertTrue(stored2.isPresent());
-        assertEntity(data2, stored2.get());
+        var res2 = repository.findByPk(id);
+        assertTrue(res2.isPresent());
+
+        // update 後の確認
+        var stored2 = res2.orElseThrow();
+        assert4colSmallint(data2.getColSmallint(), stored2.getColSmallint());
+        assert4colSmallserial(data2.getColSmallserial(), stored2.getColSmallserial());
+        assert4colInteger(data2.getColInteger(), stored2.getColInteger());
+        assert4colSerial(data2.getColSerial(), stored2.getColSerial());
+        assert4colBigint(data2.getColBigint(), stored2.getColBigint());
+        assert4colBigserial(data2.getColBigserial(), stored2.getColBigserial());
+        assert4colReal(data2.getColReal(), stored2.getColReal());
+        assert4colDoublePrecision(data2.getColDoublePrecision(), stored2.getColDoublePrecision());
+        assert4colNumeric(data2.getColNumeric(), stored2.getColNumeric());
+        assert4colBoolean(data2.getColBoolean(), stored2.getColBoolean());
+        assert4colChar(data2.getColChar(), stored2.getColChar());
+        assert4colVarchar(data2.getColVarchar(), stored2.getColVarchar());
+        assert4colText(data2.getColText(), stored2.getColText());
+        assert4colDate(data2.getColDate(), stored2.getColDate());
+        assert4colTime(data2.getColTime(), stored2.getColTime());
+        assert4colTimeTz(data2.getColTimeTz(), stored2.getColTimeTz());
+        assert4colTimestamp(data2.getColTimestamp(), stored2.getColTimestamp());
+        assert4colTimestampTz(data2.getColTimestampTz(), stored2.getColTimestampTz());
+        assert4colInterval(data2.getColInterval(), stored2.getColInterval());
+        assert4colBytea(data2.getColBytea(), stored2.getColBytea());
+        assert4colUuid(data2.getColUuid(), stored2.getColUuid());
+        assert4colJson(data2.getColJson(), stored2.getColJson());
+        assert4colJsonb(data2.getColJsonb(), stored2.getColJsonb());
+        assert4colXml(data2.getColXml(), stored2.getColXml());
+        assert4colInet(data2.getColInet(), stored2.getColInet());
+        assert4colCidr(data2.getColCidr(), stored2.getColCidr());
+        assert4colMacaddr(data2.getColMacaddr(), stored2.getColMacaddr());
+        assert4colBox(data2.getColBox(), stored2.getColBox());
+        assert4colPoint(data2.getColPoint(), stored2.getColPoint());
+        assert4colLine(data2.getColLine(), stored2.getColLine());
+        assert4colLseg(data2.getColLseg(), stored2.getColLseg());
+        assert4colPath(data2.getColPath(), stored2.getColPath());
+        assert4colPolygon(data2.getColPolygon(), stored2.getColPolygon());
+        assert4colCircle(data2.getColCircle(), stored2.getColCircle());
+        assert4colTodoStatus(data2.getColTodoStatus(), stored2.getColTodoStatus());
 
         // delete
         var deleteCount = repository.deleteByPk(id);
@@ -239,43 +313,6 @@ public abstract class TestBaseTestAllWithDefaultRepository {
         return pickBySeed(jp.green_code.todo.enums.TodoStatusEnum.class, seed);
     }
 
-    public void assertEntity(TestAllWithDefaultEntity data, TestAllWithDefaultEntity entity) {
-        assert4colSmallint(data.getColSmallint(), entity.getColSmallint());
-        assert4colSmallserial(data.getColSmallserial(), entity.getColSmallserial());
-        assert4colInteger(data.getColInteger(), entity.getColInteger());
-        assert4colSerial(data.getColSerial(), entity.getColSerial());
-        assert4colBigint(data.getColBigint(), entity.getColBigint());
-        assert4colBigserial(data.getColBigserial(), entity.getColBigserial());
-        assert4colReal(data.getColReal(), entity.getColReal());
-        assert4colDoublePrecision(data.getColDoublePrecision(), entity.getColDoublePrecision());
-        assert4colNumeric(data.getColNumeric(), entity.getColNumeric());
-        assert4colBoolean(data.getColBoolean(), entity.getColBoolean());
-        assert4colChar(data.getColChar(), entity.getColChar());
-        assert4colVarchar(data.getColVarchar(), entity.getColVarchar());
-        assert4colText(data.getColText(), entity.getColText());
-        assert4colDate(data.getColDate(), entity.getColDate());
-        assert4colTime(data.getColTime(), entity.getColTime());
-        assert4colTimeTz(data.getColTimeTz(), entity.getColTimeTz());
-        assert4colTimestamp(data.getColTimestamp(), entity.getColTimestamp());
-        assert4colTimestampTz(data.getColTimestampTz(), entity.getColTimestampTz());
-        assert4colInterval(data.getColInterval(), entity.getColInterval());
-        assert4colBytea(data.getColBytea(), entity.getColBytea());
-        assert4colUuid(data.getColUuid(), entity.getColUuid());
-        assert4colJson(data.getColJson(), entity.getColJson());
-        assert4colJsonb(data.getColJsonb(), entity.getColJsonb());
-        assert4colXml(data.getColXml(), entity.getColXml());
-        assert4colInet(data.getColInet(), entity.getColInet());
-        assert4colCidr(data.getColCidr(), entity.getColCidr());
-        assert4colMacaddr(data.getColMacaddr(), entity.getColMacaddr());
-        assert4colBox(data.getColBox(), entity.getColBox());
-        assert4colPoint(data.getColPoint(), entity.getColPoint());
-        assert4colLine(data.getColLine(), entity.getColLine());
-        assert4colLseg(data.getColLseg(), entity.getColLseg());
-        assert4colPath(data.getColPath(), entity.getColPath());
-        assert4colPolygon(data.getColPolygon(), entity.getColPolygon());
-        assert4colCircle(data.getColCircle(), entity.getColCircle());
-        assert4colTodoStatus(data.getColTodoStatus(), entity.getColTodoStatus());
-    }
 
     protected void assert4colSmallint(Short expected, Short value) {
         assertEquals(expected, value);

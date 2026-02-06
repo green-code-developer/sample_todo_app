@@ -17,10 +17,14 @@ public abstract class TestBaseTestOnePkRepository {
         var id = repository.upsert(data);
 
         // select 1回目
-        var stored = repository.findByPk(id);
+        var res = repository.findByPk(id);
         data.setColBigserial(id);
-        assertTrue(stored.isPresent());
-        assertEntity(data, stored.get());
+        assertTrue(res.isPresent());
+
+        // insert 後の確認
+        var stored = res.orElseThrow();
+        assert4colBigserial(data.getColBigserial(), stored.getColBigserial());
+        assert4colText(data.getColText(), stored.getColText());
 
         // update(upsert)
         seed++;
@@ -29,9 +33,13 @@ public abstract class TestBaseTestOnePkRepository {
         repository.upsert(data2);
 
         // select 2回目
-        var stored2 = repository.findByPk(id);
-        assertTrue(stored2.isPresent());
-        assertEntity(data2, stored2.get());
+        var res2 = repository.findByPk(id);
+        assertTrue(res2.isPresent());
+
+        // update 後の確認
+        var stored2 = res2.orElseThrow();
+        assert4colBigserial(data2.getColBigserial(), stored2.getColBigserial());
+        assert4colText(data2.getColText(), stored2.getColText());
 
         // delete
         var deleteCount = repository.deleteByPk(id);
@@ -60,10 +68,6 @@ public abstract class TestBaseTestOnePkRepository {
         return seed + "";
     }
 
-    public void assertEntity(TestOnePkEntity data, TestOnePkEntity entity) {
-        assert4colBigserial(data.getColBigserial(), entity.getColBigserial());
-        assert4colText(data.getColText(), entity.getColText());
-    }
 
     protected void assert4colBigserial(Long expected, Long value) {
         assertEquals(expected, value);

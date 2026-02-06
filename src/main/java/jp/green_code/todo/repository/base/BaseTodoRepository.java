@@ -51,6 +51,9 @@ public abstract class BaseTodoRepository {
         if (entity.getUpdatedBy() != null) {
             insertColumns.add("updated_by");
         }
+        if (entity.getCreatedAt() != null) {
+            insertColumns.add("created_at");
+        }
         if (entity.getCreatedBy() != null) {
             insertColumns.add("created_by");
         }
@@ -68,10 +71,13 @@ public abstract class BaseTodoRepository {
         }
         insertValues.add(":deadline");
         if (entity.getUpdatedAt() != null) {
-            insertValues.add(":updatedAt");
+            insertValues.add("now()");
         }
         if (entity.getUpdatedBy() != null) {
             insertValues.add(":updatedBy");
+        }
+        if (entity.getCreatedAt() != null) {
+            insertValues.add("now()");
         }
         if (entity.getCreatedBy() != null) {
             insertValues.add(":createdBy");
@@ -89,7 +95,7 @@ public abstract class BaseTodoRepository {
         }
         updateValues.add("deadline = EXCLUDED.deadline");
         if (entity.getUpdatedAt() != null) {
-            updateValues.add("updated_at = EXCLUDED.updated_at");
+            updateValues.add("updated_at = now()");
         }
         if (entity.getUpdatedBy() != null) {
             updateValues.add("updated_by = EXCLUDED.updated_by");

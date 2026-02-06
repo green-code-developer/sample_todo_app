@@ -12,24 +12,23 @@ import jp.green_code.dbcodegen.generator.RepositoryGenerator;
 import jp.green_code.dbcodegen.generator.TestBaseRepositoryGenerator;
 import jp.green_code.dbcodegen.generator.TestRepositoryGenerator;
 import org.apache.commons.io.FileUtils;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static jp.green_code.dbcodegen.DbCodeGenParameter.param;
 import static jp.green_code.dbcodegen.DbCodeGenUtil.dumpTableDefinitions;
 
 public class DbCodeGenRunner {
-    DbCodeGenParameter param;
-
-    public DbCodeGenRunner(DbCodeGenParameter param) {
-        this.param = param;
-    }
 
     public void run() throws Exception {
-        var dbDefinitionReader = new DbDefinitionReader(param);
+        param = readParameter();
+        var dbDefinitionReader = new DbDefinitionReader();
         appendEnum();
         var tables = dbDefinitionReader.readDefinition();
         dumpTableDefinitions(tables);
@@ -43,6 +42,13 @@ public class DbCodeGenRunner {
         }
         for (var t : tables) {
             writeTestRepository(t);
+        }
+    }
+
+    static DbCodeGenParameter readParameter() throws IOException {
+        Yaml yaml = new Yaml();
+        try (InputStream is = DbCodeGenMain.class.getClassLoader().getResourceAsStream("param.yml")) {
+            return yaml.loadAs(is, DbCodeGenParameter.class);
         }
     }
 

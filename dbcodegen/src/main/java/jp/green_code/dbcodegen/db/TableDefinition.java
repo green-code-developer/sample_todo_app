@@ -5,7 +5,6 @@ import org.apache.commons.lang3.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Comparator.comparing;
@@ -63,56 +62,13 @@ public class TableDefinition {
     // INSERT 対象となるカラム一覧
     //   PK と更新対象外(excludeInsertColumnsByTable) を除いたカラム
     public List<ColumnDefinition> insertTargetColumns() {
-        return columns.stream().filter(c -> !shouldSkipInInsert(c)).toList();
-    }
-
-    // INSERT 対象外カラム一覧
-    //   INSERT（excludeInsertColumnsByTable）に含まれるカラム
-    public List<ColumnDefinition> insertExcludedColumns() {
-        return columns.stream().filter(this::shouldSkipInInsert).toList();
-    }
-
-    // INSERT 対象外判定
-    public boolean shouldSkipInInsert(ColumnDefinition col) {
-        return mapContainsColumn(param.excludeInsertColumnsByTable, tableName, col.columnName);
+        return columns.stream().filter(c -> !c.shouldSkipInInsert()).toList();
     }
 
     // UPDATE 対象となるカラム一覧
     //   PK と更新対象外(excludeUpdateColumnsByTable) を除いたカラム
     public List<ColumnDefinition> updateTargetColumns() {
-        return columns.stream().filter(c -> !c.isPrimaryKey() && !shouldSkipInUpdate(c)).toList();
-    }
-
-    // UPDATE 対象外カラム一覧
-    //   UPDATE対象外（excludeUpdateColumnsByTable）に含まれるカラム
-    public List<ColumnDefinition> updateExcludedColumns() {
-        return columns.stream().filter(this::shouldSkipInUpdate).toList();
-    }
-
-    // UPDATE 対象外判定
-    public boolean shouldSkipInUpdate(ColumnDefinition col) {
-        return mapContainsColumn(param.excludeUpdateColumnsByTable, tableName, col.columnName);
-    }
-
-    // テスト対象となるカラム一覧
-    //   テスト対象外（testSkipColumnsByTable）を除いたカラム
-    public List<ColumnDefinition> testTargetColumns() {
-        return columns.stream().filter(c -> !this.shouldSkipColumnInTest(c)).toList();
-    }
-
-    // テスト対象外判定
-    public boolean shouldSkipColumnInTest(ColumnDefinition col) {
-        return mapContainsColumn(param.testSkipColumnsByTable, tableName, col.columnName);
-    }
-
-    // map にカラムが含まれるか汎用判定
-    static boolean mapContainsColumn(Map<String, List<String>> map, String tableName, String columnName) {
-        // テーブル名に「*」で登録されているカラム
-        if (map.containsKey("*") && map.get("*").contains(columnName)) {
-            return true;
-        }
-        // テーブル名とカラム名で登録されている
-        return map.containsKey(tableName) && map.get(tableName).contains(columnName);
+        return columns.stream().filter(c -> !c.isPrimaryKey() && !c.shouldSkipInUpdate()).toList();
     }
 
     // テスト対象外テーブル判定

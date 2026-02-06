@@ -20,12 +20,20 @@ public abstract class TestBaseTodoRepository {
         var id = repository.upsert(data);
 
         // select 1回目
-        var stored = repository.findByPk(id);
+        var res = repository.findByPk(id);
         data.setTodoId(id);
-        assertTrue(stored.isPresent());
-        // INSERT 対象外カラムの値を上書き（テスト不可）
-        data.setCreatedAt(stored.get().getCreatedAt());
-        assertEntity(data, stored.get());
+        assertTrue(res.isPresent());
+
+        // insert 後の確認
+        var stored = res.orElseThrow();
+        assert4todoId(data.getTodoId(), stored.getTodoId());
+        assert4todoStatus(data.getTodoStatus(), stored.getTodoStatus());
+        assert4detail(data.getDetail(), stored.getDetail());
+        assert4deadline(data.getDeadline(), stored.getDeadline());
+        // updated_at はnow() を設定するカラムのためassertしない
+        assert4updatedBy(data.getUpdatedBy(), stored.getUpdatedBy());
+        // created_at はnow() を設定するカラムのためassertしない
+        assert4createdBy(data.getCreatedBy(), stored.getCreatedBy());
 
         // update(upsert)
         seed++;
@@ -34,12 +42,21 @@ public abstract class TestBaseTodoRepository {
         repository.upsert(data2);
 
         // select 2回目
-        var stored2 = repository.findByPk(id);
-        assertTrue(stored2.isPresent());
-        // UPDATE 対象外カラムの値を更新前の値で上書き（変わっていないことを確認）
-        data2.setCreatedAt(stored.get().getCreatedAt());
-        data2.setCreatedBy(stored.get().getCreatedBy());
-        assertEntity(data2, stored2.get());
+        var res2 = repository.findByPk(id);
+        assertTrue(res2.isPresent());
+
+        // update 後の確認
+        var stored2 = res2.orElseThrow();
+        assert4todoId(data2.getTodoId(), stored2.getTodoId());
+        assert4todoStatus(data2.getTodoStatus(), stored2.getTodoStatus());
+        assert4detail(data2.getDetail(), stored2.getDetail());
+        assert4deadline(data2.getDeadline(), stored2.getDeadline());
+        // updated_at はnow() を設定するカラムのためassertしない
+        assert4updatedBy(data2.getUpdatedBy(), stored2.getUpdatedBy());
+        // created_at はupdate 対象外のため変更前の値が変わらないこと
+        assert4createdAt(stored.getCreatedAt(), stored2.getCreatedAt());
+        // created_by はupdate 対象外のため変更前の値が変わらないこと
+        assert4createdBy(stored.getCreatedBy(), stored2.getCreatedBy());
 
         // delete
         var deleteCount = repository.deleteByPk(id);
@@ -98,15 +115,6 @@ public abstract class TestBaseTodoRepository {
         return (long) seed;
     }
 
-    public void assertEntity(TodoEntity data, TodoEntity entity) {
-        assert4todoId(data.getTodoId(), entity.getTodoId());
-        assert4todoStatus(data.getTodoStatus(), entity.getTodoStatus());
-        assert4detail(data.getDetail(), entity.getDetail());
-        assert4deadline(data.getDeadline(), entity.getDeadline());
-        assert4updatedBy(data.getUpdatedBy(), entity.getUpdatedBy());
-        assert4createdAt(data.getCreatedAt(), entity.getCreatedAt());
-        assert4createdBy(data.getCreatedBy(), entity.getCreatedBy());
-    }
 
     protected void assert4todoId(Long expected, Long value) {
         assertEquals(expected, value);

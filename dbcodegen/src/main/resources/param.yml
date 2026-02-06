@@ -44,8 +44,20 @@ excludeUpdateColumnsByTable:
 #   table_name:
 #     - column_name
 #   テーブルに* を指定すると全テーブルのカラムが対象となります
-excludeInsertColumnsByTable:
+#excludeInsertColumnsByTable:
+#  "*":
+#    - created_at
+
+# now() 更新カラム（省略可）
+#   insert やupdate の時に、sql のnow() をセットします
+#   java から値を指定することはできなくなります。
+#   テーブル名とカラム名を下の形式で指定します
+#   table_name:
+#     - column_name
+#   テーブルに* を指定すると全テーブルのカラムが対象となります
+setNowColumnsByTable:
   "*":
+    - updated_at
     - created_at
 
 # 実体クラスの強制上書き（省略可）

@@ -16,9 +16,14 @@ public abstract class TestBaseTestTwoPkRepository {
         repository.upsert(data);
 
         // select 1回目
-        var stored = repository.findByPk(data.getColIntegerPk1(), data.getColIntegerPk2());
-        assertTrue(stored.isPresent());
-        assertEntity(data, stored.get());
+        var res = repository.findByPk(data.getColIntegerPk1(), data.getColIntegerPk2());
+        assertTrue(res.isPresent());
+
+        // insert 後の確認
+        var stored = res.orElseThrow();
+        assert4colIntegerPk1(data.getColIntegerPk1(), stored.getColIntegerPk1());
+        assert4colIntegerPk2(data.getColIntegerPk2(), stored.getColIntegerPk2());
+        assert4colText(data.getColText(), stored.getColText());
 
         // update(upsert)
         seed++;
@@ -26,9 +31,14 @@ public abstract class TestBaseTestTwoPkRepository {
         repository.upsert(data2);
 
         // select 2回目
-        var stored2 = repository.findByPk(data2.getColIntegerPk1(), data2.getColIntegerPk2());
-        assertTrue(stored2.isPresent());
-        assertEntity(data2, stored2.get());
+        var res2 = repository.findByPk(data2.getColIntegerPk1(), data2.getColIntegerPk2());
+        assertTrue(res2.isPresent());
+
+        // update 後の確認
+        var stored2 = res2.orElseThrow();
+        assert4colIntegerPk1(data2.getColIntegerPk1(), stored2.getColIntegerPk1());
+        assert4colIntegerPk2(data2.getColIntegerPk2(), stored2.getColIntegerPk2());
+        assert4colText(data2.getColText(), stored2.getColText());
 
         // delete
         var deleteCount = repository.deleteByPk(data2.getColIntegerPk1(), data2.getColIntegerPk2());
@@ -62,11 +72,6 @@ public abstract class TestBaseTestTwoPkRepository {
         return seed + "";
     }
 
-    public void assertEntity(TestTwoPkEntity data, TestTwoPkEntity entity) {
-        assert4colIntegerPk1(data.getColIntegerPk1(), entity.getColIntegerPk1());
-        assert4colIntegerPk2(data.getColIntegerPk2(), entity.getColIntegerPk2());
-        assert4colText(data.getColText(), entity.getColText());
-    }
 
     protected void assert4colIntegerPk1(Long expected, Long value) {
         assertEquals(expected, value);

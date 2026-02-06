@@ -18,12 +18,19 @@ public abstract class TestBaseAccountRepository {
         var id = repository.upsert(data);
 
         // select 1回目
-        var stored = repository.findByPk(id);
+        var res = repository.findByPk(id);
         data.setAccountId(id);
-        assertTrue(stored.isPresent());
-        // INSERT 対象外カラムの値を上書き（テスト不可）
-        data.setCreatedAt(stored.get().getCreatedAt());
-        assertEntity(data, stored.get());
+        assertTrue(res.isPresent());
+
+        // insert 後の確認
+        var stored = res.orElseThrow();
+        assert4accountId(data.getAccountId(), stored.getAccountId());
+        assert4accountStatus(data.getAccountStatus(), stored.getAccountStatus());
+        assert4name(data.getName(), stored.getName());
+        // updated_at はnow() を設定するカラムのためassertしない
+        assert4updatedBy(data.getUpdatedBy(), stored.getUpdatedBy());
+        // created_at はnow() を設定するカラムのためassertしない
+        assert4createdBy(data.getCreatedBy(), stored.getCreatedBy());
 
         // update(upsert)
         seed++;
@@ -32,12 +39,20 @@ public abstract class TestBaseAccountRepository {
         repository.upsert(data2);
 
         // select 2回目
-        var stored2 = repository.findByPk(id);
-        assertTrue(stored2.isPresent());
-        // UPDATE 対象外カラムの値を更新前の値で上書き（変わっていないことを確認）
-        data2.setCreatedAt(stored.get().getCreatedAt());
-        data2.setCreatedBy(stored.get().getCreatedBy());
-        assertEntity(data2, stored2.get());
+        var res2 = repository.findByPk(id);
+        assertTrue(res2.isPresent());
+
+        // update 後の確認
+        var stored2 = res2.orElseThrow();
+        assert4accountId(data2.getAccountId(), stored2.getAccountId());
+        assert4accountStatus(data2.getAccountStatus(), stored2.getAccountStatus());
+        assert4name(data2.getName(), stored2.getName());
+        // updated_at はnow() を設定するカラムのためassertしない
+        assert4updatedBy(data2.getUpdatedBy(), stored2.getUpdatedBy());
+        // created_at はupdate 対象外のため変更前の値が変わらないこと
+        assert4createdAt(stored.getCreatedAt(), stored2.getCreatedAt());
+        // created_by はupdate 対象外のため変更前の値が変わらないこと
+        assert4createdBy(stored.getCreatedBy(), stored2.getCreatedBy());
 
         // delete
         var deleteCount = repository.deleteByPk(id);
@@ -91,14 +106,6 @@ public abstract class TestBaseAccountRepository {
         return (long) seed;
     }
 
-    public void assertEntity(AccountEntity data, AccountEntity entity) {
-        assert4accountId(data.getAccountId(), entity.getAccountId());
-        assert4accountStatus(data.getAccountStatus(), entity.getAccountStatus());
-        assert4name(data.getName(), entity.getName());
-        assert4updatedBy(data.getUpdatedBy(), entity.getUpdatedBy());
-        assert4createdAt(data.getCreatedAt(), entity.getCreatedAt());
-        assert4createdBy(data.getCreatedBy(), entity.getCreatedBy());
-    }
 
     protected void assert4accountId(Long expected, Long value) {
         assertEquals(expected, value);

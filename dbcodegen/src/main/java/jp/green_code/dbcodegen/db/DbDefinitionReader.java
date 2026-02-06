@@ -1,6 +1,5 @@
 package jp.green_code.dbcodegen.db;
 
-import jp.green_code.dbcodegen.DbCodeGenParameter;
 import org.apache.commons.lang3.Strings;
 
 import java.sql.Connection;
@@ -11,13 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.sql.DatabaseMetaData.columnNullable;
+import static jp.green_code.dbcodegen.DbCodeGenParameter.param;
 
 public class DbDefinitionReader {
-    final DbCodeGenParameter param;
-
-    public DbDefinitionReader(DbCodeGenParameter param) {
-        this.param = param;
-    }
 
     public List<TableDefinition> readDefinition() throws Exception {
         var result = new ArrayList<TableDefinition>();
@@ -44,7 +39,7 @@ public class DbDefinitionReader {
         try (ResultSet columnRs = meta.getColumns(null, param.jdbcSchema, table.tableName, null)) {
             while (columnRs.next()) {
                 index++;
-                var columnDef = readColumnDefinition(columnRs);
+                var columnDef = readColumnDefinition(table.tableName, columnRs);
                 table.columns.add(columnDef);
             }
         } catch (Exception e) {
@@ -62,8 +57,9 @@ public class DbDefinitionReader {
         return table;
     }
 
-    ColumnDefinition readColumnDefinition(ResultSet columnRs) throws Exception {
+    ColumnDefinition readColumnDefinition(String tableName, ResultSet columnRs) throws Exception {
         var result = new ColumnDefinition();
+        result.tableName = tableName;
         result.columnName = columnRs.getString("COLUMN_NAME");
         result.dbTypeName = columnRs.getString("TYPE_NAME");
         result.jdbcType = columnRs.getInt("DATA_TYPE");

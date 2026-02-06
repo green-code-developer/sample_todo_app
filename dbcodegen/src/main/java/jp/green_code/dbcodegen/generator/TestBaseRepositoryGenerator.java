@@ -75,7 +75,7 @@ public class TestBaseRepositoryGenerator {
                     sb.add("    var id = repository.upsert(data);");
                     sb.add("");
                     sb.add("    // select 1回目");
-                    sb.add("    var stored = repository.findByPk(id);");
+                    sb.add("    var res = repository.findByPk(id);");
                     sb.add("    data.%s(id);".formatted(c.toSetter()));
                 },
                 () -> {
@@ -83,17 +83,22 @@ public class TestBaseRepositoryGenerator {
                     sb.add("");
                     sb.add("    // select 1回目");
                     var pks = table.pkColumns().stream().map(c -> "data.%s()".formatted(c.toGetter())).collect(Collectors.joining(", "));
-                    sb.add("    var stored = repository.findByPk(%s);".formatted(pks));
+                    sb.add("    var res = repository.findByPk(%s);".formatted(pks));
                 }
         );
-        sb.add("    assertTrue(stored.isPresent());");
-        if (!table.insertExcludedColumns().isEmpty()) {
-            sb.add("    // INSERT 対象外カラムの値を上書き（テスト不可）");
-            for (var col : table.insertExcludedColumns()) {
-                sb.add("    data.%s(stored.get().%s());".formatted(col.toSetter(), col.toGetter()));
+        sb.add("    assertTrue(res.isPresent());");
+        sb.add("");
+        sb.add("    // insert 後の確認");
+        sb.add("    var stored = res.orElseThrow();");
+        for (var col : table.columns) {
+            if (col.shouldSkipInInsert()) {
+                sb.add("    // %s はinsert 対象外のためassertしない".formatted(col.columnName));
+            } else if (col.isSetNowColumn()) {
+                sb.add("    // %s はnow() を設定するカラムのためassertしない".formatted(col.columnName));
+            } else {
+                sb.add("    assert4%s(data.%s(), stored.%s());".formatted(col.toJavaFieldName(), col.toGetter(), col.toGetter()));
             }
         }
-        sb.add("    assertEntity(data, stored.get());");
         sb.add("");
         sb.add("    // update(upsert)");
         sb.add("    seed++;");
@@ -104,24 +109,30 @@ public class TestBaseRepositoryGenerator {
                     sb.add("    repository.upsert(data2);");
                     sb.add("");
                     sb.add("    // select 2回目");
-                    sb.add("    var stored2 = repository.findByPk(id);");
+                    sb.add("    var res2 = repository.findByPk(id);");
                 },
                 () -> {
                     sb.add("    repository.upsert(data2);");
                     sb.add("");
                     sb.add("    // select 2回目");
                     var pks = table.pkColumns().stream().map(c -> "data2.%s()".formatted(c.toGetter())).collect(Collectors.joining(", "));
-                    sb.add("    var stored2 = repository.findByPk(%s);".formatted(pks));
+                    sb.add("    var res2 = repository.findByPk(%s);".formatted(pks));
                 }
         );
-        sb.add("    assertTrue(stored2.isPresent());");
-        if (!table.updateExcludedColumns().isEmpty()) {
-            sb.add("    // UPDATE 対象外カラムの値を更新前の値で上書き（変わっていないことを確認）");
-            for (var col : table.updateExcludedColumns()) {
-                sb.add("    data2.%s(stored.get().%s());".formatted(col.toSetter(), col.toGetter()));
+        sb.add("    assertTrue(res2.isPresent());");
+        sb.add("");
+        sb.add("    // update 後の確認");
+        sb.add("    var stored2 = res2.orElseThrow();");
+        for (var col : table.columns) {
+            if (col.shouldSkipInUpdate()) {
+                sb.add("    // %s はupdate 対象外のため変更前の値が変わらないこと".formatted(col.columnName));
+                sb.add("    assert4%s(stored.%s(), stored2.%s());".formatted(col.toJavaFieldName(), col.toGetter(), col.toGetter()));
+            } else if (col.isSetNowColumn()) {
+                sb.add("    // %s はnow() を設定するカラムのためassertしない".formatted(col.columnName));
+            } else {
+                sb.add("    assert4%s(data2.%s(), stored2.%s());".formatted(col.toJavaFieldName(), col.toGetter(), col.toGetter()));
             }
         }
-        sb.add("    assertEntity(data2, stored2.get());");
         sb.add("");
         sb.add("    // delete");
         table.findOnlyOnePk().ifPresentOrElse(
@@ -175,11 +186,6 @@ public class TestBaseRepositoryGenerator {
 
     List<String> assertEntity() {
         var sb = new ArrayList<String>();
-        sb.add("public void assertEntity(%s data, %s entity) {".formatted(table.toEntityClassName(), table.toEntityClassName()));
-        for (var col : table.testTargetColumns()) {
-            sb.add("    assert4%s(data.%s(), entity.%s());".formatted(col.toJavaFieldName(), col.toGetter(), col.toGetter()));
-        }
-        sb.add("}");
         for (var col : table.columns) {
             sb.add("");
             sb.add("protected void assert4%s(%s expected, %s value) {".formatted(col.toJavaFieldName(), col.javaSimpleName(), col.javaSimpleName()));
