@@ -130,12 +130,11 @@ public class BaseRepositoryGenerator {
         sb.add(indent + "    sql.add(\"(%s)\".formatted(String.join(\", \", insertValues)));");
         // pk なしの場合はon conflict 以下を作成しない
         if (!table.pkColumns().isEmpty()) {
-            sb.add(indent + "    sql.add(\"on conflict (\");");
+            sb.add(indent + "        sql.add(\"on conflict (\");");
             for (var col : table.pkColumns()) {
                 var comma = table.pkColumns().getLast() == col ? "" : ",";
-                sb.add(indent + "    sql.add(\"    %s%s\");".formatted(col.columnName, comma));
+                sb.add(indent + "        sql.add(\"    %s%s\");".formatted(col.columnName, comma));
             }
-            sb.add(indent + "    sql.add(\") do update set\");");
             sb.add(indent + "    var updateValues = new ArrayList<String>();");
             for (var col : table.updateTargetColumns()) {
                 String updateValue;
@@ -152,7 +151,12 @@ public class BaseRepositoryGenerator {
                     sb.add(indent + "    " + updateValue);
                 }
             }
-            sb.add(indent + "    sql.add(String.join(\", \", updateValues));");
+            sb.add(indent + "    if (updateValues.isEmpty()) {");
+            sb.add(indent + "        sql.add(\") do nothing\");");
+            sb.add(indent + "    } else {");
+            sb.add(indent + "        sql.add(\") do update set\");");
+            sb.add(indent + "        sql.add(String.join(\", \", updateValues));");
+            sb.add(indent + "    }");
         }
         if (table.hasAllDefaultValue()) {
             sb.add("    }");

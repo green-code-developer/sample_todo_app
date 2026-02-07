@@ -1,35 +1,28 @@
 package jp.green_code.todo.repository.base;
 
 import java.lang.Long;
-import java.lang.String;
 import java.time.OffsetDateTime;
-import jp.green_code.todo.entity.TodoEntity;
-import jp.green_code.todo.enums.TodoStatusEnum;
-import static jp.green_code.todo.repository.base.RepositoryHelper.pickBySeed;
+import jp.green_code.todo.entity.TestTriggerUpdateCreateEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class TestBaseTodoRepository {
+public abstract class TestBaseTestTriggerUpdateCreateRepository {
 
-    protected void test(BaseTodoRepository repository) {
+    protected void test(BaseTestTriggerUpdateCreateRepository repository) {
         var seed = getInitSeed();
         var data = generateTestData(seed);
 
         // insert(upsert)
-        data.setTodoId(null);
-        var id = repository.upsert(data);
+        repository.upsert(data);
 
         // select 1回目
-        var res = repository.findByPk(id);
-        data.setTodoId(id);
+        var res = repository.findByPk(data.getColIntegerPk1(), data.getColIntegerPk2());
         assertTrue(res.isPresent());
 
         // insert 後の確認
         var stored = res.orElseThrow();
-        assert4todoId(data.getTodoId(), stored.getTodoId());
-        assert4todoStatus(data.getTodoStatus(), stored.getTodoStatus());
-        assert4detail(data.getDetail(), stored.getDetail());
-        assert4deadline(data.getDeadline(), stored.getDeadline());
+        assert4colIntegerPk1(data.getColIntegerPk1(), stored.getColIntegerPk1());
+        assert4colIntegerPk2(data.getColIntegerPk2(), stored.getColIntegerPk2());
         // updated_at はnow() を設定するカラムのためassertしない
         assert4updatedBy(data.getUpdatedBy(), stored.getUpdatedBy());
         // created_at はnow() を設定するカラムのためassertしない
@@ -38,19 +31,18 @@ public abstract class TestBaseTodoRepository {
         // update(upsert)
         seed++;
         var data2 = generateTestData(seed);
-        data2.setTodoId(id);
+        data2.setColIntegerPk1(data.getColIntegerPk1());
+        data2.setColIntegerPk2(data.getColIntegerPk2());
         repository.upsert(data2);
 
         // select 2回目
-        var res2 = repository.findByPk(id);
+        var res2 = repository.findByPk(data2.getColIntegerPk1(), data2.getColIntegerPk2());
         assertTrue(res2.isPresent());
 
         // update 後の確認
         var stored2 = res2.orElseThrow();
-        assert4todoId(data2.getTodoId(), stored2.getTodoId());
-        assert4todoStatus(data2.getTodoStatus(), stored2.getTodoStatus());
-        assert4detail(data2.getDetail(), stored2.getDetail());
-        assert4deadline(data2.getDeadline(), stored2.getDeadline());
+        assert4colIntegerPk1(data2.getColIntegerPk1(), stored2.getColIntegerPk1());
+        assert4colIntegerPk2(data2.getColIntegerPk2(), stored2.getColIntegerPk2());
         // updated_at はnow() を設定するカラムのためassertしない
         assert4updatedBy(data2.getUpdatedBy(), stored2.getUpdatedBy());
         // created_at はupdate 対象外のため変更前と変わらないことを確認
@@ -59,10 +51,10 @@ public abstract class TestBaseTodoRepository {
         assert4createdBy(stored.getCreatedBy(), stored2.getCreatedBy());
 
         // delete
-        var deleteCount = repository.deleteByPk(id);
+        var deleteCount = repository.deleteByPk(data2.getColIntegerPk1(), data2.getColIntegerPk2());
         assertEquals(1, deleteCount);
         // select 3回目
-        var stored3 = repository.findByPk(id);
+        var stored3 = repository.findByPk(data2.getColIntegerPk1(), data2.getColIntegerPk2());
         assertTrue(stored3.isEmpty());
     }
 
@@ -70,12 +62,10 @@ public abstract class TestBaseTodoRepository {
         return 1;
     }
 
-    public TodoEntity generateTestData(int seed) {
-        var entity = new TodoEntity();
-        entity.setTodoId(generateTestData4todoId(seed++));
-        entity.setTodoStatus(generateTestData4todoStatus(seed++));
-        entity.setDetail(generateTestData4detail(seed++));
-        entity.setDeadline(generateTestData4deadline(seed++));
+    public TestTriggerUpdateCreateEntity generateTestData(int seed) {
+        var entity = new TestTriggerUpdateCreateEntity();
+        entity.setColIntegerPk1(generateTestData4colIntegerPk1(seed++));
+        entity.setColIntegerPk2(generateTestData4colIntegerPk2(seed++));
         entity.setUpdatedAt(generateTestData4updatedAt(seed++));
         entity.setUpdatedBy(generateTestData4updatedBy(seed++));
         entity.setCreatedAt(generateTestData4createdAt(seed++));
@@ -83,20 +73,12 @@ public abstract class TestBaseTodoRepository {
         return entity;
     }
 
-    protected Long generateTestData4todoId(int seed) {
+    protected Long generateTestData4colIntegerPk1(int seed) {
         return (long) seed;
     }
 
-    protected TodoStatusEnum generateTestData4todoStatus(int seed) {
-        return pickBySeed(jp.green_code.todo.enums.TodoStatusEnum.class, seed);
-    }
-
-    protected String generateTestData4detail(int seed) {
-        return seed + "";
-    }
-
-    protected OffsetDateTime generateTestData4deadline(int seed) {
-        return OffsetDateTime.of(2001, 1, 1, 0, 0, 0, 0, java.time.ZoneOffset.UTC).plusMinutes(seed);
+    protected Long generateTestData4colIntegerPk2(int seed) {
+        return (long) seed;
     }
 
     protected OffsetDateTime generateTestData4updatedAt(int seed) {
@@ -116,19 +98,11 @@ public abstract class TestBaseTodoRepository {
     }
 
 
-    protected void assert4todoId(Long expected, Long value) {
+    protected void assert4colIntegerPk1(Long expected, Long value) {
         assertEquals(expected, value);
     }
 
-    protected void assert4todoStatus(TodoStatusEnum expected, TodoStatusEnum value) {
-        assertEquals(expected, value);
-    }
-
-    protected void assert4detail(String expected, String value) {
-        assertEquals(expected, value.trim());
-    }
-
-    protected void assert4deadline(OffsetDateTime expected, OffsetDateTime value) {
+    protected void assert4colIntegerPk2(Long expected, Long value) {
         assertEquals(expected, value);
     }
 

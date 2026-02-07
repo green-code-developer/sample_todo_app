@@ -41,12 +41,16 @@ public abstract class BaseTestOnePkRepository {
         }
         insertValues.add(":colText");
         sql.add("(%s)".formatted(String.join(", ", insertValues)));
-        sql.add("on conflict (");
-        sql.add("    col_bigserial");
-        sql.add(") do update set");
+            sql.add("on conflict (");
+            sql.add("    col_bigserial");
         var updateValues = new ArrayList<String>();
         updateValues.add("col_text = EXCLUDED.col_text");
-        sql.add(String.join(", ", updateValues));
+        if (updateValues.isEmpty()) {
+            sql.add(") do nothing");
+        } else {
+            sql.add(") do update set");
+            sql.add(String.join(", ", updateValues));
+        }
         sql.add("returning col_bigserial");
 
         var param = entityToParam(entity);

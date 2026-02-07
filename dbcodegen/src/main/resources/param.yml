@@ -75,6 +75,8 @@ testTargetTable:
   - test_one_pk
   - test_two_pk
   - test_all_with_default
+  - test_pk_only
+  - test_trigger_update_create
 
 # テスト対象外カラム（省略可）
 #   テストコードから除外するカラムを指定します

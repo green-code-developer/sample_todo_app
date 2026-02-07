@@ -280,9 +280,8 @@ public abstract class BaseTestAllWithDefaultRepository {
                 insertValues.add(":colTodoStatus::todo_status");
             }
             sql.add("(%s)".formatted(String.join(", ", insertValues)));
-            sql.add("on conflict (");
-            sql.add("    col_bigserial");
-            sql.add(") do update set");
+                sql.add("on conflict (");
+                sql.add("    col_bigserial");
             var updateValues = new ArrayList<String>();
             if (entity.getColSmallint() != null) {
                 updateValues.add("col_smallint = EXCLUDED.col_smallint");
@@ -386,7 +385,12 @@ public abstract class BaseTestAllWithDefaultRepository {
             if (entity.getColTodoStatus() != null) {
                 updateValues.add("col_todo_status = EXCLUDED.col_todo_status");
             }
-            sql.add(String.join(", ", updateValues));
+            if (updateValues.isEmpty()) {
+                sql.add(") do nothing");
+            } else {
+                sql.add(") do update set");
+                sql.add(String.join(", ", updateValues));
+            }
         }
         sql.add("returning col_bigserial");
 

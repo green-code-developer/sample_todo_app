@@ -83,9 +83,8 @@ public abstract class BaseTodoRepository {
             insertValues.add(":createdBy");
         }
         sql.add("(%s)".formatted(String.join(", ", insertValues)));
-        sql.add("on conflict (");
-        sql.add("    todo_id");
-        sql.add(") do update set");
+            sql.add("on conflict (");
+            sql.add("    todo_id");
         var updateValues = new ArrayList<String>();
         if (entity.getTodoStatus() != null) {
             updateValues.add("todo_status = EXCLUDED.todo_status");
@@ -100,7 +99,12 @@ public abstract class BaseTodoRepository {
         if (entity.getUpdatedBy() != null) {
             updateValues.add("updated_by = EXCLUDED.updated_by");
         }
-        sql.add(String.join(", ", updateValues));
+        if (updateValues.isEmpty()) {
+            sql.add(") do nothing");
+        } else {
+            sql.add(") do update set");
+            sql.add(String.join(", ", updateValues));
+        }
         sql.add("returning todo_id");
 
         var param = entityToParam(entity);

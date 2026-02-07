@@ -1,14 +1,13 @@
 package jp.green_code.todo.repository.base;
 
 import java.lang.Long;
-import java.lang.String;
-import jp.green_code.todo.entity.TestTwoPkEntity;
+import jp.green_code.todo.entity.TestPkOnlyEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class TestBaseTestTwoPkRepository {
+public abstract class TestBaseTestPkOnlyRepository {
 
-    protected void test(BaseTestTwoPkRepository repository) {
+    protected void test(BaseTestPkOnlyRepository repository) {
         var seed = getInitSeed();
         var data = generateTestData(seed);
 
@@ -23,7 +22,6 @@ public abstract class TestBaseTestTwoPkRepository {
         var stored = res.orElseThrow();
         assert4colIntegerPk1(data.getColIntegerPk1(), stored.getColIntegerPk1());
         assert4colIntegerPk2(data.getColIntegerPk2(), stored.getColIntegerPk2());
-        assert4colText(data.getColText(), stored.getColText());
 
         // update(upsert)
         seed++;
@@ -40,7 +38,6 @@ public abstract class TestBaseTestTwoPkRepository {
         var stored2 = res2.orElseThrow();
         assert4colIntegerPk1(data2.getColIntegerPk1(), stored2.getColIntegerPk1());
         assert4colIntegerPk2(data2.getColIntegerPk2(), stored2.getColIntegerPk2());
-        assert4colText(data2.getColText(), stored2.getColText());
 
         // delete
         var deleteCount = repository.deleteByPk(data2.getColIntegerPk1(), data2.getColIntegerPk2());
@@ -54,11 +51,10 @@ public abstract class TestBaseTestTwoPkRepository {
         return 1;
     }
 
-    public TestTwoPkEntity generateTestData(int seed) {
-        var entity = new TestTwoPkEntity();
+    public TestPkOnlyEntity generateTestData(int seed) {
+        var entity = new TestPkOnlyEntity();
         entity.setColIntegerPk1(generateTestData4colIntegerPk1(seed++));
-        entity.setColIntegerPk2(generateTestData4colIntegerPk2(seed++));
-        entity.setColText(generateTestData4colText(seed));
+        entity.setColIntegerPk2(generateTestData4colIntegerPk2(seed));
         return entity;
     }
 
@@ -70,10 +66,6 @@ public abstract class TestBaseTestTwoPkRepository {
         return (long) seed;
     }
 
-    protected String generateTestData4colText(int seed) {
-        return seed + "";
-    }
-
 
     protected void assert4colIntegerPk1(Long expected, Long value) {
         assertEquals(expected, value);
@@ -81,9 +73,5 @@ public abstract class TestBaseTestTwoPkRepository {
 
     protected void assert4colIntegerPk2(Long expected, Long value) {
         assertEquals(expected, value);
-    }
-
-    protected void assert4colText(String expected, String value) {
-        assertEquals(expected, value.trim());
     }
 }

@@ -49,9 +49,9 @@ public abstract class TestBaseAccountRepository {
         assert4name(data2.getName(), stored2.getName());
         // updated_at はnow() を設定するカラムのためassertしない
         assert4updatedBy(data2.getUpdatedBy(), stored2.getUpdatedBy());
-        // created_at はupdate 対象外のため変更前の値が変わらないこと
+        // created_at はupdate 対象外のため変更前と変わらないことを確認
         assert4createdAt(stored.getCreatedAt(), stored2.getCreatedAt());
-        // created_by はupdate 対象外のため変更前の値が変わらないこと
+        // created_by はupdate 対象外のため変更前と変わらないことを確認
         assert4createdBy(stored.getCreatedBy(), stored2.getCreatedBy());
 
         // delete

@@ -148,9 +148,8 @@ public abstract class BaseTestAllRepository {
         insertValues.add(":colCircle::circle");
         insertValues.add(":colTodoStatus::todo_status");
         sql.add("(%s)".formatted(String.join(", ", insertValues)));
-        sql.add("on conflict (");
-        sql.add("    col_bigserial");
-        sql.add(") do update set");
+            sql.add("on conflict (");
+            sql.add("    col_bigserial");
         var updateValues = new ArrayList<String>();
         updateValues.add("col_smallint = EXCLUDED.col_smallint");
         if (entity.getColSmallserial() != null) {
@@ -190,7 +189,12 @@ public abstract class BaseTestAllRepository {
         updateValues.add("col_polygon = EXCLUDED.col_polygon");
         updateValues.add("col_circle = EXCLUDED.col_circle");
         updateValues.add("col_todo_status = EXCLUDED.col_todo_status");
-        sql.add(String.join(", ", updateValues));
+        if (updateValues.isEmpty()) {
+            sql.add(") do nothing");
+        } else {
+            sql.add(") do update set");
+            sql.add(String.join(", ", updateValues));
+        }
         sql.add("returning col_bigserial");
 
         var param = entityToParam(entity);

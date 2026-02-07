@@ -112,6 +112,9 @@ public class TestBaseRepositoryGenerator {
                     sb.add("    var res2 = repository.findByPk(id);");
                 },
                 () -> {
+                    for (var c : table.pkColumns()) {
+                        sb.add("    data2.%s(data.%s());".formatted(c.toSetter(), c.toGetter()));
+                    }
                     sb.add("    repository.upsert(data2);");
                     sb.add("");
                     sb.add("    // select 2回目");
@@ -125,7 +128,7 @@ public class TestBaseRepositoryGenerator {
         sb.add("    var stored2 = res2.orElseThrow();");
         for (var col : table.columns) {
             if (col.shouldSkipInUpdate()) {
-                sb.add("    // %s はupdate 対象外のため変更前の値が変わらないこと".formatted(col.columnName));
+                sb.add("    // %s はupdate 対象外のため変更前と変わらないことを確認".formatted(col.columnName));
                 sb.add("    assert4%s(stored.%s(), stored2.%s());".formatted(col.toJavaFieldName(), col.toGetter(), col.toGetter()));
             } else if (col.isSetNowColumn()) {
                 sb.add("    // %s はnow() を設定するカラムのためassertしない".formatted(col.columnName));

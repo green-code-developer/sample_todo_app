@@ -1,24 +1,22 @@
 package jp.green_code.todo.repository.base;
 
-import java.lang.Long;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import jp.green_code.todo.entity.AccountEntity;
+import jp.green_code.todo.entity.TestTriggerUpdateCreateEntity;
 
 /**
- * Table: account
+ * Table: test_trigger_update_create
  */
-public abstract class BaseAccountRepository {
+public abstract class BaseTestTriggerUpdateCreateRepository {
 
     protected final RepositoryHelper helper;
-    public static final String ALL_COLUMNS = "account_id, account_status, name, updated_at, updated_by, created_at, created_by";
+    public static final String ALL_COLUMNS = "col_integer_pk1, col_integer_pk2, updated_at, updated_by, created_at, created_by";
 
     public static final class Columns {
-        public static final String ACCOUNT_ID = "account_id";
-        public static final String ACCOUNT_STATUS = "account_status";
-        public static final String NAME = "name";
+        public static final String COL_INTEGER_PK1 = "col_integer_pk1";
+        public static final String COL_INTEGER_PK2 = "col_integer_pk2";
         public static final String UPDATED_AT = "updated_at";
         public static final String UPDATED_BY = "updated_by";
         public static final String CREATED_AT = "created_at";
@@ -26,22 +24,19 @@ public abstract class BaseAccountRepository {
         private Columns() {}
     }
 
-    public BaseAccountRepository(RepositoryHelper helper) {
+    public BaseTestTriggerUpdateCreateRepository(RepositoryHelper helper) {
         this.helper = helper;
     }
 
-    public Long upsert(AccountEntity entity) {
+    public int upsert(TestTriggerUpdateCreateEntity entity) {
         var sql = new ArrayList<String>();
-        sql.add("insert into account");
+        sql.add("insert into test_trigger_update_create");
         var insertColumns = new ArrayList<String>();
-        if (entity.getAccountId() != null) {
-            insertColumns.add("account_id");
+        if (entity.getColIntegerPk1() != null) {
+            insertColumns.add("col_integer_pk1");
         }
-        if (entity.getAccountStatus() != null) {
-            insertColumns.add("account_status");
-        }
-        if (entity.getName() != null) {
-            insertColumns.add("name");
+        if (entity.getColIntegerPk2() != null) {
+            insertColumns.add("col_integer_pk2");
         }
         if (entity.getUpdatedAt() != null) {
             insertColumns.add("updated_at");
@@ -62,14 +57,11 @@ public abstract class BaseAccountRepository {
             sql.add("(%s)".formatted(String.join(", ", insertColumns)));
             sql.add("values");
             var insertValues = new ArrayList<String>();
-            if (entity.getAccountId() != null) {
-                insertValues.add(":accountId");
+            if (entity.getColIntegerPk1() != null) {
+                insertValues.add(":colIntegerPk1");
             }
-            if (entity.getAccountStatus() != null) {
-                insertValues.add(":accountStatus");
-            }
-            if (entity.getName() != null) {
-                insertValues.add(":name");
+            if (entity.getColIntegerPk2() != null) {
+                insertValues.add(":colIntegerPk2");
             }
             if (entity.getUpdatedAt() != null) {
                 insertValues.add("now()");
@@ -85,14 +77,9 @@ public abstract class BaseAccountRepository {
             }
             sql.add("(%s)".formatted(String.join(", ", insertValues)));
                 sql.add("on conflict (");
-                sql.add("    account_id");
+                sql.add("    col_integer_pk1,");
+                sql.add("    col_integer_pk2");
             var updateValues = new ArrayList<String>();
-            if (entity.getAccountStatus() != null) {
-                updateValues.add("account_status = EXCLUDED.account_status");
-            }
-            if (entity.getName() != null) {
-                updateValues.add("name = EXCLUDED.name");
-            }
             if (entity.getUpdatedAt() != null) {
                 updateValues.add("updated_at = now()");
             }
@@ -106,17 +93,15 @@ public abstract class BaseAccountRepository {
                 sql.add(String.join(", ", updateValues));
             }
         }
-        sql.add("returning account_id");
 
         var param = entityToParam(entity);
-        return helper.one(sql, param, Long.class).orElseThrow();
+        return helper.exec(sql, param);
     }
 
-    public static Map<String, Object> entityToParam(AccountEntity entity) {
+    public static Map<String, Object> entityToParam(TestTriggerUpdateCreateEntity entity) {
         var param = new HashMap<String, Object>();
-        param.put("accountId", entity.getAccountId());
-        param.put("accountStatus", entity.getAccountStatus());
-        param.put("name", entity.getName());
+        param.put("colIntegerPk1", entity.getColIntegerPk1());
+        param.put("colIntegerPk2", entity.getColIntegerPk2());
         param.put("updatedAt", entity.getUpdatedAt());
         param.put("updatedBy", entity.getUpdatedBy());
         param.put("createdAt", entity.getCreatedAt());
@@ -124,27 +109,31 @@ public abstract class BaseAccountRepository {
         return param;
     }
 
-    public Optional<AccountEntity> findByPk(Long accountId) {
+    public Optional<TestTriggerUpdateCreateEntity> findByPk(Long colIntegerPk1, Long colIntegerPk2) {
         var sql = new ArrayList<String>();
         sql.add("select %s".formatted(ALL_COLUMNS));
-        sql.add("from account");
+        sql.add("from test_trigger_update_create");
         sql.add("where");
-        sql.add("    account_id = :accountId");
+        sql.add("    col_integer_pk1 = :colIntegerPk1 AND");
+        sql.add("    col_integer_pk2 = :colIntegerPk2");
 
         var param = new HashMap<String, Object>();
-        param.put("accountId", accountId);
+        param.put("colIntegerPk1", colIntegerPk1);
+        param.put("colIntegerPk2", colIntegerPk2);
 
-        return helper.one(sql, param, AccountEntity.class);
+        return helper.one(sql, param, TestTriggerUpdateCreateEntity.class);
     }
 
-    public int deleteByPk(Long accountId) {
+    public int deleteByPk(Long colIntegerPk1, Long colIntegerPk2) {
         var sql = new ArrayList<String>();
-        sql.add("delete from account");
+        sql.add("delete from test_trigger_update_create");
         sql.add("where");
-        sql.add("    account_id = :accountId");
+        sql.add("    col_integer_pk1 = :colIntegerPk1 AND");
+        sql.add("    col_integer_pk2 = :colIntegerPk2");
 
         var param = new HashMap<String, Object>();
-        param.put("accountId", accountId);
+        param.put("colIntegerPk1", colIntegerPk1);
+        param.put("colIntegerPk2", colIntegerPk2);
 
         return helper.exec(sql, param);
     }
