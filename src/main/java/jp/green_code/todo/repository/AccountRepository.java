@@ -1,8 +1,7 @@
 package jp.green_code.todo.repository;
 
-import org.springframework.stereotype.Repository;
-import jp.green_code.todo.repository.base.RepositoryHelper;
 import jp.green_code.todo.repository.base.BaseAccountRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * Table: account

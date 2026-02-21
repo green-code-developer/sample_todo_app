@@ -39,15 +39,6 @@ excludeUpdateColumnsByTable:
     - created_at
     - created_by
 
-# INSERT 対象外カラム（省略可）
-#   テーブル名とカラム名を下の形式で指定します
-#   table_name:
-#     - column_name
-#   テーブルに* を指定すると全テーブルのカラムが対象となります
-#excludeInsertColumnsByTable:
-#  "*":
-#    - created_at
-
 # now() 更新カラム（省略可）
 #   insert やupdate の時に、sql のnow() をセットします
 #   java から値を指定することはできなくなります。
@@ -70,25 +61,6 @@ setNowColumnsByTable:
 testTargetTable:
   - account
   - todo
-  - test_all
-  - test_no_pk
-  - test_one_pk
-  - test_two_pk
-  - test_all_with_default
-  - test_pk_only
-  - test_trigger_update_create
-
-# テスト対象外カラム（省略可）
-#   テストコードから除外するカラムを指定します
-#   先にテーブル名をtestTargetTable へ記載してください
-#   テーブル名とカラム名を下の形式で指定します
-#   table_name:
-#     - column_name
-#   テーブルに* を指定すると全テーブルのカラムが対象となります
-testSkipColumnsByTable:
-  "*":
-    - modified_at
-    - updated_at
 
 #
 # 以下、高度な設定
@@ -120,8 +92,12 @@ testSkipColumnsByTable:
 
 # TestRepository クラスの接尾辞（省略可）
 #   初期値 空文字列
-#testRepositoryClassNameSuffix: Repository
+#testRepositoryClassNameSuffix:
 
 # ヘルパークラス名（省略可）
 #   初期値 RepositoryHelper
 #repositoryHelperClassName: RepositoryHelper
+
+# カラム定義クラス名（省略可）
+#   初期値 ColumnDefinition
+#columnDefinitionClassName: ColumnDefinition

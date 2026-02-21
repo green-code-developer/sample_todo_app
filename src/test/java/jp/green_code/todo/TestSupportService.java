@@ -18,7 +18,7 @@ public class TestSupportService {
   @Autowired
   private TestSupportRepository testSupportRepository;
   @Autowired
-  private AccountRepository accountJpaRepository;
+  private AccountRepository accountRepository;
 
   public void clean() {
     // ForeignKey 制約に抵触しない順
@@ -30,11 +30,11 @@ public class TestSupportService {
   }
 
   public void addTestAccount() {
-    Optional<AccountEntity> account1 = accountJpaRepository.findByPk(TEST_ACCOUNT_ID_1);
+    Optional<AccountEntity> account1 = accountRepository.findByPk(TEST_ACCOUNT_ID_1);
     if (account1.isEmpty()) {
       addAccount(TEST_ACCOUNT_ID_1);
     }
-    Optional<AccountEntity> account2 = accountJpaRepository.findByPk(TEST_ACCOUNT_ID_2);
+    Optional<AccountEntity> account2 = accountRepository.findByPk(TEST_ACCOUNT_ID_2);
     if (account2.isEmpty()) {
       addAccount(TEST_ACCOUNT_ID_2);
     }
@@ -45,8 +45,7 @@ public class TestSupportService {
     entity.setAccountId(accountId);
     entity.setAccountStatus("ERR");
     entity.setName("test" + accountId);
-    var id = accountJpaRepository.upsert(entity);
-    entity.setAccountId(id);
+    accountRepository.insert(entity);
     return entity;
   }
 

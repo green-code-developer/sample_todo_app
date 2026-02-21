@@ -9,4 +9,3 @@ run:
 jar:
 	./gradlew bootJar
 	ls -l  build/libs/*-SNAPSHOT.jar
-

@@ -10,16 +10,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class TestBaseAccountRepository {
 
     protected void test(BaseAccountRepository repository) {
-        var seed = getInitSeed();
+        var seed = 1;
         var data = generateTestData(seed);
 
-        // insert(upsert)
+        // insert
         data.setAccountId(null);
-        var id = repository.upsert(data);
+        repository.insert(data);
 
         // select 1回目
-        var res = repository.findByPk(id);
-        data.setAccountId(id);
+        var res = repository.findByPk(data.getAccountId());
         assertTrue(res.isPresent());
 
         // insert 後の確認
@@ -27,44 +26,48 @@ public abstract class TestBaseAccountRepository {
         assert4accountId(data.getAccountId(), stored.getAccountId());
         assert4accountStatus(data.getAccountStatus(), stored.getAccountStatus());
         assert4name(data.getName(), stored.getName());
-        // updated_at はnow() を設定するカラムのためassertしない
+        assert4updatedAt(data.getUpdatedAt(), stored.getUpdatedAt());
         assert4updatedBy(data.getUpdatedBy(), stored.getUpdatedBy());
-        // created_at はnow() を設定するカラムのためassertしない
+        assert4createdAt(data.getCreatedAt(), stored.getCreatedAt());
         assert4createdBy(data.getCreatedBy(), stored.getCreatedBy());
 
-        // update(upsert)
+        // update
         seed++;
         var data2 = generateTestData(seed);
-        data2.setAccountId(id);
-        repository.upsert(data2);
+        data2.setAccountId(data.getAccountId());
+        repository.update(data2);
 
         // select 2回目
-        var res2 = repository.findByPk(id);
+        var res2 = repository.findByPk(data2.getAccountId());
         assertTrue(res2.isPresent());
 
         // update 後の確認
         var stored2 = res2.orElseThrow();
+
         assert4accountId(data2.getAccountId(), stored2.getAccountId());
+
         assert4accountStatus(data2.getAccountStatus(), stored2.getAccountStatus());
+
         assert4name(data2.getName(), stored2.getName());
-        // updated_at はnow() を設定するカラムのためassertしない
+
+        assert4updatedAt(data2.getUpdatedAt(), stored2.getUpdatedAt());
+
         assert4updatedBy(data2.getUpdatedBy(), stored2.getUpdatedBy());
+
         // created_at はupdate 対象外のため変更前と変わらないことを確認
         assert4createdAt(stored.getCreatedAt(), stored2.getCreatedAt());
+
         // created_by はupdate 対象外のため変更前と変わらないことを確認
         assert4createdBy(stored.getCreatedBy(), stored2.getCreatedBy());
 
         // delete
-        var deleteCount = repository.deleteByPk(id);
+        var deleteCount = repository.deleteByPk(data2.getAccountId());
         assertEquals(1, deleteCount);
         // select 3回目
-        var stored3 = repository.findByPk(id);
+        var stored3 = repository.findByPk(data2.getAccountId());
         assertTrue(stored3.isEmpty());
     }
 
-    protected int getInitSeed() {
-        return 1;
-    }
 
     public AccountEntity generateTestData(int seed) {
         var entity = new AccountEntity();
@@ -83,11 +86,11 @@ public abstract class TestBaseAccountRepository {
     }
 
     protected String generateTestData4accountStatus(int seed) {
-        return seed + "";
+        return String.valueOf(seed);
     }
 
     protected String generateTestData4name(int seed) {
-        return seed + "";
+        return String.valueOf(seed);
     }
 
     protected OffsetDateTime generateTestData4updatedAt(int seed) {

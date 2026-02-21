@@ -6,7 +6,6 @@ import jp.green_code.todo.entity.TodoEntity;
 import jp.green_code.todo.enums.TodoSearchSortEnum;
 import jp.green_code.todo.enums.TodoStatusEnum;
 import jp.green_code.todo.repository.base.BaseTodoRepository;
-import jp.green_code.todo.repository.base.RepositoryHelper;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
@@ -63,7 +62,7 @@ public class TodoRepository extends BaseTodoRepository {
         List<TodoEntity> list = List.of();
         if (0 < count) {
             var sb = new ArrayList<String>();
-            sb.add("select " + ALL_COLUMNS);
+            sb.add("select " + Columns.selectAster());
             sb.add("from todo");
             sb.add(condition);
             sb.add("order by " + ofNullable(sort).orElse(UPDATE_DESC).getSort());

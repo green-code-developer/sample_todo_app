@@ -8,3 +8,4 @@ ENV LANG="ja_JP.UTF-8" \
     LC_ALL="ja_JP.UTF-8" \
     TZ=Asia/Tokyo
 ADD ./DDL/ /docker-entrypoint-initdb.d/
+ADD ./psqlrc /root/.psqlrc

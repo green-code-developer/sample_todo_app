@@ -5,23 +5,22 @@ import java.lang.String;
 import java.time.OffsetDateTime;
 import jp.green_code.todo.entity.TodoEntity;
 import jp.green_code.todo.enums.TodoStatusEnum;
-import static jp.green_code.todo.repository.base.RepositoryHelper.pickBySeed;
+import static jp.green_code.todo.repository.base.BaseRepositoryHelper.pickBySeed;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class TestBaseTodoRepository {
 
     protected void test(BaseTodoRepository repository) {
-        var seed = getInitSeed();
+        var seed = 1;
         var data = generateTestData(seed);
 
-        // insert(upsert)
+        // insert
         data.setTodoId(null);
-        var id = repository.upsert(data);
+        repository.insert(data);
 
         // select 1回目
-        var res = repository.findByPk(id);
-        data.setTodoId(id);
+        var res = repository.findByPk(data.getTodoId());
         assertTrue(res.isPresent());
 
         // insert 後の確認
@@ -30,45 +29,50 @@ public abstract class TestBaseTodoRepository {
         assert4todoStatus(data.getTodoStatus(), stored.getTodoStatus());
         assert4detail(data.getDetail(), stored.getDetail());
         assert4deadline(data.getDeadline(), stored.getDeadline());
-        // updated_at はnow() を設定するカラムのためassertしない
+        assert4updatedAt(data.getUpdatedAt(), stored.getUpdatedAt());
         assert4updatedBy(data.getUpdatedBy(), stored.getUpdatedBy());
-        // created_at はnow() を設定するカラムのためassertしない
+        assert4createdAt(data.getCreatedAt(), stored.getCreatedAt());
         assert4createdBy(data.getCreatedBy(), stored.getCreatedBy());
 
-        // update(upsert)
+        // update
         seed++;
         var data2 = generateTestData(seed);
-        data2.setTodoId(id);
-        repository.upsert(data2);
+        data2.setTodoId(data.getTodoId());
+        repository.update(data2);
 
         // select 2回目
-        var res2 = repository.findByPk(id);
+        var res2 = repository.findByPk(data2.getTodoId());
         assertTrue(res2.isPresent());
 
         // update 後の確認
         var stored2 = res2.orElseThrow();
+
         assert4todoId(data2.getTodoId(), stored2.getTodoId());
+
         assert4todoStatus(data2.getTodoStatus(), stored2.getTodoStatus());
+
         assert4detail(data2.getDetail(), stored2.getDetail());
+
         assert4deadline(data2.getDeadline(), stored2.getDeadline());
-        // updated_at はnow() を設定するカラムのためassertしない
+
+        assert4updatedAt(data2.getUpdatedAt(), stored2.getUpdatedAt());
+
         assert4updatedBy(data2.getUpdatedBy(), stored2.getUpdatedBy());
+
         // created_at はupdate 対象外のため変更前と変わらないことを確認
         assert4createdAt(stored.getCreatedAt(), stored2.getCreatedAt());
+
         // created_by はupdate 対象外のため変更前と変わらないことを確認
         assert4createdBy(stored.getCreatedBy(), stored2.getCreatedBy());
 
         // delete
-        var deleteCount = repository.deleteByPk(id);
+        var deleteCount = repository.deleteByPk(data2.getTodoId());
         assertEquals(1, deleteCount);
         // select 3回目
-        var stored3 = repository.findByPk(id);
+        var stored3 = repository.findByPk(data2.getTodoId());
         assertTrue(stored3.isEmpty());
     }
 
-    protected int getInitSeed() {
-        return 1;
-    }
 
     public TodoEntity generateTestData(int seed) {
         var entity = new TodoEntity();
@@ -92,7 +96,7 @@ public abstract class TestBaseTodoRepository {
     }
 
     protected String generateTestData4detail(int seed) {
-        return seed + "";
+        return String.valueOf(seed);
     }
 
     protected OffsetDateTime generateTestData4deadline(int seed) {

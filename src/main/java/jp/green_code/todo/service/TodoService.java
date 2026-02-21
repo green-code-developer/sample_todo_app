@@ -59,7 +59,12 @@ public class TodoService {
         var todoEntity = formToEntity(form);
         // DB 登録
         var isNew = todoEntity.getTodoId() == null;
-        todoRepository.upsert(todoEntity);
+        if (isNew) {
+            todoRepository.insert(todoEntity);
+        } else {
+            todoEntity.setUpdatedBy(-1L);
+            todoRepository.update(todoEntity);
+        }
         log.info("END {}", methodName());
         return Pair.of(validationResult, isNew);
     }

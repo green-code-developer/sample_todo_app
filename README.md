@@ -5,7 +5,7 @@
 - ローカル環境に必要なデータベース(Postgres) をdocker-compose で構築します
 - 認証は実装していません
 - SQL 発行はSpring JDBC で行います
-- Entity とRepository は[独自の生成ツール](./dbcodegen/README.md)
+- Entity とRepository は[spring-jdbc-codegen](https://github.com/green-code-developer)
   で作成します
 
 ## デモ
