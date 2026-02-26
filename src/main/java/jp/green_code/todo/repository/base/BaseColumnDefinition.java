@@ -6,7 +6,7 @@ public class BaseColumnDefinition {
     /** DB カラム名 */
     private final String columnName;
     /** Java フィールド名 */
-    private final String javaFieldName;
+    private final String javaPropertyName;
     /** Java 型 */
     private final String javaFqcn;
     /** DB カラム型 */
@@ -29,10 +29,12 @@ public class BaseColumnDefinition {
     private final boolean isSetNow;
     /** Update 対象外 */
     private final boolean shouldSkipInUpdate;
+    /** Update 対象外 */
+    private final boolean hasNameMapping;
 
-    public BaseColumnDefinition(String columnName, String javaFieldName, String javaFqcn, String dbTypeName, Integer jdbcType, Integer columnSize, Integer primaryKeySeq, boolean nullable, boolean hasDefault, String dbParamTemplate, String dbSelectTemplate, boolean isSetNow, boolean shouldSkipInUpdate) {
+    public BaseColumnDefinition(String columnName, String javaPropertyName, String javaFqcn, String dbTypeName, Integer jdbcType, Integer columnSize, Integer primaryKeySeq, boolean nullable, boolean hasDefault, String dbParamTemplate, String dbSelectTemplate, boolean isSetNow, boolean shouldSkipInUpdate, boolean hasNameMapping) {
         this.columnName = columnName;
-        this.javaFieldName = javaFieldName;
+        this.javaPropertyName = javaPropertyName;
         this.javaFqcn = javaFqcn;
         this.dbTypeName = dbTypeName;
         this.jdbcType = jdbcType;
@@ -44,14 +46,15 @@ public class BaseColumnDefinition {
         this.dbSelectTemplate = dbSelectTemplate;
         this.isSetNow = isSetNow;
         this.shouldSkipInUpdate = shouldSkipInUpdate;
+        this.hasNameMapping = hasNameMapping;
     }
 
     public String getColumnName() {
         return columnName;
     }
 
-    public String getJavaFieldName() {
-        return javaFieldName;
+    public String getJavaPropertyName() {
+        return javaPropertyName;
     }
 
     public String getJavaFqcn() {
@@ -93,9 +96,9 @@ public class BaseColumnDefinition {
     /** Javaフィールド名と型キャスト */
     public String toParamColumn() {
         if (isBlank(dbParamTemplate)) {
-            return ":" + javaFieldName;
+            return ":" + javaPropertyName;
         } else {
-            return dbParamTemplate.replace("{javaFieldName}", javaFieldName);
+            return dbParamTemplate.replace("{javaPropertyName}", javaPropertyName);
         }
     }
 
@@ -115,5 +118,10 @@ public class BaseColumnDefinition {
 
     public String toString() {
         return getColumnName();
+    }
+
+    public String toUpdateSetClause() {
+        var value = isSetNow() ? "now()" : toParamColumn();
+        return "\"%s\" = %s".formatted(getColumnName(), value);
     }
 }

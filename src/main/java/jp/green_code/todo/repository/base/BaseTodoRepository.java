@@ -23,14 +23,14 @@ public abstract class BaseTodoRepository {
     protected final RepositoryHelper helper;
 
     public static class Columns {
-        public static final ColumnDefinition TODO_ID = new ColumnDefinition("todo_id", "todoId", "java.lang.Long", "bigserial", -5, 19, 1, false, true, null, null, false, false);
-        public static final ColumnDefinition TODO_STATUS = new ColumnDefinition("todo_status", "todoStatus", "jp.green_code.todo.enums.TodoStatusEnum", "todo_status", 12, 2147483647, null, false, true, ":{javaFieldName}::todo_status", null, false, false);
-        public static final ColumnDefinition DETAIL = new ColumnDefinition("detail", "detail", "java.lang.String", "text", 12, 2147483647, null, false, true, null, null, false, false);
-        public static final ColumnDefinition DEADLINE = new ColumnDefinition("deadline", "deadline", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, true, false, null, null, false, false);
-        public static final ColumnDefinition UPDATED_AT = new ColumnDefinition("updated_at", "updatedAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, false);
-        public static final ColumnDefinition UPDATED_BY = new ColumnDefinition("updated_by", "updatedBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, false, false);
-        public static final ColumnDefinition CREATED_AT = new ColumnDefinition("created_at", "createdAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, true);
-        public static final ColumnDefinition CREATED_BY = new ColumnDefinition("created_by", "createdBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, false, true);
+        public static final ColumnDefinition TODO_ID = new ColumnDefinition("todo_id", "todoId", "java.lang.Long", "bigserial", -5, 19, 1, false, true, null, null, false, false, false);
+        public static final ColumnDefinition TODO_STATUS = new ColumnDefinition("todo_status", "todoStatus", "jp.green_code.todo.enums.TodoStatusEnum", "todo_status", 12, 2147483647, null, false, true, ":{javaPropertyName}::todo_status", null, false, false, false);
+        public static final ColumnDefinition DETAIL = new ColumnDefinition("detail", "detail", "java.lang.String", "text", 12, 2147483647, null, false, true, null, null, false, false, false);
+        public static final ColumnDefinition DEADLINE = new ColumnDefinition("deadline", "deadline", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, true, false, null, null, false, false, false);
+        public static final ColumnDefinition UPDATED_AT = new ColumnDefinition("updated_at", "updatedAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, false, false);
+        public static final ColumnDefinition UPDATED_BY = new ColumnDefinition("updated_by", "updatedBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, false, false, false);
+        public static final ColumnDefinition CREATED_AT = new ColumnDefinition("created_at", "createdAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, true, false);
+        public static final ColumnDefinition CREATED_BY = new ColumnDefinition("created_by", "createdBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, false, true, false);
 
         public static final Map<String, ColumnDefinition> MAP = new LinkedHashMap<>();
 
@@ -168,11 +168,11 @@ public abstract class BaseTodoRepository {
         var param = entityToParam(entity);
         var returningColumns = toInsertReturning(entity, insertColumns);
         if (returningColumns.isEmpty()) {
-            helper.exec(sql, param);
+            this.helper.exec(sql, param);
         } else {
             var returningClause = returningColumns.stream().map(c -> Columns.MAP.get(c).toSelectColumn()).collect(joining(", "));
             sql.add("returning %s".formatted(returningClause));
-            var ret = helper.single(sql, param, TodoEntity.class);
+            var ret = this.helper.single(sql, param, TodoEntity.class);
             copyReturningValuesInInsert(entity, ret);
         }
         return entity;
@@ -190,47 +190,49 @@ public abstract class BaseTodoRepository {
         param.put("createdBy", entity.getCreatedBy());
         return param;
     }
+
     public TodoEntity update(TodoEntity entity) {
         return updateByPk(entity, entity.getTodoId());
     }
-
 
     protected void copyReturningValuesInUpdate(TodoEntity entity, TodoEntity returning) {
         entity.setUpdatedAt(returning.getUpdatedAt());
     }
 
     public TodoEntity updateByPk(TodoEntity entity, Long todoId) {
-        var sql = new ArrayList<String>();
-        sql.add("update \"todo\"");
-        sql.add("set \"todo_id\" = :todoId, \"todo_status\" = :todoStatus::todo_status, \"detail\" = :detail, \"deadline\" = :deadline, \"updated_at\" = now(), \"updated_by\" = :updatedBy, \"created_at\" = now()");
-        sql.add("where \"todo_id\" = :todoId");
-        var param = entityToParam(entity);
-        sql.add("returning updated_at");
-        var ret = helper.single(sql, param, TodoEntity.class);
+        var __sql = new ArrayList<String>();
+        var setClause = Columns.MAP.values().stream().filter(c-> !c.isShouldSkipInUpdate()).map(BaseColumnDefinition::toUpdateSetClause).collect(joining(", "));
+        __sql.add("update \"todo\"");
+        __sql.add("set %s".formatted(setClause));
+        var __param = entityToParam(entity);
+        __param.put("__pk1", todoId);
+        __sql.add("where \"todo_id\" = :__pk1");
+        __sql.add("returning updated_at");
+        var ret = this.helper.single(__sql, __param, TodoEntity.class);
         copyReturningValuesInUpdate(entity, ret);
         return entity;
     }
 
     public Optional<TodoEntity> findByPk(Long todoId) {
-        var sql = new ArrayList<String>();
-        sql.add("select %s".formatted(Columns.selectAster()));
-        sql.add("from \"todo\"");
-        sql.add("where \"todo_id\" = :todoId");
+        var __sql = new ArrayList<String>();
+        __sql.add("select %s".formatted(Columns.selectAster()));
+        __sql.add("from \"todo\"");
+        __sql.add("where \"todo_id\" = :todoId");
 
-        var param = new HashMap<String, Object>();
-        param.put("todoId", todoId);
+        var __param = new HashMap<String, Object>();
+        __param.put("todoId", todoId);
 
-        return helper.optional(sql, param, TodoEntity.class);
+        return this.helper.optional(__sql, __param, TodoEntity.class);
     }
 
     public int deleteByPk(Long todoId) {
-        var sql = new ArrayList<String>();
-        sql.add("delete from \"todo\"");
-        sql.add("where \"todo_id\" = :todoId");
+        var __sql = new ArrayList<String>();
+        __sql.add("delete from \"todo\"");
+        __sql.add("where \"todo_id\" = :todoId");
 
-        var param = new HashMap<String, Object>();
-        param.put("todoId", todoId);
+        var __param = new HashMap<String, Object>();
+        __param.put("todoId", todoId);
 
-        return helper.exec(sql, param);
+        return this.helper.exec(__sql, __param);
     }
 }
