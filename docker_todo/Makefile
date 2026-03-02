@@ -9,9 +9,9 @@ up:
 down:
 	-docker compose down
 prune:
-	-docker compose down --remove-orphans
 	-docker container prune -f
 	-docker image prune -fa
+	-docker volume prune -f
 ps:
 	docker compose ps
 stats:

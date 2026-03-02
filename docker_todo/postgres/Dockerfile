@@ -1,6 +1,6 @@
 # 日本語対応
 # see also https://qiita.com/mayu_AJ/items/93db75f718a9c284e781
-FROM postgres:17
+FROM postgres:17-bookworm
 RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
     && localedef -i ja_JP -c -f UTF-8 -A /usr/share/locale/locale.alias ja_JP.UTF-8
 ENV LANG="ja_JP.UTF-8" \

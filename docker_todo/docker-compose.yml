@@ -10,3 +10,7 @@ services:
       - POSTGRES_DB=todo
     healthcheck:
       test: psql -Utodo todo -c '\q'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
