@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
   <property name="LoggingDir" value="/var/app/log" />
-  <property name="PATTERN" value="%d %5p %m [accountId:%X{ACCOUNT_ID}] [%C{1}:%L] [%t] %n"/>
+  <property name="PATTERN" value="[%d] %p %C{1}:%L thread=%thread accountId=%X{ACCOUNT_ID} | %msg %n"/>
+
   <property name="MAX_SIZE" value="50MB" />
   <property name="MAX_HISTORY" value="99999999" />
   <property name="ENCODE" value="UTF-8" />

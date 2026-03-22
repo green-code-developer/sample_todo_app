@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" th:with="pageName='一覧'" data-theme="light">
 <head>
-    <title th:replace="~{layout/head::title(${pageName})}"></title>
-    <link th:replace="~{layout/head::head}"/>
+    <th:block th:replace="~{layout/head::title(${pageName})}"></th:block>
+    <th:block th:replace="~{layout/head::head}"/>
     <link rel="stylesheet" th:href="@{/assets/css/todo/todo_list.css}"/>
     <script th:src="@{/assets/js/todo/todo_list.js}"></script>
 </head>
 <body>
-<header th:replace="~{layout/head::hero}"></header>
-<div th:replace="~{layout/notification::notification}"></div>
+<th:block th:replace="~{layout/head::hero}"></th:block>
+<th:block th:replace="~{layout/notification::notification}"></th:block>
 <div class="app-overwrap-nav close app-large-screen-hidden">
-    <div th:replace="~{layout/sidemenu::normal}"></div>
+    <th:block th:replace="~{layout/sidemenu::normal}"></th:block>
 </div>
 <div class="app-view-two-column">
     <div class="app-left app-small-screen-hidden-or-block">
-        <div th:replace="~{layout/sidemenu::normal}"></div>
+        <th:block th:replace="~{layout/sidemenu::normal}"></th:block>
     </div>
     <div class="app-right">
         <header class="is-size-4" th:text="${pageName}"></header>
         <div class="app-gap">
             <div class="app-condition-title app-toggle-switch app-text-select-none app-text-pointer"
                  data-toggle-key="search"
-                 th:classappend="|${true ? 'app-toggle-switch' : ''} ${form.isNoCondition ? '' : 'app-toggle-open'}|">
+                 th:classappend="|${true ? 'app-toggle-switch' : ''} ${dto.isNoCondition ? '' : 'app-toggle-open'}|">
                 <i class="fa-solid fa-caret-right app-gap-right-small app-toggle-icon"></i>検索条件・並べ替え
             </div>
             <div class="app-toggle app-condition" data-toggle-key="search">
-                <form action="#" th:action="@{/list}" th:object="${form}" method="get">
+                <form action="#" th:action="@{/list}" th:object="${dto}" method="get">
                     <div class="app-form-field">
                         <label for="word" class="app-flex-v-center">詳細</label>
                         <div class="app-form-value">
                             <input class="input" id="word" th:field="*{word}" maxlength="100">
-                            <div th:replace="~{layout/app_error::message(${app}, 'word')}"></div>
+                            <th:block th:replace="~{layout/app_error::message(${result}, 'word')}"></th:block>
                         </div>
                     </div>
                     <div class="app-form-field">
@@ -39,12 +39,12 @@
                             <div class="select">
                                 <select class="select" th:field="*{status}" id="status">
                                     <option value=""></option>
-                                    <th:block th:each="e : ${@enumUtil.getTodoStatusEnum()}">
-                                        <option th:value="${e.left}" th:text="${e.right}"></option>
+                                    <th:block th:each="e : ${@enumComponent.todoStatusEnum}">
+                                        <option th:value="${e.value.name()}" th:text="${e.label}"></option>
                                     </th:block>
                                 </select>
                             </div>
-                            <div th:replace="~{layout/app_error::message(${app}, 'status')}"></div>
+                            <th:block th:replace="~{layout/app_error::message(${result}, 'status')}"></th:block>
                         </div>
                     </div>
                     <div class="app-form-field">
@@ -56,8 +56,8 @@
                                 <span class="app-gap-left app-gap-right">〜</span>
                                 <input class="input" type="date" th:field="*{deadlineTo}" maxlength="10">
                             </div>
-                            <div th:replace="~{layout/app_error::message(${app}, 'deadlineFrom')}"></div>
-                            <div th:replace="~{layout/app_error::message(${app}, 'deadlineTo')}"></div>
+                            <th:block th:replace="~{layout/app_error::message(${result}, 'deadlineFrom')}"></th:block>
+                            <th:block th:replace="~{layout/app_error::message(${result}, 'deadlineTo')}"></th:block>
                         </div>
                     </div>
                     <div class="app-form-field">
@@ -66,12 +66,12 @@
                             <div class="select">
                                 <select class="select" th:field="*{sort}" id="sort">
                                     <option value=""></option>
-                                    <th:block th:each="e : ${@enumUtil.getTodoSearchSortEnum()}">
-                                        <option th:value="${e.left}" th:text="${e.right}"></option>
+                                    <th:block th:each="e : ${@enumComponent.getTodoSearchSortEnum()}">
+                                        <option th:value="${e.value.name()}" th:text="${e.label}"></option>
                                     </th:block>
                                 </select>
                             </div>
-                            <div th:replace="~{layout/app_error::message(${app}, 'sort')}"></div>
+                            <th:block th:replace="~{layout/app_error::message(${result}, 'sort')}"></th:block>
                         </div>
                     </div>
                     <div class="app-form-field">
@@ -79,10 +79,10 @@
                         <div class="app-form-value">
                             <div class="select">
                                 <select class="select" th:field="*{pageSize}" id="pageSize">
-                                    <div th:replace="~{layout/pagination::pageOption(${form.pageSize})}"></div>
+                                    <th:block th:replace="~{layout/pagination::pageOption(${dto.pageSize})}"></th:block>
                                 </select>
                             </div>
-                            <div th:replace="~{layout/app_error::message(${app}, 'pageSize')}"></div>
+                            <th:block th:replace="~{layout/app_error::message(${app}, 'size')}"></th:block>
                         </div>
                     </div>
                     <input type="hidden" name="currentPage" value="1" data-pagination-key="main">
@@ -95,10 +95,10 @@
             </div>
         </div>
         <div class="app-gap-top-large app-gap-bottom">
-            <th:block th:if="${pageableList.list.isEmpty()}">
+            <th:block th:if="${list.isEmpty()}">
                 <div class="app-gap-large">データが見つかりませんでした</div>
             </th:block>
-            <th:block th:if="${!pageableList.list.isEmpty()}">
+            <th:block th:if="${!list.isEmpty()}">
                 <div class="app-horizontal-scroll">
                     <table class="table is-bordered is-striped is-hoverable">
                         <tr class="app-text-nowrap">
@@ -108,22 +108,22 @@
                             <th>完了予定日</th>
                             <th>更新日時</th>
                         </tr>
-                        <tr th:each="p : ${pageableList.list}">
+                        <tr th:each="p : ${list}">
                             <td>
                                 <a th:text="${p.todoId}" th:href="@{/edit/{id}(id=${p.todoId})}"
                                    class="app-text-underline"></a>
                             </td>
                             <td class="app-text-nowrap"
-                                th:text="${@enumUtil.labelOfTodoStatus(p.todoStatus)}"></td>
+                                th:text="${@enumLabelResolver.getLabel(p.todoStatus)}"></td>
                             <td class="app-text-breakall" th:text="${p.detail}"></td>
-                            <td class="app-text-nowrap" th:text="${@dateUtil.toYMD(p.deadline)}"></td>
-                            <td class="app-text-nowrap" th:text="${@dateUtil.toYMD_HM(p.updatedAt)}"></td>
+                            <td class="app-text-nowrap" th:text="${@dateComponent.toYMD(p.deadline)}"></td>
+                            <td class="app-text-nowrap" th:text="${@dateComponent.toYMD_HM(p.updatedAt)}"></td>
                         </tr>
                     </table>
                 </div>
             </th:block>
         </div>
-        <div th:replace="~{layout/pagination::pagination(${pageableList})}"></div>
+        <th:block th:replace="~{layout/pagination::pagination(${page})}"></th:block>
         <div class="app-gap-large">
             <a th:href="@{/new}" class="button is-primary">登録</a>
         </div>

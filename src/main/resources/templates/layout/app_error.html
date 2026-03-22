@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<span th:fragment="message(app, key)" th:remove="tag">
-  <th:block th:if="${app != null && app.map != null && app.map.get(key) != null && !app.map.get(key).success}">
-    <th:block th:each="m : ${app.map.get(key).appMessageList}">
-      <div th:text="${@messageUtil.getMessage(m)}" class="has-text-danger">メッセージ</div>
+<th:block th:fragment="message(validated, key)" th:remove="tag">
+    <th:block
+            th:if="${validated != null && validated.errors != null && validated.errors.get(key) != null && !validated.errors.get(key).ok()}">
+        <th:block th:each="e : ${validated.errors.get(key).errors}">
+            <div th:text="${@messageComponent.getMessage(e.messageKey)}" class="has-text-danger">メッセージ</div>
+        </th:block>
     </th:block>
-  </th:block>
-</span>
+</th:block>
 </html>

@@ -1,41 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:fragment="head" th:remove="tag">
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <meta name="format-detection" content="telephone=no"/>
-  <meta name="referrer" content="strict-origin-when-cross-origin"/>
-  <link rel="icon" type="image/x-icon" th:href="@{/assets/image/logo_128.png}">
-  <link rel="apple-touch-icon" th:href="@{/assets/image/logo_128.png}">
-  <link rel="stylesheet" th:href="@{/webjars/font-awesome/css/fontawesome.min.css}">
-  <link rel="stylesheet" th:href="@{/webjars/font-awesome/css/solid.min.css}">
-  <link rel="stylesheet" th:href="@{/assets/css/app-bulma.css}"/>
-  <link rel="stylesheet" th:href="@{/assets/css/common.css}"/>
-  <script th:src="@{/assets/js/common.js}"></script>
-</head>
+<th:block th:fragment="head" th:remove="tag">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="referrer" content="strict-origin-when-cross-origin"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/image/logo_128.png}">
+    <link rel="apple-touch-icon" th:href="@{/assets/image/logo_128.png}">
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.5.2/css/fontawesome.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.5.2/css/solid.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/app-bulma.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/common.css}"/>
+    <script th:src="@{/assets/js/common.js}"></script>
+</th:block>
 
-<head th:fragment="title(pageName)" th:remove="tag">
-  <title th:text="${pageName} + ' - ' + ${@environment.getProperty('app.name')}"></title>
-  <meta name="description" th:content="${pageName} + ' - ' + ${@environment.getProperty('app.name')}"/>
-</head>
+<th:block th:fragment="title(pageName)" th:remove="tag">
+    <title th:text="${pageName} + ' - ' + ${@environment.getProperty('app.name')}"></title>
+    <meta name="description" th:content="${pageName} + ' - ' + ${@environment.getProperty('app.name')}"/>
+</th:block>
 
+<!--/* th:block にできない */-->
 <header th:fragment="hero" class="app-header app-flex-v-center">
-  <a th:href="@{/}" class="is-size-3 app-name"
-     th:text="${@environment.getProperty('app.name')}"></a>
-  <span class="app-flex-1"></span>
-  <a href="https://github.com/green-code-developer/sample_todo_app" target="_blank">
-    <img th:src="@{/assets/image/github-mark.png}" class="app-github-icon app-light-mode"/>
-    <img th:src="@{/assets/image/github-mark-white.png}" class="app-github-icon app-dark-mode"/>
-  </a>
-  <div class="app-flex-v-center app-large-screen-hidden app-gap-left-small">
-    <input type="checkbox" id="burger" class="app-hidden" />
-    <label class="app-navbar-burger" for="burger">
-      <span></span>
-      <span></span>
-      <span></span>
-    </label>
-  </div>
+    <a th:href="@{/}" class="is-size-3 app-name"
+       th:text="${@environment.getProperty('app.name')}"></a>
+    <span class="app-flex-1"></span>
+    <a href="https://github.com/green-code-developer/sample_todo_app" target="_blank">
+        <img th:src="@{/assets/image/github-mark.png}" class="app-github-icon app-light-mode"/>
+        <img th:src="@{/assets/image/github-mark-white.png}" class="app-github-icon app-dark-mode"/>
+    </a>
+    <div class="app-flex-v-center app-large-screen-hidden app-gap-left-small">
+        <input type="checkbox" id="burger" class="app-hidden"/>
+        <label class="app-navbar-burger" for="burger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label>
+    </div>
 </header>
 
 </html>

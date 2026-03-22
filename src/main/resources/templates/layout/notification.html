@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="notification" th:remove="tag">
-  <th:block th:if="${notification != null}">
-    <div class="notification is-light app-notification"
-         th:classappend="|${notification.type + '' == 'SUCCESS' ? 'is-info' : ''}
-         ${notification.type + '' == 'ERROR' ? 'is-danger' : ''}|">
-      <span th:text="${@messageUtil.getMessage(notification.appMessage)}"></span>
-      <button class="delete"></button>
-    </div>
-  </th:block>
+<th:block th:fragment="notification" th:remove="tag">
+    <th:block th:if="${notification != null}">
+        <div class="notification is-light app-notification"
+             th:classappend="|${notification.type + '' == 'NOTIFICATION_SUCCESS' ? 'is-info' : ''}
+         ${notification.type + '' == 'NOTIFICATION_ERROR' ? 'is-danger' : ''}|">
+            <span th:text="${@messageComponent.getMessage(notification.messageKey)}"></span>
+            <button class="delete"></button>
+        </div>
+    </th:block>
+</th:block>
 </html>

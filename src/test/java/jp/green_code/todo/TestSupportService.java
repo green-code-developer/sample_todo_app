@@ -1,7 +1,7 @@
 package jp.green_code.todo;
 
-import jp.green_code.todo.entity.AccountEntity;
-import jp.green_code.todo.repository.AccountRepository;
+import jp.green_code.todo.domain.entity.AccountEntity;
+import jp.green_code.todo.domain.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

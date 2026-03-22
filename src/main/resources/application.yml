@@ -26,8 +26,9 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       # コネクションプール数
-      # ローカルはpostgres のmax_connection は100 で同時接続の考慮が不要なので5 にしておく
+      # ローカルはpostgres 同時接続の考慮が不要なので5 にしておく
       # サーバ環境ではpostgres のmax_connection と同時接続の要件に合わせて設定
+      # 100ぐらいが多いのかも
       maximumPoolSize: 5
 
   # セッション情報をpostgres に格納
@@ -46,12 +47,18 @@ spring:
   # ローカル設定　ここまで
 
 # Actuator
+# 稼働確認だけ有効にしている。ロードバランサ環境で必要になることが多い
+# http://localhost:56480/public/monitor/health
+# 他の有用な機能を有効化する場合は、外部からさせない配慮が必要
 management:
   endpoints:
     web:
       base-path: /public/monitor
       exposure:
         include: health
+
+app-shared:
+  zone-id: Asia/Tokyo
 
 # アプリで使用するキーのトップレベルはappとする
 # 外部ライブラリが使用するキーとの衝突を避ける

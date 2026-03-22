@@ -1,8 +1,9 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.10'
+	id 'org.springframework.boot' version '4.0.2'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'war'
+	id "net.ltgt.errorprone" version "5.1.0"
 }
 
 group = 'jp.green-code'
@@ -26,13 +27,10 @@ dependencies {
 	// セッションをDB 保存
 	implementation 'org.springframework.session:spring-session-core'
 	// DB 接続 jdbc
-	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	runtimeOnly 'org.postgresql:postgresql'
 	// セキュリティ
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	// lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
 	// 主にStringUtils を利用
 	implementation 'org.apache.commons:commons-lang3:3.18.0'
 	// ファイル操作で利用
@@ -42,13 +40,33 @@ dependencies {
 	// テスト
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	// webjar でバージョンを指定しないで使う
-	implementation 'org.webjars:webjars-locator:0.52'
 	// webjar ここから
 	implementation 'org.webjars:font-awesome:6.5.2'
 	// webjar ここまで
+	// ErrorProne
+	errorprone 'com.google.errorprone:error_prone_core:2.48.0'
+	// NullAway
+	errorprone 'com.uber.nullaway:nullaway:0.13.1'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// ErrorProne ここから
+tasks.withType(JavaCompile).configureEach {
+	options.errorprone {
+		// 日本語テーブルのテストを行いたいのでUnicodeInCode を無効化
+		disable("UnicodeInCode")
+		option("NullAway:AnnotatedPackages", "jp.green_code")
+	}
+}
+tasks.compileJava {
+	options.errorprone.error("NullAway")
+}
+tasks {
+	compileTestJava {
+		options.errorprone.enabled = false
+	}
+}
+// ErrorProne ここまで
