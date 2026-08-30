@@ -16,10 +16,11 @@ import java.util.List;
 
 import static java.util.Optional.ofNullable;
 import static jp.green_code.todo.domain.enums.TodoSearchSortEnum.UPDATE_DESC;
+import static jp.green_code.todo.domain.repository.base.BaseRepositoryHelper.escapeLike;
 import static jp.green_code.todo.domain.repository.base.BaseTodoRepository.Columns.DEADLINE;
 import static jp.green_code.todo.domain.repository.base.BaseTodoRepository.Columns.DETAIL;
 import static jp.green_code.todo.domain.repository.base.BaseTodoRepository.Columns.TODO_STATUS;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Table: todo
@@ -32,7 +33,7 @@ public class TodoRepository extends BaseTodoRepository {
 
     public PageResult<TodoEntity> findByCondition(PageRequest pageable, TodoSearchSortEnum sort, String word, @Nullable TodoStatusEnum status, @Nullable OffsetDateTime deadlineFrom, @Nullable OffsetDateTime deadlineTo) {
         var conditions = new ArrayList<String>();
-        if (!isBlank(word)) {
+        if (!isEmpty(word)) {
             conditions.add(DETAIL + " like concat('%', :word, '%')");
         }
         if (status != null) {
@@ -44,10 +45,10 @@ public class TodoRepository extends BaseTodoRepository {
         if (deadlineTo != null) {
             conditions.add(DEADLINE + " <= :deadlineTo");
         }
-        var condition = conditions.isEmpty() ? "" : "where " + String.join("AND ", conditions);
+        var condition = conditions.isEmpty() ? "" : "where " + String.join(" and ", conditions);
 
         var param = new HashMap<String, Object>();
-        param.put("word", word);
+        param.put("word", escapeLike(word));
         param.put("status", status + "");
         param.put("deadlineFrom", deadlineFrom);
         param.put("deadlineTo", deadlineTo);

@@ -9,7 +9,6 @@ public enum TodoStatusEnum {
     NEW,
     DOING,
     DONE,
-    DELETED,
     ;
 
     public static Optional<TodoStatusEnum> optionalValueOf(String s) {
