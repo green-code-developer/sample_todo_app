@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
-  <property name="LoggingDir" value="/var/app/log" />
   <property name="PATTERN" value="[%d] %p %C{1}:%L thread=%thread accountId=%X{ACCOUNT_ID} | %msg %n"/>
 
   <property name="MAX_SIZE" value="50MB" />
@@ -24,46 +23,6 @@
   <!-- SQL をログ出力　ここまで -->
 
   <springProfile name="prd,dev">
-    <appender name="InfoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-      <file>${LoggingDir}/info.log</file>
-      <append>true</append>
-      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-        <fileNamePattern>${LoggingDir}/old/info.%d{yyyyMMdd}.%i.log</fileNamePattern>
-        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-          <maxFileSize>${MAX_SIZE}</maxFileSize>
-        </timeBasedFileNamingAndTriggeringPolicy>
-        <maxHistory>${MAX_HISTORY}</maxHistory>
-      </rollingPolicy>
-      <encoder>
-        <pattern>${PATTERN}</pattern>
-        <charset>${ENCODE}</charset>
-      </encoder>
-    </appender>
-
-    <appender name="ErrorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-        <level>error</level>
-      </filter>
-      <file>${LoggingDir}/error.log</file>
-      <append>true</append>
-      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-        <fileNamePattern>${LoggingDir}/old/error.%d{yyyyMMdd}.%i.log</fileNamePattern>
-        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-          <maxFileSize>${MAX_SIZE}</maxFileSize>
-        </timeBasedFileNamingAndTriggeringPolicy>
-        <maxHistory>${MAX_HISTORY}</maxHistory>
-      </rollingPolicy>
-      <encoder>
-        <pattern>${PATTERN}</pattern>
-        <charset>${ENCODE}</charset>
-      </encoder>
-    </appender>
-
-    <root level="info">
-      <appender-ref ref="InfoAppender"/>
-      <appender-ref ref="ErrorAppender"/>
-    </root>
-
     <!-- SQL をログ出力　本番では行わない　ここから -->
     <logger name="org.springframework.jdbc.core.JdbcTemplate" level="info"/>
     <logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="info"/>

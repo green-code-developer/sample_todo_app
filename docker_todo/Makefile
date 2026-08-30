@@ -1,26 +1,26 @@
 .PHONY: build
 
-docker:
-	@make down
-	@make up
-	@make ps
+DOCKER=docker
+#DOCKER=podman
+
 up:
-	docker compose up -d
+	$(DOCKER) compose up -d
 down:
-	-docker compose down
+	-$(DOCKER) compose down
+build:
+	$(DOCKER) compose build --no-cache
 prune:
-	-docker container prune -f
-	-docker image prune -fa
-	-docker volume prune -f
+	$(DOCKER) container prune -f
+	$(DOCKER) image prune -f
+prune_volume:
+	$(DOCKER) volume prune -f
 ps:
-	docker compose ps
+	$(DOCKER) compose ps
 stats:
-	docker stats
+	$(DOCKER) stats
 sh:
-	docker compose exec postgres bash
+	$(DOCKER) compose exec postgres bash
 sql:
-	docker compose exec postgres psql -Utodo todo
-help:
-	echo usage make up,down,prune,ps,stats,sql,log
+	$(DOCKER) compose exec postgres psql -Utodo todo
 log:
-	docker compose logs --follow
+	$(DOCKER) compose logs --follow

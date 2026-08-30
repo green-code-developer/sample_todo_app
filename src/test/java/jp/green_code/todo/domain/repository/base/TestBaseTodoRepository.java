@@ -1,7 +1,5 @@
 package jp.green_code.todo.domain.repository.base;
 
-import java.lang.Long;
-import java.lang.String;
 import java.time.OffsetDateTime;
 import jp.green_code.todo.domain.entity.TodoEntity;
 import jp.green_code.todo.domain.enums.TodoStatusEnum;
@@ -59,11 +57,9 @@ public abstract class TestBaseTodoRepository {
 
         assert4updatedBy(data2.getUpdatedBy(), stored2.getUpdatedBy());
 
-        // created_at はupdate 対象外のため変更前と変わらないことを確認
-        assert4createdAt(stored.getCreatedAt(), stored2.getCreatedAt());
+        assert4createdAt(data2.getCreatedAt(), stored2.getCreatedAt());
 
-        // created_by はupdate 対象外のため変更前と変わらないことを確認
-        assert4createdBy(stored.getCreatedBy(), stored2.getCreatedBy());
+        assert4createdBy(data2.getCreatedBy(), stored2.getCreatedBy());
 
         // delete
         var deleteCount = repository.deleteByPk(data2.getTodoId());

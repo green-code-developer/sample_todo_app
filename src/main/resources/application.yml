@@ -1,6 +1,6 @@
 server:
   # ローカルの8080 は使用されている可能性があるので変える
-  port: 56480
+  port: 61120
   servlet:
     encoding:
       # セキュリティ対策
@@ -18,11 +18,9 @@ spring:
     enabled: true
 
   datasource:
-    url: jdbc:postgresql://localhost:56432/todo?currentSchema=TODO
+    url: jdbc:postgresql://localhost:61121/todo?currentSchema=TODO
     username: todo
-    # パスワードは環境変数 APP_POSTGRES_PASSWORD で指定できるようにしておく
-    # ローカルではtodo だがサーバ環境では環境変数の値を使用する
-    password: ${APP_POSTGRES_PASSWORD:todo}
+    password: todo
     driver-class-name: org.postgresql.Driver
     hikari:
       # コネクションプール数

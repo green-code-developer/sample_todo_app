@@ -3,13 +3,13 @@ services:
     build:
       context: ./postgres
     ports:
-      - 56432:5432
+      - 61121:5432
     environment:
       - POSTGRES_USER=todo
       - POSTGRES_PASSWORD=todo
       - POSTGRES_DB=todo
     healthcheck:
-      test: psql -Utodo todo -c '\q'
+      test: pg_isready -Utodo
     volumes:
       - pgdata:/var/lib/postgresql/data
 volumes:

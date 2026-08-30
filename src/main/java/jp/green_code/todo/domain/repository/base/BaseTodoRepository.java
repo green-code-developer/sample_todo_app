@@ -23,14 +23,14 @@ public abstract class BaseTodoRepository {
     protected final RepositoryHelper helper;
 
     public static class Columns {
-        public static final ColumnDefinition TODO_ID = new ColumnDefinition("todo_id", "todoId", "java.lang.Long", "bigserial", -5, 19, 1, false, true, null, null, false, false, false);
-        public static final ColumnDefinition TODO_STATUS = new ColumnDefinition("todo_status", "todoStatus", "jp.green_code.todo.domain.enums.TodoStatusEnum", "todo_status", 12, 2147483647, null, false, true, ":{javaPropertyName}::todo_status", null, false, false, false);
-        public static final ColumnDefinition DETAIL = new ColumnDefinition("detail", "detail", "java.lang.String", "text", 12, 2147483647, null, false, true, null, null, false, false, false);
-        public static final ColumnDefinition DEADLINE = new ColumnDefinition("deadline", "deadline", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, true, false, null, null, false, false, false);
-        public static final ColumnDefinition UPDATED_AT = new ColumnDefinition("updated_at", "updatedAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, false, false);
-        public static final ColumnDefinition UPDATED_BY = new ColumnDefinition("updated_by", "updatedBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, false, false, false);
-        public static final ColumnDefinition CREATED_AT = new ColumnDefinition("created_at", "createdAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, true, false);
-        public static final ColumnDefinition CREATED_BY = new ColumnDefinition("created_by", "createdBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, false, true, false);
+        public static final ColumnDefinition TODO_ID = new ColumnDefinition("todo_id", "todoId", "java.lang.Long", "bigserial", -5, 19, 1, false, true, null, null, false, false);
+        public static final ColumnDefinition TODO_STATUS = new ColumnDefinition("todo_status", "todoStatus", "jp.green_code.todo.domain.enums.TodoStatusEnum", "todo_status", 12, 2147483647, null, false, true, ":{javaPropertyName}::todo_status", null, false, false);
+        public static final ColumnDefinition DETAIL = new ColumnDefinition("detail", "detail", "java.lang.String", "text", 12, 2147483647, null, false, true, null, null, false, false);
+        public static final ColumnDefinition DEADLINE = new ColumnDefinition("deadline", "deadline", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, true, false, null, null, false, false);
+        public static final ColumnDefinition UPDATED_AT = new ColumnDefinition("updated_at", "updatedAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, false);
+        public static final ColumnDefinition UPDATED_BY = new ColumnDefinition("updated_by", "updatedBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, false, false);
+        public static final ColumnDefinition CREATED_AT = new ColumnDefinition("created_at", "createdAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, false);
+        public static final ColumnDefinition CREATED_BY = new ColumnDefinition("created_by", "createdBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, true, false);
 
         public static final Map<String, ColumnDefinition> MAP = new LinkedHashMap<>();
 
@@ -54,7 +54,7 @@ public abstract class BaseTodoRepository {
         this.helper = helper;
     }
 
-    protected List<String> toInsertColumns(TodoEntity entity) {
+    protected List<String> toInsertColumns(TodoEntity entity, boolean excludeNull) {
         var res = new ArrayList<String>();
         if (entity.getTodoId() != null) {
             res.add("\"todo_id\"");
@@ -65,19 +65,25 @@ public abstract class BaseTodoRepository {
         if (entity.getDetail() != null) {
             res.add("\"detail\"");
         }
-        res.add("\"deadline\"");
-        res.add("\"updated_at\"");
+        if (!excludeNull || entity.getDeadline() != null) {
+            res.add("\"deadline\"");
+        }
+        if (entity.getUpdatedAt() != null) {
+            res.add("\"updated_at\"");
+        }
         if (entity.getUpdatedBy() != null) {
             res.add("\"updated_by\"");
         }
-        res.add("\"created_at\"");
+        if (entity.getCreatedAt() != null) {
+            res.add("\"created_at\"");
+        }
         if (entity.getCreatedBy() != null) {
             res.add("\"created_by\"");
         }
         return res;
     }
 
-    protected Set<String> toInsertReturning(TodoEntity entity, List<String> insertColumns) {
+    protected Set<String> toInsertReturning(List<String> insertColumns) {
         var res = new HashSet<String>();
         if (insertColumns.isEmpty()) {
             res.add("todo_id");
@@ -89,28 +95,29 @@ public abstract class BaseTodoRepository {
             res.add("created_at");
             res.add("created_by");
         } else {
-            if (entity.getTodoId() == null) {
+            if (!insertColumns.contains("\"todo_id\"")) {
                 res.add("todo_id");
             }
-            if (entity.getTodoStatus() == null) {
+            if (!insertColumns.contains("\"todo_status\"")) {
                 res.add("todo_status");
             }
-            if (entity.getDetail() == null) {
+            if (!insertColumns.contains("\"detail\"")) {
                 res.add("detail");
             }
+            if (!insertColumns.contains("\"deadline\"")) {
+                res.add("deadline");
+            }
             res.add("updated_at");
-            if (entity.getUpdatedBy() == null) {
+            if (!insertColumns.contains("\"updated_by\"")) {
                 res.add("updated_by");
             }
             res.add("created_at");
-            if (entity.getCreatedBy() == null) {
-                res.add("created_by");
-            }
+            res.add("created_by");
         }
         return res;
     }
 
-    protected List<String> toInsertValues(TodoEntity entity) {
+    protected List<String> toInsertValues(TodoEntity entity, boolean excludeNull) {
         var res = new ArrayList<String>();
         if (entity.getTodoId() != null) {
             res.add("todo_id");
@@ -121,67 +128,91 @@ public abstract class BaseTodoRepository {
         if (entity.getDetail() != null) {
             res.add("detail");
         }
-        res.add("deadline");
-        res.add("now()");
+        if (!excludeNull || entity.getDeadline() != null) {
+            res.add("deadline");
+        }
+        if (entity.getUpdatedAt() != null) {
+            res.add("updated_at");
+        }
         if (entity.getUpdatedBy() != null) {
             res.add("updated_by");
         }
-        res.add("now()");
+        if (entity.getCreatedAt() != null) {
+            res.add("created_at");
+        }
         if (entity.getCreatedBy() != null) {
             res.add("created_by");
         }
         return res;
     }
 
-    protected void copyReturningValuesInInsert(TodoEntity entity, TodoEntity returning) {
-        if (entity.getTodoId() == null) {
+    protected void copyReturningValues(TodoEntity entity, TodoEntity returning, Set<String> returningColumns) {
+        if (returningColumns.contains("todo_id")) {
             entity.setTodoId(returning.getTodoId());
         }
-        if (entity.getTodoStatus() == null) {
+        if (returningColumns.contains("todo_status")) {
             entity.setTodoStatus(returning.getTodoStatus());
         }
-        if (entity.getDetail() == null) {
+        if (returningColumns.contains("detail")) {
             entity.setDetail(returning.getDetail());
         }
-        entity.setUpdatedAt(returning.getUpdatedAt());
-        if (entity.getUpdatedBy() == null) {
+        if (returningColumns.contains("deadline")) {
+            entity.setDeadline(returning.getDeadline());
+        }
+        if (returningColumns.contains("updated_at")) {
+            entity.setUpdatedAt(returning.getUpdatedAt());
+        }
+        if (returningColumns.contains("updated_by")) {
             entity.setUpdatedBy(returning.getUpdatedBy());
         }
-        entity.setCreatedAt(returning.getCreatedAt());
-        if (entity.getCreatedBy() == null) {
+        if (returningColumns.contains("created_at")) {
+            entity.setCreatedAt(returning.getCreatedAt());
+        }
+        if (returningColumns.contains("created_by")) {
             entity.setCreatedBy(returning.getCreatedBy());
         }
     }
 
-    public TodoEntity insert(TodoEntity entity) {
-        var sql = new ArrayList<String>();
-        sql.add("insert into \"todo\"");
-        var insertColumns = toInsertColumns(entity);
-        if (insertColumns.isEmpty()) {
-            sql.add("DEFAULT VALUES");
-        } else {
-            sql.add("(%s)".formatted(join(", ", insertColumns)));
-            var insertValues = toInsertValues(entity);
-            var insertValuesClause = insertValues.stream().map(c -> Columns.MAP.get(c) == null ? c : Columns.MAP.get(c).toParamColumn()).collect(joining(", "));
-            sql.add("values (%s)".formatted(insertValuesClause));
-        }
-        var param = entityToParam(entity);
-        var returningColumns = toInsertReturning(entity, insertColumns);
+    protected int execWithReturning(List<String> sql, Map<String, Object> param, TodoEntity entity, Set<String> returningColumns) {
         if (returningColumns.isEmpty()) {
-            this.helper.exec(sql, param);
-        } else {
-            var returningClause = returningColumns.stream().map(c -> Objects.requireNonNull(Columns.MAP.get(c), "Unknown column " + c).toSelectColumn()).collect(joining(", "));
-            sql.add("returning %s".formatted(returningClause));
-            var ret = this.helper.single(sql, param, TodoEntity.class);
-            copyReturningValuesInInsert(entity, ret);
+            return this.helper.exec(sql, param);
         }
-        return entity;
+        var returningClause = returningColumns.stream().map(c -> Objects.requireNonNull(Columns.MAP.get(c), "Unknown column " + c).toSelectColumn()).collect(joining(", "));
+        sql.add("returning %s".formatted(returningClause));
+        var ret = this.helper.optional(sql, param, TodoEntity.class);
+        ret.ifPresent(r -> copyReturningValues(entity, r, returningColumns));
+        return ret.isPresent() ? 1 : 0;
+    }
+
+    public int insert(TodoEntity entity) {
+        return doInsert(entity, false);
+    }
+
+    /** 値がnull のカラムをINSERT 対象から外し、DB の既定値を使う */
+    public int insertNotNull(TodoEntity entity) {
+        return doInsert(entity, true);
+    }
+
+    protected int doInsert(TodoEntity entity, boolean excludeNull) {
+        var __sql = new ArrayList<String>();
+        __sql.add("insert into \"todo\"");
+        var __insertColumns = toInsertColumns(entity, excludeNull);
+        if (__insertColumns.isEmpty()) {
+            __sql.add("DEFAULT VALUES");
+        } else {
+            __sql.add("(%s)".formatted(join(", ", __insertColumns)));
+            var __insertValues = toInsertValues(entity, excludeNull);
+            var __valuesClause = __insertValues.stream().map(c -> Columns.MAP.get(c) == null ? c : Columns.MAP.get(c).toParamColumn()).collect(joining(", "));
+            __sql.add("values (%s)".formatted(__valuesClause));
+        }
+        var __param = entityToParam(entity);
+        return execWithReturning(__sql, __param, entity, toInsertReturning(__insertColumns));
     }
 
     public static Map<String, Object> entityToParam(TodoEntity entity) {
         var param = new HashMap<String, Object>();
         param.put("todoId", entity.getTodoId());
-        param.put("todoStatus", String.valueOf(entity.getTodoStatus()));
+        param.put("todoStatus", entity.getTodoStatus() == null ? null : entity.getTodoStatus().name());
         param.put("detail", entity.getDetail());
         param.put("deadline", entity.getDeadline());
         param.put("updatedAt", entity.getUpdatedAt());
@@ -191,26 +222,34 @@ public abstract class BaseTodoRepository {
         return param;
     }
 
-    public TodoEntity update(TodoEntity entity) {
-        return updateByPk(entity, entity.getTodoId());
+    public int update(TodoEntity entity) {
+        return doUpdateByPk(entity, false, entity.getTodoId());
     }
 
-    protected void copyReturningValuesInUpdate(TodoEntity entity, TodoEntity returning) {
-        entity.setUpdatedAt(returning.getUpdatedAt());
+    /** 値がnull のカラムをset 句から外して部分更新する */
+    public int updateNotNull(TodoEntity entity) {
+        return doUpdateByPk(entity, true, entity.getTodoId());
     }
 
-    public TodoEntity updateByPk(TodoEntity entity, Long todoId) {
+
+    public int updateByPk(TodoEntity entity, Long todoId) {
+        return doUpdateByPk(entity, false, todoId);
+    }
+
+    protected int doUpdateByPk(TodoEntity entity, boolean excludeNull, Long todoId) {
         var __sql = new ArrayList<String>();
-        var setClause = Columns.MAP.values().stream().filter(c-> !c.isShouldSkipInUpdate()).map(BaseColumnDefinition::toUpdateSetClause).collect(joining(", "));
+        var __param = entityToParam(entity);
+        var setClause = Columns.MAP.values().stream()
+                .filter(c -> !excludeNull || __param.get(c.getJavaPropertyName()) != null)
+                .map(BaseColumnDefinition::toUpdateSetClause).collect(joining(", "));
+        if (setClause.isEmpty()) {
+            throw new IllegalArgumentException("更新対象のカラムがありません");
+        }
         __sql.add("update \"todo\"");
         __sql.add("set %s".formatted(setClause));
-        var __param = entityToParam(entity);
         __param.put("__pk1", todoId);
         __sql.add("where \"todo_id\" = :__pk1");
-        __sql.add("returning updated_at");
-        var ret = this.helper.single(__sql, __param, TodoEntity.class);
-        copyReturningValuesInUpdate(entity, ret);
-        return entity;
+        return execWithReturning(__sql, __param, entity, Set.of("updated_at", "created_at", "created_by"));
     }
 
     public Optional<TodoEntity> findByPk(Long todoId) {

@@ -11,7 +11,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://postgres/todo?currentSchema=TODO
+    url: jdbc:postgresql://host.docker.internal:61101/todo?currentSchema=TODO
   # ローカル設定戻し　ここから
   thymeleaf:
     cache: true

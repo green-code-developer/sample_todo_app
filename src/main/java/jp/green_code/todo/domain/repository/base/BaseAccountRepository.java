@@ -23,13 +23,13 @@ public abstract class BaseAccountRepository {
     protected final RepositoryHelper helper;
 
     public static class Columns {
-        public static final ColumnDefinition ACCOUNT_ID = new ColumnDefinition("account_id", "accountId", "java.lang.Long", "bigserial", -5, 19, 1, false, true, null, null, false, false, false);
-        public static final ColumnDefinition ACCOUNT_STATUS = new ColumnDefinition("account_status", "accountStatus", "java.lang.String", "varchar", 12, 2147483647, null, false, true, null, null, false, false, false);
-        public static final ColumnDefinition NAME = new ColumnDefinition("name", "name", "java.lang.String", "text", 12, 2147483647, null, false, true, null, null, false, false, false);
-        public static final ColumnDefinition UPDATED_AT = new ColumnDefinition("updated_at", "updatedAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, false, false);
-        public static final ColumnDefinition UPDATED_BY = new ColumnDefinition("updated_by", "updatedBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, false, false, false);
-        public static final ColumnDefinition CREATED_AT = new ColumnDefinition("created_at", "createdAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, true, false);
-        public static final ColumnDefinition CREATED_BY = new ColumnDefinition("created_by", "createdBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, false, true, false);
+        public static final ColumnDefinition ACCOUNT_ID = new ColumnDefinition("account_id", "accountId", "java.lang.Long", "bigserial", -5, 19, 1, false, true, null, null, false, false);
+        public static final ColumnDefinition ACCOUNT_STATUS = new ColumnDefinition("account_status", "accountStatus", "java.lang.String", "varchar", 12, 2147483647, null, false, true, null, null, false, false);
+        public static final ColumnDefinition NAME = new ColumnDefinition("name", "name", "java.lang.String", "text", 12, 2147483647, null, false, true, null, null, false, false);
+        public static final ColumnDefinition UPDATED_AT = new ColumnDefinition("updated_at", "updatedAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, false);
+        public static final ColumnDefinition UPDATED_BY = new ColumnDefinition("updated_by", "updatedBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, false, false);
+        public static final ColumnDefinition CREATED_AT = new ColumnDefinition("created_at", "createdAt", "java.time.OffsetDateTime", "timestamptz", 93, 35, null, false, true, null, null, true, false);
+        public static final ColumnDefinition CREATED_BY = new ColumnDefinition("created_by", "createdBy", "java.lang.Long", "int8", -5, 19, null, false, true, null, null, true, false);
 
         public static final Map<String, ColumnDefinition> MAP = new LinkedHashMap<>();
 
@@ -52,7 +52,7 @@ public abstract class BaseAccountRepository {
         this.helper = helper;
     }
 
-    protected List<String> toInsertColumns(AccountEntity entity) {
+    protected List<String> toInsertColumns(AccountEntity entity, boolean excludeNull) {
         var res = new ArrayList<String>();
         if (entity.getAccountId() != null) {
             res.add("\"account_id\"");
@@ -63,18 +63,22 @@ public abstract class BaseAccountRepository {
         if (entity.getName() != null) {
             res.add("\"name\"");
         }
-        res.add("\"updated_at\"");
+        if (entity.getUpdatedAt() != null) {
+            res.add("\"updated_at\"");
+        }
         if (entity.getUpdatedBy() != null) {
             res.add("\"updated_by\"");
         }
-        res.add("\"created_at\"");
+        if (entity.getCreatedAt() != null) {
+            res.add("\"created_at\"");
+        }
         if (entity.getCreatedBy() != null) {
             res.add("\"created_by\"");
         }
         return res;
     }
 
-    protected Set<String> toInsertReturning(AccountEntity entity, List<String> insertColumns) {
+    protected Set<String> toInsertReturning(List<String> insertColumns) {
         var res = new HashSet<String>();
         if (insertColumns.isEmpty()) {
             res.add("account_id");
@@ -85,28 +89,26 @@ public abstract class BaseAccountRepository {
             res.add("created_at");
             res.add("created_by");
         } else {
-            if (entity.getAccountId() == null) {
+            if (!insertColumns.contains("\"account_id\"")) {
                 res.add("account_id");
             }
-            if (entity.getAccountStatus() == null) {
+            if (!insertColumns.contains("\"account_status\"")) {
                 res.add("account_status");
             }
-            if (entity.getName() == null) {
+            if (!insertColumns.contains("\"name\"")) {
                 res.add("name");
             }
             res.add("updated_at");
-            if (entity.getUpdatedBy() == null) {
+            if (!insertColumns.contains("\"updated_by\"")) {
                 res.add("updated_by");
             }
             res.add("created_at");
-            if (entity.getCreatedBy() == null) {
-                res.add("created_by");
-            }
+            res.add("created_by");
         }
         return res;
     }
 
-    protected List<String> toInsertValues(AccountEntity entity) {
+    protected List<String> toInsertValues(AccountEntity entity, boolean excludeNull) {
         var res = new ArrayList<String>();
         if (entity.getAccountId() != null) {
             res.add("account_id");
@@ -117,60 +119,79 @@ public abstract class BaseAccountRepository {
         if (entity.getName() != null) {
             res.add("name");
         }
-        res.add("now()");
+        if (entity.getUpdatedAt() != null) {
+            res.add("updated_at");
+        }
         if (entity.getUpdatedBy() != null) {
             res.add("updated_by");
         }
-        res.add("now()");
+        if (entity.getCreatedAt() != null) {
+            res.add("created_at");
+        }
         if (entity.getCreatedBy() != null) {
             res.add("created_by");
         }
         return res;
     }
 
-    protected void copyReturningValuesInInsert(AccountEntity entity, AccountEntity returning) {
-        if (entity.getAccountId() == null) {
+    protected void copyReturningValues(AccountEntity entity, AccountEntity returning, Set<String> returningColumns) {
+        if (returningColumns.contains("account_id")) {
             entity.setAccountId(returning.getAccountId());
         }
-        if (entity.getAccountStatus() == null) {
+        if (returningColumns.contains("account_status")) {
             entity.setAccountStatus(returning.getAccountStatus());
         }
-        if (entity.getName() == null) {
+        if (returningColumns.contains("name")) {
             entity.setName(returning.getName());
         }
-        entity.setUpdatedAt(returning.getUpdatedAt());
-        if (entity.getUpdatedBy() == null) {
+        if (returningColumns.contains("updated_at")) {
+            entity.setUpdatedAt(returning.getUpdatedAt());
+        }
+        if (returningColumns.contains("updated_by")) {
             entity.setUpdatedBy(returning.getUpdatedBy());
         }
-        entity.setCreatedAt(returning.getCreatedAt());
-        if (entity.getCreatedBy() == null) {
+        if (returningColumns.contains("created_at")) {
+            entity.setCreatedAt(returning.getCreatedAt());
+        }
+        if (returningColumns.contains("created_by")) {
             entity.setCreatedBy(returning.getCreatedBy());
         }
     }
 
-    public AccountEntity insert(AccountEntity entity) {
-        var sql = new ArrayList<String>();
-        sql.add("insert into \"account\"");
-        var insertColumns = toInsertColumns(entity);
-        if (insertColumns.isEmpty()) {
-            sql.add("DEFAULT VALUES");
-        } else {
-            sql.add("(%s)".formatted(join(", ", insertColumns)));
-            var insertValues = toInsertValues(entity);
-            var insertValuesClause = insertValues.stream().map(c -> Columns.MAP.get(c) == null ? c : Columns.MAP.get(c).toParamColumn()).collect(joining(", "));
-            sql.add("values (%s)".formatted(insertValuesClause));
-        }
-        var param = entityToParam(entity);
-        var returningColumns = toInsertReturning(entity, insertColumns);
+    protected int execWithReturning(List<String> sql, Map<String, Object> param, AccountEntity entity, Set<String> returningColumns) {
         if (returningColumns.isEmpty()) {
-            this.helper.exec(sql, param);
-        } else {
-            var returningClause = returningColumns.stream().map(c -> Objects.requireNonNull(Columns.MAP.get(c), "Unknown column " + c).toSelectColumn()).collect(joining(", "));
-            sql.add("returning %s".formatted(returningClause));
-            var ret = this.helper.single(sql, param, AccountEntity.class);
-            copyReturningValuesInInsert(entity, ret);
+            return this.helper.exec(sql, param);
         }
-        return entity;
+        var returningClause = returningColumns.stream().map(c -> Objects.requireNonNull(Columns.MAP.get(c), "Unknown column " + c).toSelectColumn()).collect(joining(", "));
+        sql.add("returning %s".formatted(returningClause));
+        var ret = this.helper.optional(sql, param, AccountEntity.class);
+        ret.ifPresent(r -> copyReturningValues(entity, r, returningColumns));
+        return ret.isPresent() ? 1 : 0;
+    }
+
+    public int insert(AccountEntity entity) {
+        return doInsert(entity, false);
+    }
+
+    /** 値がnull のカラムをINSERT 対象から外し、DB の既定値を使う */
+    public int insertNotNull(AccountEntity entity) {
+        return doInsert(entity, true);
+    }
+
+    protected int doInsert(AccountEntity entity, boolean excludeNull) {
+        var __sql = new ArrayList<String>();
+        __sql.add("insert into \"account\"");
+        var __insertColumns = toInsertColumns(entity, excludeNull);
+        if (__insertColumns.isEmpty()) {
+            __sql.add("DEFAULT VALUES");
+        } else {
+            __sql.add("(%s)".formatted(join(", ", __insertColumns)));
+            var __insertValues = toInsertValues(entity, excludeNull);
+            var __valuesClause = __insertValues.stream().map(c -> Columns.MAP.get(c) == null ? c : Columns.MAP.get(c).toParamColumn()).collect(joining(", "));
+            __sql.add("values (%s)".formatted(__valuesClause));
+        }
+        var __param = entityToParam(entity);
+        return execWithReturning(__sql, __param, entity, toInsertReturning(__insertColumns));
     }
 
     public static Map<String, Object> entityToParam(AccountEntity entity) {
@@ -185,26 +206,34 @@ public abstract class BaseAccountRepository {
         return param;
     }
 
-    public AccountEntity update(AccountEntity entity) {
-        return updateByPk(entity, entity.getAccountId());
+    public int update(AccountEntity entity) {
+        return doUpdateByPk(entity, false, entity.getAccountId());
     }
 
-    protected void copyReturningValuesInUpdate(AccountEntity entity, AccountEntity returning) {
-        entity.setUpdatedAt(returning.getUpdatedAt());
+    /** 値がnull のカラムをset 句から外して部分更新する */
+    public int updateNotNull(AccountEntity entity) {
+        return doUpdateByPk(entity, true, entity.getAccountId());
     }
 
-    public AccountEntity updateByPk(AccountEntity entity, Long accountId) {
+
+    public int updateByPk(AccountEntity entity, Long accountId) {
+        return doUpdateByPk(entity, false, accountId);
+    }
+
+    protected int doUpdateByPk(AccountEntity entity, boolean excludeNull, Long accountId) {
         var __sql = new ArrayList<String>();
-        var setClause = Columns.MAP.values().stream().filter(c-> !c.isShouldSkipInUpdate()).map(BaseColumnDefinition::toUpdateSetClause).collect(joining(", "));
+        var __param = entityToParam(entity);
+        var setClause = Columns.MAP.values().stream()
+                .filter(c -> !excludeNull || __param.get(c.getJavaPropertyName()) != null)
+                .map(BaseColumnDefinition::toUpdateSetClause).collect(joining(", "));
+        if (setClause.isEmpty()) {
+            throw new IllegalArgumentException("更新対象のカラムがありません");
+        }
         __sql.add("update \"account\"");
         __sql.add("set %s".formatted(setClause));
-        var __param = entityToParam(entity);
         __param.put("__pk1", accountId);
         __sql.add("where \"account_id\" = :__pk1");
-        __sql.add("returning updated_at");
-        var ret = this.helper.single(__sql, __param, AccountEntity.class);
-        copyReturningValuesInUpdate(entity, ret);
-        return entity;
+        return execWithReturning(__sql, __param, entity, Set.of("updated_at", "created_at", "created_by"));
     }
 
     public Optional<AccountEntity> findByPk(Long accountId) {

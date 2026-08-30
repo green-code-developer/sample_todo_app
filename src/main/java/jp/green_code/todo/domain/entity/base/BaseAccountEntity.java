@@ -1,7 +1,5 @@
 package jp.green_code.todo.domain.entity.base;
 
-import java.lang.Long;
-import java.lang.String;
 import java.time.OffsetDateTime;
 
 /**
