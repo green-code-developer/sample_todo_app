@@ -31,8 +31,9 @@
 - セッションは Spring Session により PostgreSQL へ保存する。Web サーバを冗長化した際にサーバ間でセッションを共有できる。5.1 の検索条件の保持はこれに依存する
 - Entity と Repository の基底クラスは spring-jdbc-codegen で自動生成する
 - Spring Security により CSRF 対策と CSP（`default-src 'self'`）を有効化する。認証は行わない
-- ErrorProne + NullAway による null 安全チェックをビルド時に行う。全体を `@NullMarked` とし、Form（`domain.dto`）のみ `@NullUnmarked` とする
+- ErrorProne + NullAway による null 安全チェックをビルド時に行う。**全体を `@NullMarked` とし、`@NullUnmarked` は使わない**。null を許容する箇所はフィールドや引数ごとに `@Nullable` で表す
 - Entity はカラムごとに null 許容を表す。spring-jdbc-codegen が生成する。todo テーブルでは `todo_status` と `detail` が非 null、`updated_by` と `created_by` がプリミティブ、`todo_id`・`deadline`・`updated_at`・`created_at` が `@Nullable` になる
+- Form（`domain.dto`）は HTTP から受けた**未検証の入力**を保持するため、全フィールドを `@Nullable` とする。送られてこないパラメータは null になるため
 
 ### 2.2 パッケージ構成
 
@@ -181,6 +182,10 @@ DB の既定値 -1 は使われない。
 ## 6. バリデーション
 
 エラーメッセージは `messages.properties` の `validation.*` を使用する。
+
+Form は全フィールドが `@Nullable` で、未検証の入力をそのまま保持する。
+**検証を通った値だけを Entity へ移す。** Entity の非 null なフィールド（`detail` など）へ
+未検証の値を渡すとコンパイルエラーになるため、この順序は型で守られる。
 
 ### 6.1 登録・更新（TodoDto）
 

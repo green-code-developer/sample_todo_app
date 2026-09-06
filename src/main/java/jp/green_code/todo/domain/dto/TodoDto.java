@@ -1,16 +1,22 @@
 package jp.green_code.todo.domain.dto;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Todo 登録・更新フォーム
  */
 public class TodoDto {
     // 新規の場合はnull
+    @Nullable
     private Long todoId;
 
+    @Nullable
     private String detail;
 
+    @Nullable
     private String deadline;
 
+    @Nullable
     private String todoStatus;
     public boolean isNew() {
         return todoId == null;
@@ -20,35 +26,35 @@ public class TodoDto {
         return String.format("TodoForm(todoId=%s,detail=%s,deadlineFrom=%s,todoStatus=%s)", todoId, detail, deadline, todoStatus);
     }
 
-    public Long getTodoId() {
+    public @Nullable Long getTodoId() {
         return todoId;
     }
 
-    public void setTodoId(Long todoId) {
+    public void setTodoId(@Nullable Long todoId) {
         this.todoId = todoId;
     }
 
-    public String getDetail() {
+    public @Nullable String getDetail() {
         return detail;
     }
 
-    public void setDetail(String detail) {
+    public void setDetail(@Nullable String detail) {
         this.detail = detail;
     }
 
-    public String getDeadline() {
+    public @Nullable String getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(String deadline) {
+    public void setDeadline(@Nullable String deadline) {
         this.deadline = deadline;
     }
 
-    public String getTodoStatus() {
+    public @Nullable String getTodoStatus() {
         return todoStatus;
     }
 
-    public void setTodoStatus(String todoStatus) {
+    public void setTodoStatus(@Nullable String todoStatus) {
         this.todoStatus = todoStatus;
     }
 }

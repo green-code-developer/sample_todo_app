@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Optional.ofNullable;
+
 import static jp.green_code.todo.domain.enums.TodoStatusEnum.NEW;
 import static jp.green_code.shared.component.DateComponent.FORMAT_YMD_hyphen_loose;
 import static jp.green_code.shared.component.DateComponent.parseYMD_hyphen_loose;
@@ -93,7 +95,6 @@ public class TodoService {
     Validated<TodoEntity> validateAndBuildEntity(TodoDto dto) {
         var entity = new TodoEntity();
         entity.setTodoId(dto.getTodoId());
-        entity.setDetail(dto.getDetail());
         entity.setTodoStatus(NEW);
 
         var map = new HashMap<String, ValidationStepResult>();
@@ -104,6 +105,8 @@ public class TodoService {
         var detailValidators = List.of(textMinLength(1), textMaxLength(100));
         var detailResult = validateRequired(dto.getDetail(), detailValidators);
         map.put("detail", detailResult);
+        // 検証を通らなかった場合はentity を使わないため、null でないときだけ詰める
+        ofNullable(dto.getDetail()).ifPresent(entity::setDetail);
 
         var deadlineValidators = List.of(stopIfEmpty(), localDateTextValidator(FORMAT_YMD_hyphen_loose, ldt -> entity.setDeadline(dateComponent.localDateToOffsetDateTime(ldt))));
         var deadlineResult = validateAllowNull(dto.getDeadline(), deadlineValidators);

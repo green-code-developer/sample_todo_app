@@ -31,7 +31,7 @@ public class TodoRepository extends BaseTodoRepository {
         super(helper);
     }
 
-    public PageResult<TodoEntity> findByCondition(PageRequest pageable, TodoSearchSortEnum sort, String word, @Nullable TodoStatusEnum status, @Nullable OffsetDateTime deadlineFrom, @Nullable OffsetDateTime deadlineTo) {
+    public PageResult<TodoEntity> findByCondition(PageRequest pageable, @Nullable TodoSearchSortEnum sort, @Nullable String word, @Nullable TodoStatusEnum status, @Nullable OffsetDateTime deadlineFrom, @Nullable OffsetDateTime deadlineTo) {
         var conditions = new ArrayList<String>();
         if (!isEmpty(word)) {
             conditions.add(DETAIL + " like concat('%', :word, '%')");

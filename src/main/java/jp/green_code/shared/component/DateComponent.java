@@ -59,7 +59,7 @@ public class DateComponent {
     }
 
     // "1900-01-01T00:00:00+00:00" 形式の文字列を日付に変換
-    public static Optional<OffsetDateTime> parseISO(String s) {
+    public static Optional<OffsetDateTime> parseISO(@Nullable String s) {
         try {
             return Optional.of(OffsetDateTime.parse(trim(s), ISO_OFFSET_DATE_TIME));
         } catch (Exception e) {
@@ -69,7 +69,7 @@ public class DateComponent {
 
     // PARSE_DATE_TIME_FORMAT の文字列を日付に変換
     // 柔軟性を上げるためゆるく解析する
-    public static Optional<LocalDateTime> parseYMD_HMS(String s) {
+    public static Optional<LocalDateTime> parseYMD_HMS(@Nullable String s) {
         try {
             var formatter = ofPattern(FORMAT_YMD_HMS_LOOSE);
             return Optional.of(LocalDateTime.parse(trim(s), formatter));
@@ -78,7 +78,8 @@ public class DateComponent {
         }
     }
 
-    public static Optional<LocalDate> parseYMD_hyphen_loose(String s) {
+    /** s がnull や解釈できない文字列の場合は empty を返す */
+    public static Optional<LocalDate> parseYMD_hyphen_loose(@Nullable String s) {
         try {
             var formatter = ofPattern(FORMAT_YMD_hyphen_loose);
             return Optional.of(LocalDate.parse(trim(s), formatter));

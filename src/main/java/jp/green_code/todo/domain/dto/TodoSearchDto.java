@@ -1,5 +1,7 @@
 package jp.green_code.todo.domain.dto;
 
+import org.jspecify.annotations.Nullable;
+
 import jp.green_code.shared.dto.PageRequest;
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,14 +12,19 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class TodoSearchDto extends PageRequest {
 
+    @Nullable
     private String word;
 
+    @Nullable
     private String status;
 
+    @Nullable
     private String deadlineFrom;
 
+    @Nullable
     private String deadlineTo;
 
+    @Nullable
     private String sort;
 
     // 画面上の検索条件を開いておくかどうか
@@ -29,43 +36,43 @@ public class TodoSearchDto extends PageRequest {
         return String.format("TodoSearchForm(word=%s,status=%s,deadlineFrom=%s,deadlineTo=%s,sort=%s,page=%s,size=%s)", StringUtils.left(word, 100), status, deadlineFrom, deadlineTo, sort, getCurrentPage(), getPageSize());
     }
 
-    public String getWord() {
+    public @Nullable String getWord() {
         return word;
     }
 
-    public void setWord(String word) {
+    public void setWord(@Nullable String word) {
         this.word = word;
     }
 
-    public String getStatus() {
+    public @Nullable String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(@Nullable String status) {
         this.status = status;
     }
 
-    public String getDeadlineFrom() {
+    public @Nullable String getDeadlineFrom() {
         return deadlineFrom;
     }
 
-    public void setDeadlineFrom(String deadlineFrom) {
+    public void setDeadlineFrom(@Nullable String deadlineFrom) {
         this.deadlineFrom = deadlineFrom;
     }
 
-    public String getDeadlineTo() {
+    public @Nullable String getDeadlineTo() {
         return deadlineTo;
     }
 
-    public void setDeadlineTo(String deadlineTo) {
+    public void setDeadlineTo(@Nullable String deadlineTo) {
         this.deadlineTo = deadlineTo;
     }
 
-    public String getSort() {
+    public @Nullable String getSort() {
         return sort;
     }
 
-    public void setSort(String sort) {
+    public void setSort(@Nullable String sort) {
         this.sort = sort;
     }
 }
