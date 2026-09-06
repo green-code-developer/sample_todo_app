@@ -97,8 +97,11 @@ jp.green_code
 
 `updated_at` / `created_at` はトリガー `refresh_meta_columns()` が設定するため、アプリケーションから指定した値は採用されない。
 
-- INSERT 時：`updated_at`、`created_at` に現在時刻を設定する。`created_by` はトリガーの対象外で、アプリケーションが指定した値（未指定の場合は既定値 -1）がそのまま入る
+- INSERT 時：`updated_at`、`created_at` に現在時刻を設定する。`created_by` はトリガーの対象外で、アプリケーションが指定した値がそのまま入る
 - UPDATE 時：`updated_at` に現在時刻を設定し、`created_at`・`created_by` は更新前の値を維持する
+
+`created_by` と `updated_by` はアプリケーションが値を入れる（5.2 参照）。
+DB の既定値 -1 は使われない。
 
 ### 4.2 ステータス（TodoStatusEnum）
 
@@ -169,8 +172,9 @@ jp.green_code
 
 **登録・更新の内容**
 
-- 登録：`todo_id` は DB が採番する。`created_by` は DB 既定値の -1 を使用する
-- 更新：`updated_by` にダミーアカウント ID -1 を設定する（認証未実装のため）
+- 登録：`todo_id` を INSERT の対象から外し、DB に採番させる
+- `created_by`（登録時のみ）と `updated_by` にダミーアカウント ID -1 を設定する（認証未実装のため）
+- 更新時に送った `created_by` はトリガーが更新前の値へ戻すため、値は変わらない
 - `todoStatus` の入力欄は更新画面にのみ存在する。新規登録画面には入力欄がなく送信されないため、登録時は `NEW` を設定する
 
 ## 6. バリデーション

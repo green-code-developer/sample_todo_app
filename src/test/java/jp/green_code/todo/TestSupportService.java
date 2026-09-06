@@ -45,7 +45,8 @@ public class TestSupportService {
     entity.setAccountId(accountId);
     entity.setAccountStatus("ERR");
     entity.setName("test" + accountId);
-    accountRepository.insert(entity);
+    // account_id を明示して登録するため全カラムを送る
+    accountRepository.insertAllColumns(entity);
     return entity;
   }
 

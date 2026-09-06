@@ -72,13 +72,17 @@ public class TodoService {
             case Valid<TodoEntity> e -> {
                 var todoEntity = e.value();
                 var isNew = todoEntity.getTodoId() == null;
+                // 作成者ID と更新者ID をセットする(ここではダミー値を使用)
+                long dummyAccountId = -1L;
+                todoEntity.setUpdatedBy(dummyAccountId);
                 if (isNew) {
-                    todoRepository.insert(todoEntity);
+                    todoEntity.setCreatedBy(dummyAccountId);
+                    // todo_id はDB に採番させる
+                    // updated_at とcreated_at はトリガーが値を決める
+                    todoRepository.insertExceptPk(todoEntity);
                 } else {
-                    // 更新者ID をセットする(ここではダミー値を使用)
-                    long dummyAccountId = -1L;
-                    todoEntity.setUpdatedBy(dummyAccountId);
-                    todoRepository.update(todoEntity);
+                    // created_by は更新しない。トリガーが更新前の値へ戻す
+                    todoRepository.updateAllColumns(todoEntity);
                 }
                 log.info(logFormatter.end(methodName(), "isNew=%s".formatted(isNew)));
                 yield e;

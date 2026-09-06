@@ -1,6 +1,7 @@
 package jp.green_code.todo.domain.entity.base;
 
 import java.time.OffsetDateTime;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Table: account
@@ -8,31 +9,31 @@ import java.time.OffsetDateTime;
 public abstract class BaseAccountEntity {
 
     /** account_id */
-    protected Long accountId;
+    protected @Nullable Long accountId;
 
     /** account_status */
-    protected String accountStatus;
+    protected String accountStatus = "";
 
     /** name */
-    protected String name;
+    protected String name = "";
 
     /** updated_at */
-    protected OffsetDateTime updatedAt;
+    protected @Nullable OffsetDateTime updatedAt;
 
     /** updated_by */
-    protected Long updatedBy;
+    protected long updatedBy = -1L;
 
     /** created_at */
-    protected OffsetDateTime createdAt;
+    protected @Nullable OffsetDateTime createdAt;
 
     /** created_by */
-    protected Long createdBy;
+    protected long createdBy = -1L;
 
-    public Long getAccountId() {
+    public @Nullable Long getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Long accountId) {
+    public void setAccountId(@Nullable Long accountId) {
         this.accountId = accountId;
     }
 
@@ -52,35 +53,35 @@ public abstract class BaseAccountEntity {
         this.name = name;
     }
 
-    public OffsetDateTime getUpdatedAt() {
+    public @Nullable OffsetDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(OffsetDateTime updatedAt) {
+    public void setUpdatedAt(@Nullable OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public Long getUpdatedBy() {
+    public long getUpdatedBy() {
         return updatedBy;
     }
 
-    public void setUpdatedBy(Long updatedBy) {
+    public void setUpdatedBy(long updatedBy) {
         this.updatedBy = updatedBy;
     }
 
-    public OffsetDateTime getCreatedAt() {
+    public @Nullable OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(OffsetDateTime createdAt) {
+    public void setCreatedAt(@Nullable OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Long getCreatedBy() {
+    public long getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(long createdBy) {
         this.createdBy = createdBy;
     }
 }

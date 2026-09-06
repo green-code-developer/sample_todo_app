@@ -12,8 +12,7 @@ public abstract class TestBaseAccountRepository {
         var data = generateTestData(seed);
 
         // insert
-        data.setAccountId(null);
-        repository.insert(data);
+        repository.insertExceptPk(data);
 
         // select 1回目
         var res = repository.findByPk(data.getAccountId());
@@ -33,7 +32,7 @@ public abstract class TestBaseAccountRepository {
         seed++;
         var data2 = generateTestData(seed);
         data2.setAccountId(data.getAccountId());
-        repository.update(data2);
+        repository.updateAllColumns(data2);
 
         // select 2回目
         var res2 = repository.findByPk(data2.getAccountId());
@@ -41,19 +40,12 @@ public abstract class TestBaseAccountRepository {
 
         // update 後の確認
         var stored2 = res2.orElseThrow();
-
         assert4accountId(data2.getAccountId(), stored2.getAccountId());
-
         assert4accountStatus(data2.getAccountStatus(), stored2.getAccountStatus());
-
         assert4name(data2.getName(), stored2.getName());
-
         assert4updatedAt(data2.getUpdatedAt(), stored2.getUpdatedAt());
-
         assert4updatedBy(data2.getUpdatedBy(), stored2.getUpdatedBy());
-
         assert4createdAt(data2.getCreatedAt(), stored2.getCreatedAt());
-
         assert4createdBy(data2.getCreatedBy(), stored2.getCreatedBy());
 
         // delete
@@ -93,7 +85,7 @@ public abstract class TestBaseAccountRepository {
         return OffsetDateTime.of(2001, 1, 1, 0, 0, 0, 0, java.time.ZoneOffset.UTC).plusMinutes(seed);
     }
 
-    protected Long generateTestData4updatedBy(int seed) {
+    protected long generateTestData4updatedBy(int seed) {
         return (long) seed;
     }
 
@@ -101,7 +93,7 @@ public abstract class TestBaseAccountRepository {
         return OffsetDateTime.of(2001, 1, 1, 0, 0, 0, 0, java.time.ZoneOffset.UTC).plusMinutes(seed);
     }
 
-    protected Long generateTestData4createdBy(int seed) {
+    protected long generateTestData4createdBy(int seed) {
         return (long) seed;
     }
 
@@ -122,7 +114,7 @@ public abstract class TestBaseAccountRepository {
         assertEquals(expected, value);
     }
 
-    protected void assert4updatedBy(Long expected, Long value) {
+    protected void assert4updatedBy(long expected, long value) {
         assertEquals(expected, value);
     }
 
@@ -130,7 +122,7 @@ public abstract class TestBaseAccountRepository {
         assertEquals(expected, value);
     }
 
-    protected void assert4createdBy(Long expected, Long value) {
+    protected void assert4createdBy(long expected, long value) {
         assertEquals(expected, value);
     }
 }

@@ -2,6 +2,7 @@ package jp.green_code.todo.domain.entity.base;
 
 import java.time.OffsetDateTime;
 import jp.green_code.todo.domain.enums.TodoStatusEnum;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Table: todo
@@ -9,34 +10,34 @@ import jp.green_code.todo.domain.enums.TodoStatusEnum;
 public abstract class BaseTodoEntity {
 
     /** todo_id */
-    protected Long todoId;
+    protected @Nullable Long todoId;
 
     /** todo_status */
-    protected TodoStatusEnum todoStatus;
+    protected TodoStatusEnum todoStatus = TodoStatusEnum.NEW;
 
     /** detail */
-    protected String detail;
+    protected String detail = "";
 
     /** deadline */
-    protected OffsetDateTime deadline;
+    protected @Nullable OffsetDateTime deadline;
 
     /** updated_at */
-    protected OffsetDateTime updatedAt;
+    protected @Nullable OffsetDateTime updatedAt;
 
     /** updated_by */
-    protected Long updatedBy;
+    protected long updatedBy = -1L;
 
     /** created_at */
-    protected OffsetDateTime createdAt;
+    protected @Nullable OffsetDateTime createdAt;
 
     /** created_by */
-    protected Long createdBy;
+    protected long createdBy = -1L;
 
-    public Long getTodoId() {
+    public @Nullable Long getTodoId() {
         return todoId;
     }
 
-    public void setTodoId(Long todoId) {
+    public void setTodoId(@Nullable Long todoId) {
         this.todoId = todoId;
     }
 
@@ -56,43 +57,43 @@ public abstract class BaseTodoEntity {
         this.detail = detail;
     }
 
-    public OffsetDateTime getDeadline() {
+    public @Nullable OffsetDateTime getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(OffsetDateTime deadline) {
+    public void setDeadline(@Nullable OffsetDateTime deadline) {
         this.deadline = deadline;
     }
 
-    public OffsetDateTime getUpdatedAt() {
+    public @Nullable OffsetDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(OffsetDateTime updatedAt) {
+    public void setUpdatedAt(@Nullable OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public Long getUpdatedBy() {
+    public long getUpdatedBy() {
         return updatedBy;
     }
 
-    public void setUpdatedBy(Long updatedBy) {
+    public void setUpdatedBy(long updatedBy) {
         this.updatedBy = updatedBy;
     }
 
-    public OffsetDateTime getCreatedAt() {
+    public @Nullable OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(OffsetDateTime createdAt) {
+    public void setCreatedAt(@Nullable OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Long getCreatedBy() {
+    public long getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(long createdBy) {
         this.createdBy = createdBy;
     }
 }

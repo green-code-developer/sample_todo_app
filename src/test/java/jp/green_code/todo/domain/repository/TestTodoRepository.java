@@ -17,12 +17,12 @@ public class TestTodoRepository extends TestBaseTodoRepository {
     }
 
     @Override
-    protected Long generateTestData4updatedBy(int seed) {
+    protected long generateTestData4updatedBy(int seed) {
         return -1L;
     }
 
     @Override
-    protected Long generateTestData4createdBy(int seed) {
+    protected long generateTestData4createdBy(int seed) {
         return -1L;
     }
 }

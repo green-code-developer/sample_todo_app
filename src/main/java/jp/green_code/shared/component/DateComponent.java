@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+
+import org.jspecify.annotations.Nullable;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Optional;
@@ -33,19 +35,20 @@ public class DateComponent {
         this.zoneId = zoneId;
     }
 
-    public static String toYMD(OffsetDateTime dateTime) {
+    public static String toYMD(@Nullable OffsetDateTime dateTime) {
         return format(dateTime, FORMAT_YMD);
     }
 
-    public static String toYMD_hyphen(OffsetDateTime dateTime) {
+    public static String toYMD_hyphen(@Nullable OffsetDateTime dateTime) {
         return format(dateTime, FORMAT_YMD_hyphen);
     }
 
-    public static String toYMD_HM(OffsetDateTime dateTime) {
+    public static String toYMD_HM(@Nullable OffsetDateTime dateTime) {
         return format(dateTime, FORMAT_YMD_HM);
     }
 
-    static String format(OffsetDateTime dateTime, String format) {
+    /** dateTime がnull の場合は空文字を返す */
+    static String format(@Nullable OffsetDateTime dateTime, String format) {
         DateTimeFormatter fmt = ofPattern(format);
         return dateTime == null ? "" : fmt.format(dateTime.atZoneSameInstant(ZoneId.systemDefault()));
     }
