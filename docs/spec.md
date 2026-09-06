@@ -75,7 +75,7 @@ jp.green_code
 | URL | メソッド | テンプレート | 説明 |
 |---|---|---|---|
 | `/` | GET | － | `/list` へリダイレクト |
-| `/list` | GET / POST | `todo/todo_list.html` | 一覧・検索 |
+| `/list` | GET | `todo/todo_list.html` | 一覧・検索 |
 | `/new` | GET | `todo/todo_edit.html` | 登録画面 |
 | `/edit/{todoId}` | GET | `todo/todo_edit.html` | 編集画面。該当 ID が存在しない場合は 404 |
 | `/upsert` | POST | － | 登録・更新の実行 |
@@ -87,7 +87,7 @@ jp.green_code
 | カラム | 型 | NULL | 既定値 | 説明 |
 |---|---|---|---|---|
 | `todo_id` | bigserial | 不可 | 採番 | 主キー。10001 から採番 |
-| `todo_status` | varchar | 不可 | `''` | ステータス。4.2 参照 |
+| `todo_status` | `todo_status`（enum 型） | 不可 | `'NEW'` | ステータス。4.2 参照 |
 | `detail` | text | 不可 | `''` | やることの内容 |
 | `deadline` | timestamptz | 可 | － | 完了予定日 |
 | `updated_at` | timestamptz | 不可 | now() | 更新日時 |
@@ -95,10 +95,10 @@ jp.green_code
 | `created_at` | timestamptz | 不可 | now() | 作成日時 |
 | `created_by` | bigint | 不可 | -1 | 作成者。account への外部キー |
 
-`updated_at` / `created_at` / `created_by` はトリガー `refresh_meta_columns()` が設定する。アプリケーションから指定した値は採用されない。
+`updated_at` / `created_at` はトリガー `refresh_meta_columns()` が設定するため、アプリケーションから指定した値は採用されない。
 
-- INSERT 時：`updated_at`、`created_at` に現在時刻を設定
-- UPDATE 時：`updated_at` に現在時刻を設定し、`created_at`・`created_by` は更新前の値を維持
+- INSERT 時：`updated_at`、`created_at` に現在時刻を設定する。`created_by` はトリガーの対象外で、アプリケーションが指定した値（未指定の場合は既定値 -1）がそのまま入る
+- UPDATE 時：`updated_at` に現在時刻を設定し、`created_at`・`created_by` は更新前の値を維持する
 
 ### 4.2 ステータス（TodoStatusEnum）
 
@@ -171,7 +171,7 @@ jp.green_code
 
 - 登録：`todo_id` は DB が採番する。`created_by` は DB 既定値の -1 を使用する
 - 更新：`updated_by` にダミーアカウント ID -1 を設定する（認証未実装のため）
-- `todoStatus` は画面から常に送信する。未指定の場合は `NEW` を設定する
+- `todoStatus` の入力欄は更新画面にのみ存在する。新規登録画面には入力欄がなく送信されないため、登録時は `NEW` を設定する
 
 ## 6. バリデーション
 

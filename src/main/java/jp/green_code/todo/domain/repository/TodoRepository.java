@@ -48,7 +48,8 @@ public class TodoRepository extends BaseTodoRepository {
         var condition = conditions.isEmpty() ? "" : "where " + String.join(" and ", conditions);
 
         var param = new HashMap<String, Object>();
-        param.put("word", escapeLike(word));
+        // word は未入力だとnull で渡る。escapeLike はnull を受け付けない
+        param.put("word", isEmpty(word) ? "" : escapeLike(word));
         param.put("status", status + "");
         param.put("deadlineFrom", deadlineFrom);
         param.put("deadlineTo", deadlineTo);

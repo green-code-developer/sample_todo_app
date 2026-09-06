@@ -14,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
@@ -44,7 +43,7 @@ public class TodoController {
         this.todoService = todoService;
     }
 
-    @RequestMapping(LIST_PATH)
+    @GetMapping(LIST_PATH)
     public ModelAndView list(HttpServletRequest request, RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "false") boolean usePrevCondition, TodoSearchDto dto) {
         // 前回の検索条件を使いたい場合
         if (usePrevCondition) {

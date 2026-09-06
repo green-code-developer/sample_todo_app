@@ -40,8 +40,6 @@ enumJavaTypeMappings:
 returningColumnsByTable:
   "*":
     - updated_at
-    - created_at
-    - created_by
 
 # 実体クラスの強制上書き（省略可）
 #   初期値 false(しない)

@@ -41,6 +41,8 @@ public class PageRequest {
     }
 
     public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+        // 入口で上限を適用する
+        // getOffset() や総ページ数の計算も同じ値を使うため、ここで丸めないとページング計算が食い違う
+        this.pageSize = Math.min(pageSize, MAX_PAGE_SIZE);
     }
 }
