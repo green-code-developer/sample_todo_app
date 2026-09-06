@@ -31,7 +31,8 @@
 - セッションは Spring Session により PostgreSQL へ保存する。Web サーバを冗長化した際にサーバ間でセッションを共有できる。5.1 の検索条件の保持はこれに依存する
 - Entity と Repository の基底クラスは spring-jdbc-codegen で自動生成する
 - Spring Security により CSRF 対策と CSP（`default-src 'self'`）を有効化する。認証は行わない
-- ErrorProne + NullAway による null 安全チェックをビルド時に行う。全体を `@NullMarked` とし、null が入りうる Entity（`domain.entity`）と Form（`domain.dto`）のみ `@NullUnmarked` とする
+- ErrorProne + NullAway による null 安全チェックをビルド時に行う。全体を `@NullMarked` とし、Form（`domain.dto`）のみ `@NullUnmarked` とする
+- Entity はカラムごとに null 許容を表す。spring-jdbc-codegen が生成する。todo テーブルでは `todo_status` と `detail` が非 null、`updated_by` と `created_by` がプリミティブ、`todo_id`・`deadline`・`updated_at`・`created_at` が `@Nullable` になる
 
 ### 2.2 パッケージ構成
 
