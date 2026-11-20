@@ -1,6 +1,11 @@
 # 本番環境用設定
 # ローカル環境と異なる点のみ記載する
 server:
+  # nginx が付ける X-Forwarded-Proto / X-Forwarded-Host を使う。
+  # 付けないと、リダイレクト先が http:// になる(nginx からは平文の HTTP で届くため)
+  # native ではなく framework にする。native は接続元が内部のアドレスのときだけヘッダーを信用するが、
+  # rootless Podman 越しだと接続元がサーバーの外向きのアドレスに見えることがある
+  forward-headers-strategy: framework
   servlet:
     session:
       cookie:
